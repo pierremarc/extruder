@@ -125,7 +125,7 @@ export function extrude(canvas, state) {
                     height: lineHeight
                 };
                 // debug('line-rect', rect);
-                extrudeLine(ctx, rect, x, y, line, font, fontSize);
+                extrudeLine(ctx, rect, x * ss.scale, y * ss.scale, line, font, fontSize);
             }
         });
     }
