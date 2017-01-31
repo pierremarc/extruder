@@ -129,11 +129,18 @@ function exportTool(box) {
     box.appendChild(exportPNG);
 
     const offScreen = createElement('canvas');
+    let localState = null;
     onStateChange((state) => {
-        offScreen.width = state.width;
-        offScreen.height = state.height;
-        if (extrude(offScreen, state)) {
-            exportPNG.href = offScreen.toDataURL("image/png");
+        localState = state;
+    });
+
+    box.addEventListener('mouseenter', () => {
+        if (localState) {
+            offScreen.width = localState.width;
+            offScreen.height = localState.height;
+            if (extrude(offScreen, localState)) {
+                exportPNG.href = offScreen.toDataURL("image/png");
+            }
         }
     });
 }
