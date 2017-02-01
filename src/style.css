@@ -78,7 +78,7 @@ table {
 
 .tool-box {
     border: 1px solid red;
-    flex: 1;
+    flex: 2;
 
     display: flex;
     flex-direction: column;
@@ -87,6 +87,8 @@ table {
 
 .tool-box .tool {
     flex: auto;
+    margin: 16px;
+    border: 1px solid grey;
     padding: 16px;
 }
 
@@ -98,6 +100,13 @@ table {
 
 .tool-font-item-selected {
     font-weight: bold;
+}
+
+.tool-xy, .tool-size {
+    position: absolute;
+    width: 100%;
+    margin: 16px;
+    padding: 16px;
 }
 
 .extruder-box {
@@ -132,4 +141,12 @@ table {
 }
 .message-debug {
     background-color: green;
+}
+
+
+input.slider-input {
+    width: 24px;
+    border: none;
+    text-align: right;
+    font-family: monospace;
 }

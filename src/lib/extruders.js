@@ -93,9 +93,12 @@ function extrudeBezier(ops, x, y, p1, c1, c2, p2) {
     const mark2 = marker[2];
 
     ops.push(op.save());
+
     ops.push(op.gs('fillStyle', 'rgba(0,0,0,1)'));
-    ops.push(op.gs('strokeStyle', 'rgba(0,0,0,1)'));
-    ops.push(op.gs('lineWidth', 0.1));
+    // ops.push(op.gs('strokeStyle', 'rgba(0,0,0,1)'));
+    // ops.push(op.gs('lineWidth', 0.1));
+    ops.push(op.gs('strokeStyle', 'rgba(0,255,0,1)'));
+    ops.push(op.gs('lineWidth', 1));
     ops.push(op.begin());
     let cp = p1.lerp(c1, t);
     ops.push(op.moveTo(p1));

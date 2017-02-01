@@ -56,69 +56,24 @@ function textTool(box) {
     box.appendChild(textArea);
 }
 
-function xyTool(box) {
-    const xBox = createElement('div', { class: 'tool-xy-box tool-xy-x' });
-    const yBox = createElement('div', { class: 'tool-xy-box tool-xy-y' });
-    const xInput = createElement('input', {
-        type: 'number',
-        value: getState('x')
-    });
-    const yInput = createElement('input', {
-        type: 'number',
-        value: getState('y')
-    });
-
-    appendText(xBox, 'x:');
-    box.appendChild(xBox);
-    appendText(yBox, 'y:');
-    box.appendChild(yBox);
-
-    xBox.appendChild(xInput);
-    yBox.appendChild(yInput);
-
-    xInput.addEventListener('change', () => {
-        setState('x', Number(xInput.value));
-    });
-
-    yInput.addEventListener('change', () => {
-        setState('y', Number(yInput.value));
-    });
-
-    onStateChange((state) => {
-        xInput.value = state.x;
-        yInput.value = state.y;
-    });
-}
-
-function extentTool(box) {
-    const widthBox = createElement('div', { class: 'tool-extent-box tool-extent-width' });
-    const heightBox = createElement('div', { class: 'tool-extent-box tool-extent-height' });
-    const widthInput = createElement('input', {
-        type: 'number',
-        value: getState('width')
-    });
-    const heightInput = createElement('input', {
-        type: 'number',
-        value: getState('height')
-    });
-
-    appendText(widthBox, 'width:');
-    box.appendChild(widthBox);
-    appendText(heightBox, 'height:');
-    box.appendChild(heightBox);
-
-    widthBox.appendChild(widthInput);
-    heightBox.appendChild(heightInput);
-
-    widthInput.addEventListener('change', () => {
-        setState('width', Number(widthInput.value));
-    });
-
-    heightInput.addEventListener('change', () => {
-        setState('height', Number(heightInput.value));
-    });
-
-}
+// function xyTool(box) {
+//     const xBox = createElement('div', { class: 'tool-xy-box tool-xy-x' });
+//     const yBox = createElement('div', { class: 'tool-xy-box tool-xy-y' });
+//     xBox.appendChild(slider('x', -300, 300, Math.ceil));
+//     yBox.appendChild(slider('y', -300, 300, Math.ceil));
+//     box.appendChild(xBox);
+//     box.appendChild(yBox);
+// }
+//
+// function extentTool(box) {
+//     const widthBox = createElement('div', { class: 'tool-extent-box tool-extent-width' });
+//     const heightBox = createElement('div', { class: 'tool-extent-box tool-extent-height' });
+//
+//     widthBox.appendChild(slider('width', 100, 4000, Math.ceil));
+//     heightBox.appendChild(slider('height', 100, 4000, Math.ceil));
+//     box.appendChild(widthBox);
+//     box.appendChild(heightBox);
+// }
 
 function exportTool(box) {
     const exportPNG = createElement('a', {
@@ -146,14 +101,16 @@ function exportTool(box) {
 }
 
 export default function install(fonts) {
-    const container = createElement('div', { class: 'tool-box' });
-    const fontBox = wrapTool('font', fontTool,fonts);
+    const sidebar = createElement('div', { class: 'tool-box' });
+    const fontBox = wrapTool('font', fontTool, fonts);
     const textBox = wrapTool('text', textTool);
-    const xyBox = wrapTool('xy', xyTool);
-    const extentBox = wrapTool('size', extentTool);
     const exportBox = wrapTool('export', exportTool);
+    // const xyBox = wrapTool('xy', xyTool);
+    // const extentBox = wrapTool('size', extentTool);
 
 
-    [fontBox, textBox, xyBox, extentBox, exportBox].forEach(box => container.appendChild(box));
-    body().appendChild(container);
+    [fontBox, textBox, exportBox].forEach(box => sidebar.appendChild(box));
+    body().appendChild(sidebar);
+    // body().appendChild(xyBox);
+    // body().appendChild(extentBox);
 }

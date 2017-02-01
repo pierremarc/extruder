@@ -1,5 +1,5 @@
 
-import { assign, isArray, zipObject, last } from 'lodash/fp';
+import { assign, isArray, zipObject, last, intersection } from 'lodash/fp';
 
 // const debug = require('debug')('extruder');
 
@@ -20,16 +20,30 @@ function createState() {
 }
 
 
-function applyHandlers() {
+function applyHandlers(keys) {
     handlers.forEach((handler) => {
-        handler(createState());
+        const [callback, checkKeys] = handler;
+        if (checkKeys) {
+            if (checkKeys(keys).length > 0) {
+                callback(createState(), keys);
+            }
+        }
+        else {
+            callback(createState(), keys);
+        }
     });
 }
 
 
-export function onStateChange(callback) {
-    handlers.push(callback);
+export function onStateChange(callback, keys = null) {
+    if (keys) {
+        handlers.push([callback, intersection(keys)]);
+    }
+    else {
+        handlers.push([callback, false]);
+    }
 }
+
 
 
 export function getState(k) {
@@ -52,10 +66,11 @@ export function setState(key, value, silent = false) {
     }
     else {
         state.push(assign(createState(), { [key]: value }));
+        key = [key];
     }
 
     if (!silent) {
-        applyHandlers();
+        applyHandlers(key);
     }
 
     // debug(`state stack size ${state.length}`);

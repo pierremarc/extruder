@@ -2,9 +2,9 @@
 export default {
     initialState: {
         x: 100,
-        y: 100,
-        width: 200,
-        height: 100,
+        y: -100,
+        width: 2000,
+        height: 1000,
         text: 'hello',
         font: null,
         margin: 0.05,

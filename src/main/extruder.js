@@ -1,14 +1,14 @@
 
+
+
 import message from '../lib/message';
 import point from '../lib/point';
 import Context from '../lib/ctx-canvas';
-// import ContextBBox from '../lib/ctx-bbox';
-// import ContextScale from '../lib/ctx-scale';
-// import DebugContext from '../lib/ctx-debug';
 import op from '../lib/operation';
-import { body, createElement } from '../lib/dom';
+import { body, createElement, px } from '../lib/dom';
 import render from './render';
 import { onStateChange, getState, setState } from '../lib/state';
+import slider from '../lib/slider';
 
 const debug = require('debug')('extruder');
 
@@ -36,45 +36,9 @@ function getScaledSize(rect, bbox) {
 }
 
 function extrudeLine(ctx, rect, x, y, text, font, fontSize) {
-    // const bboxContext = new ContextBBox();
     const anchor = point(rect.minx, rect.miny);
-
-    // { // debug
-    //     const rawCtx = ctx.ctx;
-    //     rawCtx.save();
-    //     rawCtx.strokeStyle = 'green';
-    //     rawCtx.fillStyle = 'white';
-    //     rawCtx.lineWidth = 0.5;
-    //     rawCtx.fillRect(rect.minx, rect.maxy, rect.width, rect.height);
-    //     rawCtx.strokeRect(rect.minx, rect.maxy, rect.width, rect.height);
-    //     rawCtx.restore();
-    // }
-
-    // pass #1 get glyphs
     const baseOperations = render(text, font, fontSize, x, y, anchor);
     op.render(ctx, baseOperations);
-    //
-    // // pass #2 get a bounding box
-    // op.render(bboxContext, baseOperations);
-    // {
-    //     const bb = bboxContext;
-    //     debug('bbox', bb.minx, bb.miny, bb.maxx, bb.maxy);
-    // }
-    //
-    // // pass #3 get scaled glyphs
-    // const cz = getScaledSize(rect, bboxContext);
-    // debug('scale', cz.scale);
-    // const scaler = new ContextScale(cz.scale, cz.scale, anchor);
-    // op.render(scaler, baseOperations);
-    //
-    //
-    // // finally render on canvas
-    // {
-    //     const dbg = new ContextBBox();
-    //     op.render(dbg, scaler.operations);
-    //     debug('scaled bbox', dbg.minx, dbg.miny, dbg.maxx, dbg.maxy);
-    // }
-    // op.render(ctx, scaler.operations);
 }
 
 
@@ -86,7 +50,7 @@ export function extrude(canvas, state) {
 
     // clear canvas
     ctx.ctx.clearRect(0, 0, canvas.width, canvas.height);
-    ctx.ctx.fillStyle = 'white';
+    ctx.ctx.fillStyle = '#DCDCDC';
     ctx.ctx.fillRect(0, 0, canvas.width, canvas.height);
 
     if (!font) {
@@ -94,7 +58,6 @@ export function extrude(canvas, state) {
         return false;
     }
 
-    debug('scale', ss);
     if (lines.length > 0) {
         const scaledMargin = Math.max(margin * ss.width, margin * ss.height);
         const innerWidth = ss.width - (scaledMargin * 2);
@@ -109,8 +72,10 @@ export function extrude(canvas, state) {
             const rawCtx = ctx.ctx;
             rawCtx.save();
             rawCtx.strokeStyle = '#60A8FF';
+            rawCtx.fillStyle = 'white';
             rawCtx.lineWidth = 0.5;
             rawCtx.strokeRect(ss.offset.x, ss.offset.y, ss.width, ss.height);
+            rawCtx.fillRect(ss.offset.x, ss.offset.y, ss.width, ss.height);
             rawCtx.restore();
         }
 
@@ -137,7 +102,7 @@ export function extrude(canvas, state) {
 function mouseEventPos(e) {
     const rect = e.currentTarget.getBoundingClientRect();
     const p = point(e.clientX - rect.left, e.clientY - rect.top);
-    debug('mouseEventPos', p);
+    // debug('mouseEventPos', p);
     return p;
 }
 
@@ -177,12 +142,52 @@ function stopMoving(e) {
     }
 }
 
+
+function xyTool() {
+    const box = createElement('div', { class: 'tool-xy' });
+    const xBox = createElement('div', { class: 'tool-xy-box tool-xy-x' });
+    const yBox = createElement('div', { class: 'tool-xy-box tool-xy-y' });
+    xBox.appendChild(slider('x', -300, 300, Math.ceil));
+    yBox.appendChild(slider('y', -300, 300, Math.ceil));
+    box.appendChild(xBox);
+    box.appendChild(yBox);
+    return box;
+}
+
+function extentTool() {
+    const box = createElement('div', { class: 'tool-size' });
+    const widthBox = createElement('div', { class: 'tool-extent-box tool-extent-width' });
+    const heightBox = createElement('div', { class: 'tool-extent-box tool-extent-height' });
+
+    widthBox.appendChild(slider('width', 100, 4000, Math.ceil));
+    heightBox.appendChild(slider('height', 100, 4000, Math.ceil));
+    box.appendChild(widthBox);
+    box.appendChild(heightBox);
+    return box;
+}
+
+
+function xyLay(box, rect) {
+    const s = box.style;
+    s.position = 'absolute';
+    s.top = px(0);
+    s.left = px(rect.left)// + (rect.width * 0.2));
+    s.width = px(rect.width * 0.5);
+}
+
 export default function main() {
     const container = createElement('div', { class: 'extruder-box' });
     const canvas = createElement('canvas');
+    const xyBox = xyTool();
+    const sizeBox = extentTool();
     container.appendChild(canvas);
+    container.appendChild(xyBox);
+    // container.appendChild(sizeBox);
     body().appendChild(container);
+
     const rect = container.getBoundingClientRect();
+
+
 
     canvas.width = rect.width;
     canvas.height = rect.height;
@@ -190,9 +195,10 @@ export default function main() {
     canvas.addEventListener('mouseup', stopMoving, false);
     canvas.addEventListener('mousemove', isMoving, false);
 
-
+    const keys = ['x', 'y', 'width', 'height', 'font', 'text'];
     onStateChange((state) => {
-        // debug(`xy [${state.x}, ${state.y}]`);
         extrude(canvas, state);
-    });
+    }, keys);
+
+    xyLay(xyBox, rect);
 }
