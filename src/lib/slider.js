@@ -19,9 +19,10 @@ class Projection {
     forward(value) {
         const [sMin, sMax] = this.source;
         const [tMin, tMax] = this.target;
-        const sourceValue = sMax - sMin;
-        const targetValue = tMax - tMin;
-        const result = tMin + ((value * targetValue) / sourceValue);
+        const sourceInterval = sMax - sMin;
+        const targetInterval = tMax - tMin;
+        const sourceValue = value - sMin;
+        const result = tMin + ((sourceValue / sourceInterval) * targetInterval);
 
         return result;
     }
@@ -29,9 +30,10 @@ class Projection {
     inverse(value) {
         const [sMin, sMax] = this.source;
         const [tMin, tMax] = this.target;
-        const sourceValue = sMax - sMin;
-        const targetValue = tMax - tMin;
-        const result = sMin + ((value * sourceValue) / targetValue);
+        const sourceInterval = sMin + (sMax - sMin);
+        const targetInterval = tMin + (tMax - tMin);
+        const targetValue = value - tMin;
+        const result = sMin + ((targetValue / targetInterval) * sourceInterval);
 
         return result;
     }
@@ -42,6 +44,28 @@ class Projection {
         return `[${sMin}, ${sMax}] [${tMin}, ${tMax}]`;
     }
 }
+
+(function testProj() {
+    const assert = (a, b) => {
+        if (!a) {
+            // throw (new Error(b));
+            console.error(b);
+        }
+    };
+
+    const target = [-1000, 1000];
+    const source = [-100, 100];
+    const p = new Projection(source, target);
+
+    assert(p.forward(source[0]) === target[0], `p.forward(${source[0]}) !== ${target[0]} (${p.forward(source[0])})`);
+    assert(p.forward(42) === 420, `p.forward(42) !== 420 (${p.forward(42)})`);
+    assert(p.forward(source[1]) === target[1], `p.forward(${source[1]}) !== ${target[1]} (${p.forward(source[0])})`);
+
+    assert(p.inverse(target[0]) === source[0], `p.inverse(${target[0]}) !== ${source[0]} (${p.inverse(target[0])})`);
+    assert(p.inverse(target[1]) === source[1], `p.inverse(${target[1]}) !== ${source[1]} (${p.inverse(target[0])})`);
+
+
+}());
 
 // function getValue(line, square, min, max) {
 //     const lineRect = line.getBoundingClientRect();
@@ -68,10 +92,10 @@ function updateSlider(key, line, square, input) {
     const state = getState(name(key));
     const squareRect = square.getBoundingClientRect();
     const lineRect = line.getBoundingClientRect();
-    const sourceRange = [lineRect.left, lineRect.right];
-    const targetRange = [state.min, state.max];
+    const targetRange = [0, lineRect.width];
+    const sourceRange = [state.min, state.max];
     const proj = new Projection(sourceRange, targetRange);
-    const x = proj.inverse(value);
+    const x = proj.forward(value);
     square.style.left = px(x - (squareRect.width / 2));
     input.value = value;
 }
@@ -81,7 +105,7 @@ function startHandler(key, parser, line) {
         const state = getState(name(key));
         const lineRect = line.getBoundingClientRect();
         state.started = true;
-        state.sourceRange = [lineRect.left, lineRect.right];
+        state.sourceRange = [0, lineRect.width];
         setState(name(key), state);
     });
 }
@@ -137,32 +161,39 @@ const styles = {
         flex: 2
     },
 
-    line: {
+    wrapper: {
         flex: 6,
-        height: px(12),
-        backgroundColor: 'green'
+        position: 'relative'
+        // height: px(12),
+        // backgroundColor: 'green'
+    },
+
+    line: {
+        // position: 'relative',
+        top: px(0),
     },
 
     square: {
-        position: 'relative',
-        width: px(12),
-        height: px(12),
-        backgroundColor: 'red'
+        position: 'absolute',
+        // top: px(0)
+        // backgroundColor: 'red'
     },
 
     input: {
         flex: 2,
-        top: px(28)
+        // top: px(28)
     }
 };
 
 
 function applyStyle(styleName, elem) {
     Object.keys(styles[styleName]).forEach((k) => {
-        elem.style[k] = styles[styleName][k];
+        if (elem.style[k] === '') {
+            console.log(styleName, k, elem.style[k]);
+            elem.style[k] = styles[styleName][k];
+        }
     });
 }
-
 
 
 export default function slider(key, min, max, parser = identity) {
@@ -173,6 +204,7 @@ export default function slider(key, min, max, parser = identity) {
         max
     });
     const container = createElement('div', { class: `slider ${name(key)}` });
+    const lineWrapper = createElement('div');
     const line = createElement('div', { class: 'slider-line' });
     const square = createElement('div', { class: 'slider-square' });
     const input = createElement('input', { class: 'slider-input', value: getState(key) });
@@ -181,37 +213,39 @@ export default function slider(key, min, max, parser = identity) {
 
     appendText(label, key);
     applyStyle('container', container);
+    applyStyle('wrapper', lineWrapper);
     applyStyle('line', line);
     applyStyle('square', square);
     applyStyle('input', input);
     applyStyle('label', label);
 
 
-    const start = startHandler(key, parser, line);
-    const stop = stopHandler(key, parser, line, square);
-    const move = moveHandler(key, parser, line, square);
+    const start = startHandler(key, parser, lineWrapper);
+    const stop = stopHandler(key, parser, lineWrapper, square);
+    const move = moveHandler(key, parser, lineWrapper, square);
     const cancel = cancelHandler(key, parser);
 
-    line.addEventListener('mousedown', start);
-    line.addEventListener('mouseup', stop);
-    line.addEventListener('mousemove', move);
-    line.addEventListener('mouseleave', cancel);
+    lineWrapper.addEventListener('mousedown', start);
+    lineWrapper.addEventListener('mouseup', stop);
+    lineWrapper.addEventListener('mousemove', move);
+    lineWrapper.addEventListener('mouseleave', cancel);
 
     input.addEventListener('change', () => {
         setState(key, Number(input.value));
     });
 
-    line.appendChild(square);
+    lineWrapper.appendChild(line);
+    lineWrapper.appendChild(square);
     container.appendChild(label);
-    container.appendChild(line);
+    container.appendChild(lineWrapper);
     container.appendChild(input);
 
 
     const updateInit = (previousWidth, t) => {
         const lr = line.getBoundingClientRect();
         if (lr.width !== previousWidth) {
-            const proj = new Projection([lr.left, lr.right], [min, max]);
-            const initPos = proj.inverse(getState(key));
+            const proj = new Projection([min, max], [0, lr.width]);
+            const initPos = proj.forward(getState(key));
             square.style.left = px(initPos);
             setTimeout(() => updateInit(lr.width), t);
 

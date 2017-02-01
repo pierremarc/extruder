@@ -49,52 +49,55 @@ export function extrude(canvas, state) {
     const ss = getScaledSize(canvas, { width, height });
 
     // clear canvas
-    ctx.ctx.clearRect(0, 0, canvas.width, canvas.height);
-    ctx.ctx.fillStyle = '#DCDCDC';
-    ctx.ctx.fillRect(0, 0, canvas.width, canvas.height);
+    const rawCtx = ctx.ctx;
+    rawCtx.save();
+    rawCtx.clearRect(0, 0, canvas.width, canvas.height);
+    rawCtx.fillStyle = '#DCDCDC';
+    rawCtx.fillRect(0, 0, canvas.width, canvas.height);
 
     if (!font) {
         message('you should select a font first');
-        return false;
     }
+    else {
+        if (lines.length > 0) {
+            const scaledMargin = Math.max(margin * ss.width, margin * ss.height);
+            const innerWidth = ss.width - (scaledMargin * 2);
+            const innerHeight = ss.height - (scaledMargin * 2);
+            const lineHeight = innerHeight / lines.length;
+            const baseFactor = 0.8;
+            const fontSize = lineHeight;
+            const left = ss.offset.x + scaledMargin;
+            const top = ss.offset.y + scaledMargin;
 
-    if (lines.length > 0) {
-        const scaledMargin = Math.max(margin * ss.width, margin * ss.height);
-        const innerWidth = ss.width - (scaledMargin * 2);
-        const innerHeight = ss.height - (scaledMargin * 2);
-        const lineHeight = innerHeight / lines.length;
-        const baseFactor = 0.8;
-        const fontSize = lineHeight;
-        const left = ss.offset.x + scaledMargin;
-        const top = ss.offset.y + scaledMargin;
-
-        if (canvas.width !== ss.width || canvas.height !== ss.height) {
-            const rawCtx = ctx.ctx;
-            rawCtx.save();
-            rawCtx.strokeStyle = '#60A8FF';
-            rawCtx.fillStyle = 'white';
-            rawCtx.lineWidth = 0.5;
-            rawCtx.strokeRect(ss.offset.x, ss.offset.y, ss.width, ss.height);
-            rawCtx.fillRect(ss.offset.x, ss.offset.y, ss.width, ss.height);
-            rawCtx.restore();
-        }
-
-        lines.forEach((line, idx) => {
-            if (line.length > 0) {
-                const rect = {
-                    minx: left,
-                    miny: top + (idx * lineHeight) + (baseFactor * lineHeight),
-                    maxx: left + innerWidth,
-                    maxy: top + (idx * lineHeight),
-                    width: innerWidth,
-                    height: lineHeight
-                };
-                // debug('line-rect', rect);
-                extrudeLine(ctx, rect, x * ss.scale, y * ss.scale, line, font, fontSize);
+            if (canvas.width !== ss.width || canvas.height !== ss.height) {
+                rawCtx.setTransform(0.9, 0, 0, 0.9, canvas.width * 0.05, canvas.height * 0.05);
+                rawCtx.save();
+                rawCtx.strokeStyle = '#60A8FF';
+                rawCtx.fillStyle = 'white';
+                rawCtx.lineWidth = 0.5;
+                rawCtx.strokeRect(ss.offset.x, ss.offset.y, ss.width, ss.height);
+                rawCtx.fillRect(ss.offset.x, ss.offset.y, ss.width, ss.height);
+                rawCtx.restore();
             }
-        });
+
+            lines.forEach((line, idx) => {
+                if (line.length > 0) {
+                    const rect = {
+                        minx: left,
+                        miny: top + (idx * lineHeight) + (baseFactor * lineHeight),
+                        maxx: left + innerWidth,
+                        maxy: top + (idx * lineHeight),
+                        width: innerWidth,
+                        height: lineHeight
+                    };
+                    // debug('line-rect', rect);
+                    extrudeLine(ctx, rect, x * ss.scale, y * ss.scale, line, font, fontSize);
+                }
+            });
+        }
     }
 
+    rawCtx.restore();
     return true;
 }
 
@@ -175,6 +178,14 @@ function xyLay(box, rect) {
     s.width = px(rect.width * 0.5);
 }
 
+
+function sizeLay(box, rect) {
+    const s = box.style;
+    s.position = 'absolute';
+    s.bottom = px(0);
+    s.right = px(0)// + (rect.width * 0.2));
+    s.width = px(rect.width * 0.5);
+}
 export default function main() {
     const container = createElement('div', { class: 'extruder-box' });
     const canvas = createElement('canvas');
@@ -182,7 +193,7 @@ export default function main() {
     const sizeBox = extentTool();
     container.appendChild(canvas);
     container.appendChild(xyBox);
-    // container.appendChild(sizeBox);
+    container.appendChild(sizeBox);
     body().appendChild(container);
 
     const rect = container.getBoundingClientRect();
@@ -201,4 +212,5 @@ export default function main() {
     }, keys);
 
     xyLay(xyBox, rect);
+    sizeLay(sizeBox, rect);
 }

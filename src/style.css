@@ -77,8 +77,8 @@ table {
 }
 
 .tool-box {
-    border: 1px solid red;
-    flex: 2;
+    /*border: 1px solid red;*/
+    flex: 1;
 
     display: flex;
     flex-direction: column;
@@ -88,7 +88,7 @@ table {
 .tool-box .tool {
     flex: auto;
     margin: 16px;
-    border: 1px solid grey;
+    /*border: 1px solid grey;*/
     padding: 16px;
 }
 
@@ -96,6 +96,10 @@ table {
     font-size: 140%;
     font-weight: bold;
     margin-bottom: .5em;
+}
+
+.tool-font-item {
+    padding: .25em;
 }
 
 .tool-font-item-selected {
@@ -110,10 +114,10 @@ table {
 }
 
 .extruder-box {
-    border: 1px solid blue;
+    /*border: 1px solid blue;*/
     flex: 5;
+    background-color: #DCDCDC;
 }
-
 
 .message-box {
     position: absolute;
@@ -147,6 +151,39 @@ table {
 input.slider-input {
     width: 24px;
     border: none;
-    text-align: right;
+    text-align: left;
+    padding-left: 1em;
     font-family: monospace;
+    background-color: transparent;
+}
+
+input.slider-input:focus {
+    outline: none;
+}
+
+.slider-label {
+    text-align: right;
+    padding-right: 1em;
+    font-style: italic;
+}
+
+.slider-line {
+    height: 2px;
+    margin-top: 11px;
+    margin-bottom: 11px;
+    background-color: black;
+}
+
+.slider-square {
+    background-color: black;
+    height: 12px;
+    width: 12px;
+    top: 6px;
+    border-radius: 6px;
+}
+
+
+textarea.tool-text-area {
+    width: 100%;
+    height: 157px;
 }
