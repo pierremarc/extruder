@@ -23,6 +23,12 @@ class Point {
         return (new Point(this.x / p.x, this.y / p.y));
     }
 
+    equals(p) {
+        if (Math.abs(p.x - this.x) > Number.EPSILON) return false;
+        if (Math.abs(p.y - this.y) > Number.EPSILON) return false;
+        return true;
+    }
+
     lerp(p, t) {
         const rx = this.x + ((p.x - this.x) * t);
         const ry = this.y + ((p.y - this.y) * t);

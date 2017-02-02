@@ -1,7 +1,7 @@
 
 import { assign, isArray, zipObject, last, intersection } from 'lodash/fp';
 
-// const debug = require('debug')('extruder');
+const debug = require('debug')('extruder');
 
 const state = [];
 
@@ -45,12 +45,16 @@ export function onStateChange(callback, keys = null) {
 }
 
 
-
-export function getState(k) {
+export function getState(k, dflt = null) {
     if (state.length === 0) {
         throw (new Error('[state.init] state not initialised'));
     }
-    return last(state)[k];
+    const ls = last(state);
+    if (k in ls) {
+        return ls[k];
+    }
+    debug(`getState reached default for ${k}`);
+    return dflt;
 }
 
 

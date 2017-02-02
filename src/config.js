@@ -1,15 +1,17 @@
 
 export default {
     initialState: {
-        x: 100,
-        y: -100,
-        width: 2000,
-        height: 1000,
+        x: 34,
+        y: -34,
+        width: 3000,
+        height: 2000,
         text: 'hello',
         font: null,
         margin: 0.05,
         isMoving: false,
         startPos: null,
+        numSplit: 24,
+        colorExtrusion: 'rgba(0, 0, 0, 1)'
     },
     fonts: [
         '/fonts/Volkart/Volkart-BlackItalic.otf',

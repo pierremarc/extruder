@@ -15,19 +15,19 @@ const OP_SAVE = 'SA';
 const OP_RESTORE = 'R';
 
 
-function begin() {
+export function begin() {
     return [OP_BEGIN];
 }
 
-function moveTo(pt) {
+export function moveTo(pt) {
     return [OP_MOVE, pt.coordinates()];
 }
 
-function lineTo(pt) {
+export function lineTo(pt) {
     return [OP_LINE, pt.coordinates()];
 }
 
-function cubicTo(c1, c2, pt) {
+export function cubicTo(c1, c2, pt) {
     return [
         OP_CUBIC,
         c1.coordinates(),
@@ -36,7 +36,7 @@ function cubicTo(c1, c2, pt) {
     ];
 }
 
-function quadraticTo(c1, pt) {
+export function quadraticTo(c1, pt) {
     return [
         OP_QUADRATIC,
         c1.coordinates(),
@@ -44,32 +44,32 @@ function quadraticTo(c1, pt) {
     ];
 }
 
-function closePath() {
+export function closePath() {
     return [OP_CLOSE];
 }
 
 
-function gs(k, v) {
+export function gs(k, v) {
     return [OP_SET, k, v];
 }
 
-function stroke() {
+export function stroke() {
     return [OP_STROKE];
 }
 
-function fill() {
+export function fill() {
     return [OP_FILL];
 }
 
-function fillAndStroke() {
+export function fillAndStroke() {
     return [OP_FILL_STROKE];
 }
 
-function save() {
+export function save() {
     return [OP_SAVE];
 }
 
-function restore() {
+export function restore() {
     return [OP_RESTORE];
 }
 
@@ -131,7 +131,7 @@ function renderRestore(ctx, op) {
     ctx.restore(op);
 }
 
-function render(ctx, operations) {
+export function render(ctx, operations) {
     operations.forEach((op) => {
         const opCode = op[0];
 

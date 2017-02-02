@@ -52,8 +52,8 @@ export function extrude(canvas, state) {
     const rawCtx = ctx.ctx;
     rawCtx.save();
     rawCtx.clearRect(0, 0, canvas.width, canvas.height);
-    rawCtx.fillStyle = '#DCDCDC';
-    rawCtx.fillRect(0, 0, canvas.width, canvas.height);
+    // rawCtx.fillStyle = '#DCDCDC';
+    // rawCtx.fillRect(0, 0, canvas.width, canvas.height);
 
     if (!font) {
         message('you should select a font first');

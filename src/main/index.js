@@ -1,6 +1,7 @@
 
 import opentype from 'opentype.js';
 import message, { DEBUG, ERROR } from '../lib/message';
+import { setState } from '../lib/state';
 import tools from './tools';
 import extruder from './extruder';
 
@@ -38,6 +39,7 @@ export default function main(config) {
         .then((fonts) => {
             tools(fonts);
             extruder(fonts);
+            setState('font', fonts[0]);
         })
         .catch((err) => {
             message(err.toString(), ERROR);

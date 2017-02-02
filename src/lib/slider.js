@@ -189,7 +189,6 @@ const styles = {
 function applyStyle(styleName, elem) {
     Object.keys(styles[styleName]).forEach((k) => {
         if (elem.style[k] === '') {
-            console.log(styleName, k, elem.style[k]);
             elem.style[k] = styles[styleName][k];
         }
     });

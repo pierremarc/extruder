@@ -9,7 +9,7 @@ function fontName(font) {
 }
 
 function createfontItem(font) {
-    const name = fontName(font);
+    const name = font.names.fontSubfamily.en;
     const elem = createElement('div', { class: 'tool-font-item clickable' });
     elem.addEventListener('click', () => {
         const nodeList = document.querySelectorAll('.tool-font-item-selected');
@@ -41,9 +41,23 @@ function wrapTool(name, fn, ...args) {
 }
 
 function fontTool(box, fonts) {
+    const groups = {};
+    const getGroup = (font) => {
+        const family = font.names.fontFamily.en;
+        if (!(family in groups)) {
+            const element = createElement('div', { class: 'font-family' });
+            const title = createElement('span', { class: 'font-family-title' });
+            appendText(title, family);
+            element.appendChild(title);
+            box.appendChild(element);
+            groups[family] = element;
+        }
+        return groups[family];
+    };
     fonts.forEach((font) => {
         const fontItem = createfontItem(font);
-        box.appendChild(fontItem);
+        const group = getGroup(font);
+        group.appendChild(fontItem);
     });
 }
 
@@ -109,7 +123,7 @@ export default function install(fonts) {
     // const extentBox = wrapTool('size', extentTool);
 
 
-    [fontBox, textBox, exportBox].forEach(box => sidebar.appendChild(box));
+    [textBox, fontBox, exportBox].forEach(box => sidebar.appendChild(box));
     body().appendChild(sidebar);
     // body().appendChild(xyBox);
     // body().appendChild(extentBox);

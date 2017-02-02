@@ -97,7 +97,8 @@ export default function render(text, font, fontSize, xOffset, yOffset, anchor = 
             default: break;
             }
         }
-        ops.push(op.fillAndStroke());
+        // ops.push(op.fillAndStroke());
+        ops.push(op.fill());
     });
     ops.push(op.restore());
     return ops;
