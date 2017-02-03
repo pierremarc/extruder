@@ -115,7 +115,7 @@ export function extrude(canvas, state) {
                 rawCtx.restore();
             }
 
-            lines.forEach((line, idx) => {
+            const processLine = (line, idx) => {
                 if (line.length > 0) {
                     const rect = {
                         minx: left,
@@ -128,7 +128,15 @@ export function extrude(canvas, state) {
                     // debug('line-rect', rect);
                     extrudeLine(ctx, rect, x * ss.scale, y * ss.scale, line, font, fontSize);
                 }
-            });
+            };
+            if (y < 0) {
+                for (let idx = lines.length - 1; idx >= 0; idx -= 1) {
+                    processLine(lines[idx], idx);
+                }
+            }
+            else {
+                lines.forEach(processLine);
+            }
         }
     }
 
