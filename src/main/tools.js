@@ -63,44 +63,40 @@ function fontTool(box, fonts) {
 
 function textTool(box) {
     const textArea = createElement('textarea', { class: 'tool-text-area' });
-    textArea.value = getState('text');
+    let text = getState('text');
+    textArea.value = text;
     textArea.addEventListener('keyup', () => {
-        setState('text', textArea.value);
+        if (textArea.value !== text) {
+            text = textArea.value;
+            setState('text', text);
+        }
     });
     box.appendChild(textArea);
 }
 
-// function xyTool(box) {
-//     const xBox = createElement('div', { class: 'tool-xy-box tool-xy-x' });
-//     const yBox = createElement('div', { class: 'tool-xy-box tool-xy-y' });
-//     xBox.appendChild(slider('x', -300, 300, Math.ceil));
-//     yBox.appendChild(slider('y', -300, 300, Math.ceil));
-//     box.appendChild(xBox);
-//     box.appendChild(yBox);
-// }
-//
-// function extentTool(box) {
-//     const widthBox = createElement('div', { class: 'tool-extent-box tool-extent-width' });
-//     const heightBox = createElement('div', { class: 'tool-extent-box tool-extent-height' });
-//
-//     widthBox.appendChild(slider('width', 100, 4000, Math.ceil));
-//     heightBox.appendChild(slider('height', 100, 4000, Math.ceil));
-//     box.appendChild(widthBox);
-//     box.appendChild(heightBox);
-// }
 
 function exportTool(box) {
+    const knockout = createElement('input', {
+        type: 'checkbox'
+    });
     const exportPNG = createElement('a', {
         class: 'tool-export-button',
         download: 'extruded.png'
      });
+     appendText(knockout, 'knockout')
     appendText(exportPNG, 'Download PNG');
+    box.appendChild(knockout);
     box.appendChild(exportPNG);
 
     const offScreen = createElement('canvas');
     let localState = null;
     onStateChange((state) => {
         localState = state;
+    });
+
+
+    knockout.addEventListener('change', () => {
+        setState('knockout', knockout.checked);
     });
 
     box.addEventListener('mouseenter', () => {

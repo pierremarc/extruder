@@ -1,19 +1,18 @@
 
 import point from './point';
 
-const OP_BEGIN = 'b';
-const OP_MOVE = 'm';
-const OP_LINE = 'l';
-const OP_CUBIC = 'c';
-const OP_QUADRATIC = 'q';
-const OP_CLOSE = 'z';
-const OP_SET = 's';
-const OP_STROKE = 'S';
-const OP_FILL = 'F';
-const OP_FILL_STROKE = 'FS';
-const OP_SAVE = 'SA';
-const OP_RESTORE = 'R';
-
+export const OP_BEGIN = 'b';
+export const OP_MOVE = 'm';
+export const OP_LINE = 'l';
+export const OP_CUBIC = 'c';
+export const OP_QUADRATIC = 'q';
+export const OP_CLOSE = 'z';
+export const OP_SET = 's';
+export const OP_STROKE = 'S';
+export const OP_FILL = 'F';
+export const OP_FILL_STROKE = 'FS';
+export const OP_SAVE = 'SA';
+export const OP_RESTORE = 'R';
 
 export function begin() {
     return [OP_BEGIN];

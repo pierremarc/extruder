@@ -1,11 +1,12 @@
 
 export default {
     initialState: {
-        x: 34,
-        y: -34,
+        x: 64,
+        y: 64,
+        knockout: false,
         width: 3000,
         height: 2000,
-        text: 'hello',
+        text: 'aie',
         font: null,
         margin: 0.05,
         isMoving: false,

@@ -1,10 +1,11 @@
 
 
-
+import { difference } from 'lodash/fp';
 import message from '../lib/message';
 import point from '../lib/point';
 import Context from '../lib/ctx-canvas';
-import op from '../lib/operation';
+import PaperContext from '../lib/ctx-paper';
+import op, { OP_BEGIN } from '../lib/operation';
 import { body, createElement, px } from '../lib/dom';
 import render from './render';
 import { onStateChange, getState, setState } from '../lib/state';
@@ -37,8 +38,42 @@ function getScaledSize(rect, bbox) {
 
 function extrudeLine(ctx, rect, x, y, text, font, fontSize) {
     const anchor = point(rect.minx, rect.miny);
-    const baseOperations = render(text, font, fontSize, x, y, anchor);
-    op.render(ctx, baseOperations);
+    const knockout = getState('knockout', false);
+    const { extrusion, mask } = render(text, font, fontSize, x, y, anchor);
+    if (knockout) {
+        // op.render(ctx, extrusion);
+        // return;
+        const paperEx = new PaperContext();
+        let maskOps = [];
+        mask.forEach((operation) => {
+            const opCode = operation[0];
+            if (opCode === OP_BEGIN) {
+                maskOps.push([]);
+            }
+            if (maskOps.length > 0) {
+                maskOps[maskOps.length - 1].push(operation);
+            }
+        });
+        const masks = [];
+        maskOps.forEach((maskOp) => {
+            const m = new PaperContext(true);
+            op.render(m, maskOp);
+            masks.push(m);
+        });
+
+        op.render(paperEx, extrusion);
+        masks.forEach((m) => {
+            paperEx.substract(m);
+        });
+        const knockoutOps = paperEx.exportOperations();
+        // const a = knockoutOps.map((o) => o.join(':'));
+        // const b = extrusion.map((o) => o.join(':'));
+        // console.log('assert', a.length === b.length, difference(a, b));
+        op.render(ctx, knockoutOps);
+    }
+    else {
+        op.render(ctx, extrusion.concat(mask));
+    }
 }
 
 
@@ -206,7 +241,7 @@ export default function main() {
     canvas.addEventListener('mouseup', stopMoving, false);
     canvas.addEventListener('mousemove', isMoving, false);
 
-    const keys = ['x', 'y', 'width', 'height', 'font', 'text'];
+    const keys = ['x', 'y', 'width', 'height', 'font', 'text', 'knockout'];
     onStateChange((state) => {
         extrude(canvas, state);
     }, keys);

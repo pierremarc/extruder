@@ -4,11 +4,26 @@ import {
     extrudeBezier,
     extrudeQuadratic
 } from '../lib/extruders';
-import op from '../lib/operation';
+
+import {
+    begin,
+    moveTo,
+    lineTo,
+    cubicTo,
+    quadraticTo,
+    closePath,
+    gs,
+    stroke,
+    fill,
+    fillAndStroke,
+    save,
+    restore
+} from '../lib/operation';
+
 import point from '../lib/point';
 
 export default function render(text, font, fontSize, xOffset, yOffset, anchor = point(0, 0)) {
-    const ops = [];
+    const extrusion = [];
 
     const paths = font.getPaths(text, anchor.x, anchor.y, fontSize);
 
@@ -26,7 +41,7 @@ export default function render(text, font, fontSize, xOffset, yOffset, anchor = 
                 break;
 
             case 'L':
-                extrudeLine(ops, xOffset, yOffset, currentPosition, point(cmd.x, cmd.y));
+                extrudeLine(extrusion, xOffset, yOffset, currentPosition, point(cmd.x, cmd.y));
                 currentPosition = point(cmd.x, cmd.y);
                 break;
 
@@ -34,7 +49,7 @@ export default function render(text, font, fontSize, xOffset, yOffset, anchor = 
                 const c1 = point(cmd.x1, cmd.y1);
                 const c2 = point(cmd.x2, cmd.y2);
                 const p2 = point(cmd.x, cmd.y);
-                extrudeBezier(ops, xOffset, yOffset, currentPosition, c1, c2, p2);
+                extrudeBezier(extrusion, xOffset, yOffset, currentPosition, c1, c2, p2);
                 currentPosition = p2;
                 break;
             }
@@ -42,13 +57,13 @@ export default function render(text, font, fontSize, xOffset, yOffset, anchor = 
             case 'Q': {
                 const c1 = point(cmd.x1, cmd.y1);
                 const p2 = point(cmd.x, cmd.y);
-                extrudeQuadratic(ops, xOffset, yOffset, currentPosition, c1, p2);
+                extrudeQuadratic(extrusion, xOffset, yOffset, currentPosition, c1, p2);
                 currentPosition = p2;
                 break;
             }
 
             case 'Z':
-                extrudeLine(ops, xOffset, yOffset, currentPosition, firstMove);
+                extrudeLine(extrusion, xOffset, yOffset, currentPosition, firstMove);
                 currentPosition = firstMove;
                 break;
 
@@ -57,49 +72,53 @@ export default function render(text, font, fontSize, xOffset, yOffset, anchor = 
         }
     });
 
-    ops.push(op.save());
-    ops.push(op.gs('fillStyle', 'white'));
-    ops.push(op.gs('strokeStyle', 'white'));
-    ops.push(op.gs('lineWidth', 2));
+    const mask = [];
+    mask.push(save());
+    mask.push(gs('fillStyle', 'white'));
+    mask.push(gs('strokeStyle', 'white'));
+    mask.push(gs('lineWidth', 2));
     paths.forEach((path) => {
-        ops.push(op.begin());
         const commands = path.commands;
+        let lastMove = null;
+        mask.push(begin());
         for (let i = 0; i < commands.length; i += 1) {
             const cmd = commands[i];
             switch (cmd.type) {
             case 'M':
-                ops.push(op.moveTo(point(cmd.x, cmd.y)));
+                lastMove = point(cmd.x, cmd.y);
+                mask.push(moveTo(lastMove));
                 break;
 
             case 'L':
-                ops.push(op.lineTo(point(cmd.x, cmd.y)));
+                mask.push(lineTo(point(cmd.x, cmd.y)));
                 break;
 
             case 'C': {
                 const c1 = point(cmd.x1, cmd.y1);
                 const c2 = point(cmd.x2, cmd.y2);
                 const p2 = point(cmd.x, cmd.y);
-                ops.push(op.cubicTo(c1, c2, p2));
+                mask.push(cubicTo(c1, c2, p2));
                 break;
             }
 
             case 'Q': {
                 const c1 = point(cmd.x1, cmd.y1);
                 const p2 = point(cmd.x, cmd.y);
-                ops.push(op.quadraticTo(c1, p2));
+                mask.push(quadraticTo(c1, p2));
                 break;
             }
 
             case 'Z':
-                ops.push(op.closePath());
+                mask.push(lineTo(lastMove));
+                mask.push(closePath());
                 break;
 
             default: break;
             }
         }
-        // ops.push(op.fillAndStroke());
-        ops.push(op.fill());
+        mask.push(fill());
     });
-    ops.push(op.restore());
-    return ops;
+    mask.push(restore());
+
+    return { extrusion, mask };
 }

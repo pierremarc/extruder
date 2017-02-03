@@ -248,7 +248,7 @@ export default function slider(key, min, max, parser = identity) {
             square.style.left = px(initPos);
             setTimeout(() => updateInit(lr.width), t);
 
-            debug('slider', initPos, proj.toString());
+        // debug('slider', initPos, proj.toString());
         }
         else {
             setTimeout(() => updateInit(lr.width), t * 2);
