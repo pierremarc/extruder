@@ -5,6 +5,7 @@ import message from '../lib/message';
 import { body, createElement, px } from '../lib/dom';
 import { onStateChange, getState, setState } from '../lib/state';
 import slider from '../lib/slider';
+import palette from './palette';
 import extrude from './extrude';
 
 const debug = require('debug')('extruder');
@@ -114,6 +115,17 @@ function extentTool() {
     return box;
 }
 
+function colorTool() {
+    const box = createElement('div', { class: 'tool-color' });
+    const labels = ['Background', 'Extrusion', 'Foreground'];
+
+    labels.forEach((label) => {
+        const key = `color${label}`;
+        box.appendChild(palette({ label, key }));
+    });
+    return box;
+}
+
 
 function xyLay(box, rect) {
     const s = box.style;
@@ -130,6 +142,14 @@ function sizeLay(box, rect) {
     s.bottom = px(0);
     s.right = px(0);
     s.width = px(rect.width * 0.5);
+}
+
+function colorLay(box, rect) {
+    const s = box.style;
+    s.position = 'absolute';
+    s.top = px(0);
+    s.right = px(0);
+    s.width = px(rect.width * 0.2);
 }
 
 
@@ -159,7 +179,6 @@ function getScaledSize(rect, bbox) {
 
 function withContext(canvas, state, fn) {
     var context = new ContextCanvas(canvas);
-    const bg = getState('backgroundColor', 'white');
     const { width, height, offset } = state;
     const ss = getScaledSize(canvas, { width, height });
 
@@ -168,14 +187,12 @@ function withContext(canvas, state, fn) {
     const rawCtx = context.ctx;
     rawCtx.save();
     rawCtx.setTransform(0.9, 0, 0, 0.9, canvas.width * 0.05, canvas.height * 0.05);
-
+    rawCtx.save();
     rawCtx.strokeStyle = '#60A8FF';
-    rawCtx.fillStyle = bg;
     rawCtx.lineWidth = 0.5;
     rawCtx.strokeRect(ss.offset.x, ss.offset.y, ss.width, ss.height);
-    rawCtx.fillRect(ss.offset.x, ss.offset.y, ss.width, ss.height);
-
-
+    rawCtx.restore();
+    
     fn(context, state, false);
     rawCtx.restore();
 
@@ -186,9 +203,11 @@ export default function main() {
     const canvas = createElement('canvas');
     const xyBox = xyTool();
     const sizeBox = extentTool();
+    const colorBox = colorTool();
     container.appendChild(canvas);
     container.appendChild(xyBox);
     container.appendChild(sizeBox);
+    container.appendChild(colorBox);
     body().appendChild(container);
 
     const rect = container.getBoundingClientRect();
@@ -199,11 +218,17 @@ export default function main() {
     canvas.addEventListener('mouseup', stopMoving, false);
     canvas.addEventListener('mousemove', isMoving, false);
 
-    const keys = ['x', 'y', 'width', 'height', 'font', 'text', 'margin'];
+    const keys = [
+        'x', 'y',
+        'width', 'height', 'margin',
+        'font', 'text',
+        'colorBackground', 'colorExtrusion', 'colorForeground'
+    ];
     onStateChange((state) => {
         withContext(canvas, state, extrude);
     }, keys);
 
     xyLay(xyBox, rect);
     sizeLay(sizeBox, rect);
+    colorLay(colorBox, rect);
 }

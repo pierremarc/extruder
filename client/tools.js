@@ -89,8 +89,10 @@ function exportTool(box) {
     const wrap1 = createElement('div', { class: 'tool-export-button-wrapper' });
     const exportPNG = createElement('a', {
         class: 'tool-export-button',
+        href: '#',
         download: 'extruded.png'
     });
+
     appendText(exportPNG, 'Download PNG');
 
     const exportPDF = createElement('a', {
@@ -100,8 +102,17 @@ function exportTool(box) {
     });
     appendText(exportPDF, 'Download PDF');
 
+    const exportPDFKnockout = createElement('a', {
+        class: 'tool-export-button',
+        href: '#',
+        download: 'extruded.pdf'
+    });
+    appendText(exportPDFKnockout, '(knockout)');
+
     wrap0.appendChild(exportPNG);
     wrap1.appendChild(exportPDF);
+    appendText(wrap1, ' ');
+    wrap1.appendChild(exportPDFKnockout);
     box.appendChild(wrap0);
     box.appendChild(wrap1);
 
@@ -123,10 +134,10 @@ function exportTool(box) {
         }
     });
 
-    exportPDF.addEventListener('click', () => {
+    const pdfHandler = (knockout) => (e) => {
         if (localState) {
             const ctx = new ContextStore(localState.width, localState.height);
-            if (extrude(ctx, localState, true)) {
+            if (extrude(ctx, localState, knockout)) {
                 const data = {
                     width: localState.width,
                     height: localState.height,
@@ -148,7 +159,10 @@ function exportTool(box) {
                 // exportPDF.href = offScreen.toDataURL('image/png');
             }
         }
-    });
+    };
+
+    exportPDF.addEventListener('click', pdfHandler(false));
+    exportPDFKnockout.addEventListener('click', pdfHandler(true));
 }
 
 export default function install(fonts) {

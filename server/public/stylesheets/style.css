@@ -120,12 +120,32 @@ span.font-family-title {
     font-weight: bold;
 }
 
-.tool-xy, .tool-size {
+.tool-xy, .tool-size, .tool-color {
     margin: 8px;
     padding: 8px;
     /*border: 1px solid;
     border-radius: 5px;
     box-shadow: 1px 1px 12px rgba(0,0,0,0.75);*/
+}
+
+.palette {
+    text-align: center;
+    padding: 8px;
+    margin-bottom: 16px;
+    overflow: auto;
+    background-color: white;
+    border-radius: 3px;
+    border: 1px solid grey;
+}
+
+.palette-item {
+    float: left;
+    margin: 3px;
+    border: 1px solid grey;
+}
+
+.palette-item-none {
+    background-image: url('./transparent.png');
 }
 
 .extruder-box {

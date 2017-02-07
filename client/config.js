@@ -11,7 +11,7 @@ export default {
         margin: 0.05,
         isMoving: false,
         startPos: null,
-        numSplit: 24,
+        numSplit: 32,
         colorExtrusion: 'black',
         colorBackground: 'white',
         colorForeground: 'white',

@@ -21,6 +21,7 @@ import {
 } from '../lib/operation';
 
 import point from '../lib/point';
+import { getState } from '../lib/state';
 
 export default function draw(text, font, fontSize, xOffset, yOffset, anchor = point(0, 0)) {
     const extrusion = [];
@@ -73,9 +74,10 @@ export default function draw(text, font, fontSize, xOffset, yOffset, anchor = po
     });
 
     const mask = [];
+    const fgColor = getState('colorForeground', 'white');
     mask.push(save());
-    mask.push(gs('fillStyle', 'white'));
-    mask.push(gs('strokeStyle', 'white'));
+    mask.push(gs('fillStyle', fgColor));
+    mask.push(gs('strokeStyle', fgColor));
     mask.push(gs('lineWidth', 2));
     paths.forEach((path) => {
         const commands = path.commands;

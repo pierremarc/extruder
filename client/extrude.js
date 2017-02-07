@@ -2,8 +2,18 @@
 import point from '../lib/point';
 import { getState } from '../lib/state';
 import PaperContext from '../lib/ctx-paper';
-import { render, OP_BEGIN } from '../lib/operation';
 import draw from './draw';
+import {
+    render,
+    OP_BEGIN,
+    save,
+    restore,
+    moveTo,
+    lineTo,
+    closePath,
+    fill,
+    gs
+} from '../lib/operation';
 
 
 function extrudeLine(ctx, rect, x, y, text, font, fontSize, knockout) {
@@ -41,6 +51,23 @@ function extrudeLine(ctx, rect, x, y, text, font, fontSize, knockout) {
 }
 
 
+function makeBackground(min, max) {
+    const bg = getState('colorBackground', 'none');
+    const ops = [];
+    if (bg !== 'none') {
+        ops.push(save());
+        ops.push(gs('fillStyle', bg));
+        ops.push(moveTo(min));
+        ops.push(lineTo(point(max.x, min.y)));
+        ops.push(lineTo(point(max.x, max.y)));
+        ops.push(lineTo(point(min.x, max.y)));
+        ops.push(closePath());
+        ops.push(fill());
+        ops.push(restore());
+    }
+    return ops;
+}
+
 export default function extrude(ctx, state, knockout = false) {
     const { x, y, text, font, margin, width, height } = state;
     const lines = text.split('\n');
@@ -76,6 +103,11 @@ export default function extrude(ctx, state, knockout = false) {
         const left = offset.x + scaledMargin;
         const top = offset.y + scaledMargin;
 
+
+        render(ctx, makeBackground(
+            offset,
+            point(offset.x + adjWidth, offset.y + adjHeight)
+        ));
 
         const processLine = (line, idx) => {
             if (line.length > 0) {
