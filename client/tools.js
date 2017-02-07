@@ -15,7 +15,12 @@ import extrude from './extrude';
 
 
 function createfontItem(font) {
+    const currentFont = getState('font', '');
+
     const elem = createElement('div', { class: 'tool-font-item clickable' });
+    if (font.identifier === currentFont) {
+        addClass(elem, 'tool-font-item-selected');
+    }
     elem.addEventListener('click', () => {
         const nodeList = document.querySelectorAll('.tool-font-item-selected');
         const selected = Array.prototype.slice.call(nodeList, 0);

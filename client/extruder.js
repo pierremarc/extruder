@@ -245,6 +245,7 @@ export default function main() {
     canvas.addEventListener('mousemove', isMoving, false);
 
     const keys = [
+        'appReady',
         'x', 'y',
         'width', 'height', 'margin',
         'font', 'fontSize', 'text',

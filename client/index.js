@@ -38,8 +38,8 @@ function main(configOpt) {
         .then((names) => {
             tools(names);
             extruder();
-            setState('font', names[0].identifier);
             message('fonts loaded, application is ready');
+            setState('appReady', true);
         })
         .catch((err) => {
             message(err.toString(), ERROR);
