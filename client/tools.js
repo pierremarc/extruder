@@ -136,9 +136,8 @@ function exportTool(box) {
                     return response.blob();
                 })
                 .then((blob) => {
-                    console.log(blob.size);
-                    const blobURL = URL.createObjectURL(blob);
-                    window.open(blobURL);
+                    const fn = knockout ? 'extruder-knockout.pdf' : 'extruder.pdf';
+                    saveAs(blob, fn);
                 });
                 // exportPDF.href = offScreen.toDataURL('image/png');
             }
