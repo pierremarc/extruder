@@ -1,19 +1,19 @@
 const webpack = require('webpack');
 const path = require('path');
 
-const sourcePath = path.join(__dirname, './src');
-const staticsPath = path.join(__dirname, './build');
+const sourcePath = path.join(__dirname, './client');
+const staticsPath = path.join(__dirname, './server/public/javascripts');
 
 module.exports = function (env) {
   const nodeEnv = env && env.prod ? 'production' : 'development';
   const isProd = nodeEnv === 'production';
 
   const plugins = [
-    new webpack.optimize.CommonsChunkPlugin({
-      name: 'vendor',
-      minChunks: Infinity,
-      filename: 'vendor.bundle.js'
-    }),
+    // new webpack.optimize.CommonsChunkPlugin({
+    //   name: 'vendor',
+    //   minChunks: Infinity,
+    //   filename: 'vendor.bundle.js'
+    // }),
     new webpack.DefinePlugin({
       'process.env': { NODE_ENV: JSON.stringify(nodeEnv) }
     }),
@@ -64,24 +64,6 @@ module.exports = function (env) {
     module: {
       rules: [
         {
-          test: /\.html$/,
-          exclude: /node_modules/,
-          use: {
-            loader: 'file-loader',
-            query: {
-              name: '[name].[ext]'
-            },
-          },
-        },
-        {
-          test: /\.css$/,
-          exclude: /node_modules/,
-          use: [
-            'style-loader',
-            'css-loader'
-          ]
-        },
-        {
           test: /\.(js|jsx)$/,
           exclude: /node_modules/,
           use: [
@@ -113,7 +95,7 @@ module.exports = function (env) {
     },
 
     devServer: {
-      contentBase: './src/',
+      contentBase: './client/',
       historyApiFallback: true,
       port: 3000,
       compress: isProd,
