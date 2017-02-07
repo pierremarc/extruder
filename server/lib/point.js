@@ -19,6 +19,11 @@ var Point = function () {
     }
 
     _createClass(Point, [{
+        key: 'toObject',
+        value: function toObject() {
+            return { x: this.x, y: this.y };
+        }
+    }, {
         key: 'plus',
         value: function plus(p) {
             return new Point(this.x + p.x, this.y + p.y);
@@ -84,15 +89,26 @@ var Point = function () {
         //     return (new Point(output[0], output[1]));
         // }
 
+    }], [{
+        key: 'fromObject',
+        value: function fromObject(obj) {
+            var x = obj.x,
+                y = obj.y;
+
+            return new Point(x, y);
+        }
     }]);
 
     return Point;
 }();
 
 function point(x, y) {
-    if (Array.isArray(x)) {
-        y = x[1];
-        x = x[0];
+    if (!x && !y) {
+        return new Point(0, 0);
+    } else if (Array.isArray(x)) {
+        return new Point(x[0], x[1]);
+    } else if (y === undefined && 'x' in x && 'y' in x) {
+        return new Point(x.x, x.y);
     }
     return new Point(x, y);
 }

@@ -22,11 +22,12 @@ import {
 
 import point from '../lib/point';
 import { getState } from '../lib/state';
+import { getFont } from './font';
 
 export default function draw(text, font, fontSize, xOffset, yOffset, anchor = point(0, 0)) {
     const extrusion = [];
 
-    const paths = font.getPaths(text, anchor.x, anchor.y, fontSize);
+    const paths = getFont(font).getPaths(text, anchor.x, anchor.y, fontSize);
 
 
     paths.forEach((path) => {

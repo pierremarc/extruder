@@ -202,7 +202,7 @@ var styles = {
     },
 
     label: {
-        flex: 2
+        // flex: 2
     },
 
     wrapper: {
@@ -222,7 +222,8 @@ var styles = {
     },
 
     input: {
-        flex: 2
+        // flex: 1,
+        // top: px(28)
     }
 };
 
@@ -234,8 +235,22 @@ function applyStyle(styleName, elem) {
     });
 }
 
-function slider(key, min, max) {
-    var parser = arguments.length > 3 && arguments[3] !== undefined ? arguments[3] : _fp.identity;
+/**
+ * [slider description]
+ * @method slider
+ * @param  {[type]} options           [description]
+ * @param  {[type]} min               [description]
+ * @param  {[type]} max               [description]
+ * @param  {[type]} [parser=identity] [description]
+ * @return {[type]}                   [description]
+ */
+function slider(options) {
+    var key = options.key,
+        label = options.label,
+        unit = options.unit,
+        parser = options.parser,
+        min = options.min,
+        max = options.max;
 
     (0, _state.setState)(name(key), {
         started: false,
@@ -247,21 +262,25 @@ function slider(key, min, max) {
     var lineWrapper = (0, _dom.createElement)('div');
     var line = (0, _dom.createElement)('div', { class: 'slider-line' });
     var square = (0, _dom.createElement)('div', { class: 'slider-square' });
-    var input = (0, _dom.createElement)('input', { class: 'slider-input', value: (0, _state.getState)(key) });
-    var label = (0, _dom.createElement)('div', { class: 'slider-label' });
+    var input = (0, _dom.createElement)('input', {
+        class: 'slider-input',
+        type: 'number',
+        value: (0, _state.getState)(key)
+    });
+    var labelBox = (0, _dom.createElement)('div', { class: 'slider-label' });
 
-    (0, _dom.appendText)(label, key);
+    (0, _dom.appendText)(labelBox, label || key);
     applyStyle('container', container);
     applyStyle('wrapper', lineWrapper);
     applyStyle('line', line);
     applyStyle('square', square);
     applyStyle('input', input);
-    applyStyle('label', label);
+    applyStyle('label', labelBox);
 
-    var start = startHandler(key, parser, lineWrapper);
-    var stop = stopHandler(key, parser, lineWrapper, square);
-    var move = moveHandler(key, parser, lineWrapper, square);
-    var cancel = cancelHandler(key, parser);
+    var start = startHandler(key, parser || _fp.identity, lineWrapper);
+    var stop = stopHandler(key, parser || _fp.identity, lineWrapper, square);
+    var move = moveHandler(key, parser || _fp.identity, lineWrapper, square);
+    var cancel = cancelHandler(key, parser || _fp.identity);
 
     lineWrapper.addEventListener('mousedown', start);
     lineWrapper.addEventListener('mouseup', stop);
@@ -274,7 +293,7 @@ function slider(key, min, max) {
 
     lineWrapper.appendChild(line);
     lineWrapper.appendChild(square);
-    container.appendChild(label);
+    container.appendChild(labelBox);
     container.appendChild(lineWrapper);
     container.appendChild(input);
 

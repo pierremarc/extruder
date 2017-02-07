@@ -69,7 +69,7 @@ function makeBackground(min, max) {
 }
 
 export default function extrude(ctx, state, knockout = false) {
-    const { x, y, text, font, margin, width, height } = state;
+    const { x, y, text, font, fontSize, lineHeightFactor, margin, width, height } = state;
     const lines = text.split('\n');
 
 
@@ -94,14 +94,13 @@ export default function extrude(ctx, state, knockout = false) {
         const adjWidth = width * scale;
         const adjHeight = height * scale;
 
-        const scaledMargin = Math.max(margin * adjWidth, margin * adjHeight);
-        const innerWidth = adjWidth - (scaledMargin * 2);
-        const innerHeight = adjHeight - (scaledMargin * 2);
-        const lineHeight = innerHeight / lines.length;
+        const scaledMargin = margin * adjWidth; //Math.max(margin * adjWidth, margin * adjHeight);
+        const innerWidth = adjWidth - (scaledMargin); // * 2);
+        const innerHeight = adjHeight; // - (scaledMargin * 2);
+        const lineHeight = (fontSize * scale) * (lineHeightFactor || 1.2);
         const baseFactor = 0.8;
-        const fontSize = lineHeight;
         const left = offset.x + scaledMargin;
-        const top = offset.y + scaledMargin;
+        const top = offset.y;
 
 
         render(ctx, makeBackground(
@@ -119,7 +118,13 @@ export default function extrude(ctx, state, knockout = false) {
                     width: innerWidth,
                     height: lineHeight
                 };
-                extrudeLine(ctx, rect, x * scale, y * scale, line, font, fontSize, knockout);
+                extrudeLine(
+                    ctx, rect,
+                    x * scale, y * scale,
+                    `${line} `,
+                    font, fontSize * scale,
+                    knockout
+                );
             }
         };
         if (y < 0) {

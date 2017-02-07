@@ -8,6 +8,8 @@ export default {
         height: 1080,
         text: 'abc',
         font: null,
+        fontSize: 600,
+        lineHeightFactor: 1.2,
         margin: 0.05,
         isMoving: false,
         startPos: null,

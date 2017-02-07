@@ -81,7 +81,7 @@ table {
     flex: 1;
     display: flex;
     flex-direction: column;
-    border-right: 1px solid white;
+    /*border-right: 1px solid white;*/
     background-color: #DCDCDC;
 }
 
@@ -91,6 +91,10 @@ table {
     margin: 16px;
     /*border: 1px solid grey;*/
     padding: 16px;
+    background-color: rgba(255, 255, 255, 0.5);
+    border-radius: 3px;
+    border: 1px solid grey;
+    overflow: auto;
 }
 
 .tool-title {
@@ -128,12 +132,18 @@ span.font-family-title {
     box-shadow: 1px 1px 12px rgba(0,0,0,0.75);*/
 }
 
+.tool-xy, .tool-size {
+    background-color: rgba(255, 255, 255, 0.5);
+    border-radius: 3px;
+    border: 1px solid grey;
+}
+
 .palette {
     text-align: center;
     padding: 8px;
     margin-bottom: 16px;
     overflow: auto;
-    background-color: white;
+    background-color: rgba(255, 255, 255, 0.5);
     border-radius: 3px;
     border: 1px solid grey;
 }
@@ -219,10 +229,45 @@ input.slider-input:focus {
 
 
 textarea.tool-text-area {
-    width: 100%;
+    width: 90%;
     padding: 6pt;
     min-height: 3em;
     font-size: 18pt;
     border-style: dotted;
     border-color: grey;
+}
+
+
+.button {
+    margin-top: 5px;
+    margin-bottom: 5px;
+    margin-right: 5px;
+    color: #333;
+    background-color: #fff;
+    border-color: #ccc;
+    display: inline-block;
+padding: 6px 12px;
+margin-bottom: 0;
+font-size: 14px;
+font-weight: 400;
+line-height: 1.42857143;
+text-align: center;
+white-space: nowrap;
+vertical-align: middle;
+-ms-touch-action: manipulation;
+touch-action: manipulation;
+cursor: pointer;
+-webkit-user-select: none;
+-moz-user-select: none;
+-ms-user-select: none;
+user-select: none;
+background-image: none;
+border: 1px solid transparent;
+border-radius: 4px;
+}
+
+.button:hover {
+    color: #333;
+    background-color: #e6e6e6;
+    border-color: #adadad;
 }

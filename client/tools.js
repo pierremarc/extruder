@@ -1,5 +1,6 @@
 
 import 'whatwg-fetch';
+import { saveAs } from 'file-saver';
 import ContextCanvas from '../lib/ctx-canvas';
 import ContextStore from '../lib/ctx-store';
 import { setState, getState, onStateChange } from '../lib/state';
@@ -13,12 +14,7 @@ import {
 import extrude from './extrude';
 
 
-function fontName(font) {
-    return font.names.fullName.en;
-}
-
 function createfontItem(font) {
-    const name = font.names.fontSubfamily.en;
     const elem = createElement('div', { class: 'tool-font-item clickable' });
     elem.addEventListener('click', () => {
         const nodeList = document.querySelectorAll('.tool-font-item-selected');
@@ -27,10 +23,10 @@ function createfontItem(font) {
             removeClass(node, 'tool-font-item-selected');
         });
         addClass(elem, 'tool-font-item-selected');
-        setState('font', font);
+        setState('font', font.identifier);
     });
     const label = createElement('span');
-    appendText(label, name);
+    appendText(label, font.subFamily);
     elem.appendChild(label);
     return elem;
 }
@@ -52,7 +48,7 @@ function wrapTool(name, fn, ...args) {
 function fontTool(box, fonts) {
     const groups = {};
     const getGroup = (font) => {
-        const family = font.names.fontFamily.en;
+        const family = font.family;
         if (!(family in groups)) {
             const element = createElement('div', { class: 'font-family' });
             const title = createElement('span', { class: 'font-family-title' });
@@ -84,35 +80,21 @@ function textTool(box) {
 }
 
 
+function exportButton(label, handler) {
+    const button = createElement('button', {
+        class: 'button',
+        type: 'button'
+    });
+    appendText(button, label);
+    button.addEventListener('click', handler);
+    return button;
+}
+
 function exportTool(box) {
     const wrap0 = createElement('div', { class: 'tool-export-button-wrapper' });
     const wrap1 = createElement('div', { class: 'tool-export-button-wrapper' });
-    const exportPNG = createElement('a', {
-        class: 'tool-export-button',
-        href: '#',
-        download: 'extruded.png'
-    });
 
-    appendText(exportPNG, 'Download PNG');
 
-    const exportPDF = createElement('a', {
-        class: 'tool-export-button',
-        href: '#',
-        download: 'extruded.pdf'
-    });
-    appendText(exportPDF, 'Download PDF');
-
-    const exportPDFKnockout = createElement('a', {
-        class: 'tool-export-button',
-        href: '#',
-        download: 'extruded.pdf'
-    });
-    appendText(exportPDFKnockout, '(knockout)');
-
-    wrap0.appendChild(exportPNG);
-    wrap1.appendChild(exportPDF);
-    appendText(wrap1, ' ');
-    wrap1.appendChild(exportPDFKnockout);
     box.appendChild(wrap0);
     box.appendChild(wrap1);
 
@@ -122,17 +104,19 @@ function exportTool(box) {
         localState = state;
     });
 
-    exportPNG.addEventListener('mouseenter', () => {
+    wrap0.appendChild(exportButton('PNG', () => {
         if (localState) {
             offScreen.width = localState.width;
             offScreen.height = localState.height;
             const ctx = new ContextCanvas(offScreen);
             ctx.clear();
             if (extrude(ctx, localState)) {
-                exportPNG.href = offScreen.toDataURL('image/png');
+                offScreen.toBlob((blob) => {
+                    saveAs(blob, 'extruder.png');
+                });
             }
         }
-    });
+    }));
 
     const pdfHandler = (knockout) => (e) => {
         if (localState) {
@@ -161,8 +145,8 @@ function exportTool(box) {
         }
     };
 
-    exportPDF.addEventListener('click', pdfHandler(false));
-    exportPDFKnockout.addEventListener('click', pdfHandler(true));
+    wrap1.appendChild(exportButton('PDF', pdfHandler(false)));
+    wrap1.appendChild(exportButton('PDF (knockout)', pdfHandler(true)));
 }
 
 export default function install(fonts) {

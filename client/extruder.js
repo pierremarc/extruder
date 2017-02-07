@@ -7,7 +7,8 @@ import { onStateChange, getState, setState } from '../lib/state';
 import slider from '../lib/slider';
 import palette from './palette';
 import extrude from './extrude';
-
+import ContextStore from '../lib/ctx-store';
+import { OP_SAVE, OP_RESTORE } from '../lib/operation';
 const debug = require('debug')('extruder');
 
 
@@ -21,12 +22,12 @@ function startMoving(e) {
     const current = point(getState('x'), getState('y'));
     setState(
         ['isMoving', 'startPos'],
-        [true, mouseEventPos(e).minus(current)]
+        [true, mouseEventPos(e).minus(current).toObject()]
     );
 }
 
 function isMoving(e) {
-    const startPos = getState('startPos');
+    const startPos = point(getState('startPos'));
     const isMovingState = getState('isMoving');
 
     if (isMovingState && (startPos !== null)) {
@@ -41,7 +42,7 @@ function isMoving(e) {
 
 function stopMoving(e) {
     // console.log('stopMoving', e.clientX, e.clientY);
-    const startPos = getState('startPos');
+    const startPos = point(getState('startPos'));
     const isMovingState = getState('isMoving');
     const move = mouseEventPos(e).minus(startPos);
 
@@ -58,6 +59,7 @@ function xyTool() {
     const box = createElement('div', { class: 'tool-xy' });
     const xBox = createElement('div', { class: 'tool-xy-box tool-xy-x' });
     const yBox = createElement('div', { class: 'tool-xy-box tool-xy-y' });
+    const fsBox = createElement('div', { class: 'tool-xy-box tool-xy-fs' });
 
     xBox.appendChild(slider({
         key: 'x',
@@ -73,6 +75,14 @@ function xyTool() {
         max: 300,
         parser: Math.ceil
     }));
+    fsBox.appendChild(slider({
+        key: 'fontSize',
+        label: 'font size',
+        min: 10,
+        max: 2000,
+        parser: Math.ceil
+    }));
+    box.appendChild(fsBox);
     box.appendChild(xBox);
     box.appendChild(yBox);
     return box;
@@ -106,7 +116,7 @@ function extentTool() {
 
     marginBox.appendChild(slider({
         key: 'margin',
-        label: 'page margin',
+        label: 'left margin',
         min: 0,
         max: 0.2,
         parser: (v) => v.toFixed(2)
@@ -192,9 +202,25 @@ function withContext(canvas, state, fn) {
     rawCtx.lineWidth = 0.5;
     rawCtx.strokeRect(ss.offset.x, ss.offset.y, ss.width, ss.height);
     rawCtx.restore();
-    
+
     fn(context, state, false);
     rawCtx.restore();
+
+    const sc = new ContextStore(canvas.width, canvas.height);
+    fn(sc, state, false);
+    const check = sc.operations.reduce((memo, op) => {
+        if (op[0] === OP_SAVE) {
+            memo[0] += 1;
+        }
+        else if (op[0] === OP_RESTORE) {
+            memo[1] += 1;
+        }
+        return memo;
+    }, [0, 0]);
+
+    // if (check[0] !== check[1]) {
+    //     throw (new Error(`save/restore not balanced ${check[0]} !== ${check[1]}`));
+    // }
 
 }
 
@@ -221,7 +247,7 @@ export default function main() {
     const keys = [
         'x', 'y',
         'width', 'height', 'margin',
-        'font', 'text',
+        'font', 'fontSize', 'text',
         'colorBackground', 'colorExtrusion', 'colorForeground'
     ];
     onStateChange((state) => {
