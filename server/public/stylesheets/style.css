@@ -81,16 +81,15 @@ table {
     flex: 1;
     display: flex;
     flex-direction: column;
-    /*border-right: 1px solid white;*/
     background-color: #DCDCDC;
 }
 
 
 .tool-box .tool {
     flex: auto;
-    margin: 16px;
+    margin: 8px;
     /*border: 1px solid grey;*/
-    padding: 16px;
+    padding: 12px;
     background-color: rgba(255, 255, 255, 0.5);
     border-radius: 3px;
     border: 1px solid grey;

@@ -222,8 +222,7 @@ var styles = {
     },
 
     input: {
-        // flex: 1,
-        // top: px(28)
+        flex: '0 10 0%'
     }
 };
 
