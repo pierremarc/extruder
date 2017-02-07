@@ -97,15 +97,15 @@ function extrudeLine(ops, x, y, p1, p2) {
     ops.push((0, _operation.save)());
     ops.push((0, _operation.gs)('fillStyle', color));
     ops.push((0, _operation.gs)('strokeStyle', color));
-    ops.push((0, _operation.gs)('lineWidth', 0.1));
+    ops.push((0, _operation.gs)('lineWidth', 0.5));
     ops.push((0, _operation.begin)());
     ops.push((0, _operation.moveTo)(p1));
     ops.push((0, _operation.lineTo)(p2));
     ops.push((0, _operation.lineTo)((0, _point2.default)(p2.x + x, p2.y + y)));
     ops.push((0, _operation.lineTo)((0, _point2.default)(p1.x + x, p1.y + y)));
     ops.push((0, _operation.closePath)());
-    // ops.push(fillAndStroke());
-    ops.push((0, _operation.fill)());
+    ops.push((0, _operation.fillAndStroke)());
+    // ops.push(fill());
     ops.push((0, _operation.restore)());
 }
 
@@ -143,7 +143,7 @@ function extrudeBezier(ops, x, y, p1, c1, c2, p2) {
     ops.push((0, _operation.save)());
     ops.push((0, _operation.gs)('fillStyle', color));
     ops.push((0, _operation.gs)('strokeStyle', color));
-    ops.push((0, _operation.gs)('lineWidth', 0.1));
+    ops.push((0, _operation.gs)('lineWidth', 0.5));
 
     var step = 1 / numSplit;
     var bz = [p1, c1, c2, p2];

@@ -6,9 +6,8 @@ import { render, OP_BEGIN } from '../lib/operation';
 import draw from './draw';
 
 
-function extrudeLine(ctx, rect, x, y, text, font, fontSize) {
+function extrudeLine(ctx, rect, x, y, text, font, fontSize, knockout) {
     const anchor = point(rect.minx, rect.miny);
-    const knockout = getState('knockout', false);
     const { extrusion, mask } = draw(text, font, fontSize, x, y, anchor);
     if (knockout) {
         const paperEx = new PaperContext();
@@ -42,8 +41,8 @@ function extrudeLine(ctx, rect, x, y, text, font, fontSize) {
 }
 
 
-export default function extrude(ctx, state, scale = 1) {
-    const { x, y, text, font, margin, width, height, offset } = state;
+export default function extrude(ctx, state, knockout = false) {
+    const { x, y, text, font, margin, width, height } = state;
     const lines = text.split('\n');
 
 
@@ -52,9 +51,25 @@ export default function extrude(ctx, state, scale = 1) {
     }
 
     if (lines.length > 0) {
-        const scaledMargin = Math.max(margin * ctx.width, margin * ctx.height);
-        const innerWidth = ctx.width - (scaledMargin * 2);
-        const innerHeight = ctx.height - (scaledMargin * 2);
+        const hScale = ctx.width / width;
+        const vScale = ctx.height / height;
+        let scale = 1;
+        let offset = point(0, 0);
+
+        if (hScale < vScale) {
+            scale = hScale;
+            offset = point(0, (ctx.height - (height * scale)) / 2);
+        }
+        else {
+            scale = vScale;
+            offset = point((ctx.width - (width * scale)) / 2, 0);
+        }
+        const adjWidth = width * scale;
+        const adjHeight = height * scale;
+
+        const scaledMargin = Math.max(margin * adjWidth, margin * adjHeight);
+        const innerWidth = adjWidth - (scaledMargin * 2);
+        const innerHeight = adjHeight - (scaledMargin * 2);
         const lineHeight = innerHeight / lines.length;
         const baseFactor = 0.8;
         const fontSize = lineHeight;
@@ -72,8 +87,7 @@ export default function extrude(ctx, state, scale = 1) {
                     width: innerWidth,
                     height: lineHeight
                 };
-                // debug('line-rect', rect);
-                extrudeLine(ctx, rect, x * scale, y * scale, line, font, fontSize);
+                extrudeLine(ctx, rect, x * scale, y * scale, line, font, fontSize, knockout);
             }
         };
         if (y < 0) {

@@ -85,11 +85,8 @@ function textTool(box) {
 
 
 function exportTool(box) {
-    const knockout = createElement('input', {
-        type: 'checkbox',
-        value: 'knockout'
-    });
-
+    const wrap0 = createElement('div', { class: 'tool-export-button-wrapper' });
+    const wrap1 = createElement('div', { class: 'tool-export-button-wrapper' });
     const exportPNG = createElement('a', {
         class: 'tool-export-button',
         download: 'extruded.png'
@@ -98,24 +95,20 @@ function exportTool(box) {
 
     const exportPDF = createElement('a', {
         class: 'tool-export-button',
-        htref: '#',
+        href: '#',
         download: 'extruded.pdf'
     });
     appendText(exportPDF, 'Download PDF');
 
-    box.appendChild(knockout);
-    box.appendChild(exportPNG);
-    box.appendChild(exportPDF);
+    wrap0.appendChild(exportPNG);
+    wrap1.appendChild(exportPDF);
+    box.appendChild(wrap0);
+    box.appendChild(wrap1);
 
     const offScreen = createElement('canvas');
     let localState = null;
     onStateChange((state) => {
         localState = state;
-    });
-
-
-    knockout.addEventListener('change', () => {
-        setState('knockout', knockout.checked);
     });
 
     exportPNG.addEventListener('mouseenter', () => {
@@ -133,7 +126,7 @@ function exportTool(box) {
     exportPDF.addEventListener('click', () => {
         if (localState) {
             const ctx = new ContextStore(localState.width, localState.height);
-            if (extrude(ctx, localState)) {
+            if (extrude(ctx, localState, true)) {
                 const data = {
                     width: localState.width,
                     height: localState.height,

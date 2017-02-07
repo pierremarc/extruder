@@ -116,7 +116,7 @@ export default function draw(text, font, fontSize, xOffset, yOffset, anchor = po
             default: break;
             }
         }
-        mask.push(fill());
+        mask.push(fillAndStroke());
     });
     mask.push(restore());
 

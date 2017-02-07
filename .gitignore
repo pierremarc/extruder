@@ -1,5 +1,5 @@
 node_modules/
 build/
 server/public/fonts/
-server/public/*.hot-update.js
-server/public/*.hot-update.json
+*.hot-update.js
+*.hot-update.json

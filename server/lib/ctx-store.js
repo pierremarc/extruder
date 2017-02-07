@@ -21,12 +21,14 @@ function _inherits(subClass, superClass) { if (typeof superClass !== "function" 
 var ContextStore = function (_BaseContext) {
     _inherits(ContextStore, _BaseContext);
 
-    function ContextStore() {
+    function ContextStore(width, height) {
         _classCallCheck(this, ContextStore);
 
         var _this = _possibleConstructorReturn(this, (ContextStore.__proto__ || Object.getPrototypeOf(ContextStore)).call(this));
 
         Object.defineProperty(_this, 'operations', { value: [] });
+        Object.defineProperty(_this, 'width', { value: width });
+        Object.defineProperty(_this, 'height', { value: height });
         return _this;
     }
 

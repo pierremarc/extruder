@@ -57,8 +57,21 @@ function xyTool() {
     const box = createElement('div', { class: 'tool-xy' });
     const xBox = createElement('div', { class: 'tool-xy-box tool-xy-x' });
     const yBox = createElement('div', { class: 'tool-xy-box tool-xy-y' });
-    xBox.appendChild(slider('x', -300, 300, Math.ceil));
-    yBox.appendChild(slider('y', -300, 300, Math.ceil));
+
+    xBox.appendChild(slider({
+        key: 'x',
+        label: 'horizontal',
+        min: -300,
+        max: 300,
+        parser: Math.ceil
+    }));
+    yBox.appendChild(slider({
+        key: 'y',
+        label: 'vertical',
+        min: -300,
+        max: 300,
+        parser: Math.ceil
+    }));
     box.appendChild(xBox);
     box.appendChild(yBox);
     return box;
@@ -66,13 +79,38 @@ function xyTool() {
 
 function extentTool() {
     const box = createElement('div', { class: 'tool-size' });
-    const widthBox = createElement('div', { class: 'tool-extent-box tool-extent-width' });
-    const heightBox = createElement('div', { class: 'tool-extent-box tool-extent-height' });
+    if(!getState('fixedSize', false)) {
 
-    widthBox.appendChild(slider('width', 100, 4000, Math.ceil));
-    heightBox.appendChild(slider('height', 100, 4000, Math.ceil));
-    box.appendChild(widthBox);
-    box.appendChild(heightBox);
+        const widthBox = createElement('div', { class: 'tool-extent-box tool-extent-width' });
+        const heightBox = createElement('div', { class: 'tool-extent-box tool-extent-height' });
+
+        widthBox.appendChild(slider({
+            key: 'width',
+            label: 'page width',
+            min: 100,
+            max: 4000,
+            parser: Math.ceil
+        }));
+        heightBox.appendChild(slider({
+            key: 'height',
+            label: 'page height',
+            min: 100,
+            max: 4000,
+            parser: Math.ceil
+        }));
+        box.appendChild(widthBox);
+        box.appendChild(heightBox);
+    }
+    const marginBox = createElement('div', { class: 'tool-extent-box tool-extent-margin' });
+
+    marginBox.appendChild(slider({
+        key: 'margin',
+        label: 'page margin',
+        min: 0,
+        max: 0.2,
+        parser: (v) => v.toFixed(2)
+    }));
+    box.appendChild(marginBox);
     return box;
 }
 
@@ -128,17 +166,17 @@ function withContext(canvas, state, fn) {
     context.clear();
     // few visual niceties for on screen rendering
     const rawCtx = context.ctx;
-    rawCtx.setTransform(0.9, 0, 0, 0.9, canvas.width * 0.05, canvas.height * 0.05);
     rawCtx.save();
+    rawCtx.setTransform(0.9, 0, 0, 0.9, canvas.width * 0.05, canvas.height * 0.05);
 
     rawCtx.strokeStyle = '#60A8FF';
     rawCtx.fillStyle = bg;
     rawCtx.lineWidth = 0.5;
-    rawCtx.strokeRect(offset.x, offset.y, ss.width, ss.height);
-    rawCtx.fillRect(offset.x, offset.y, ss.width, ss.height);
+    rawCtx.strokeRect(ss.offset.x, ss.offset.y, ss.width, ss.height);
+    rawCtx.fillRect(ss.offset.x, ss.offset.y, ss.width, ss.height);
 
 
-    fn(context, state, ss.scale);
+    fn(context, state, false);
     rawCtx.restore();
 
 }
@@ -161,7 +199,7 @@ export default function main() {
     canvas.addEventListener('mouseup', stopMoving, false);
     canvas.addEventListener('mousemove', isMoving, false);
 
-    const keys = ['x', 'y', 'width', 'height', 'font', 'text', 'knockout'];
+    const keys = ['x', 'y', 'width', 'height', 'font', 'text', 'margin'];
     onStateChange((state) => {
         withContext(canvas, state, extrude);
     }, keys);
