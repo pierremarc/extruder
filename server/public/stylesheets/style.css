@@ -199,6 +199,7 @@ input.slider-input {
     padding-left: 1em;
     font-family: monospace;
     background-color: transparent;
+    flex: 0 10 7%;
 }
 
 input.slider-input:focus {

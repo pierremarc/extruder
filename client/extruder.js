@@ -78,13 +78,13 @@ function xyTool() {
     fsBox.appendChild(slider({
         key: 'fontSize',
         label: 'font size',
-        min: 10,
-        max: 2000,
+        min: 70,
+        max: 700,
         parser: Math.ceil
     }));
     box.appendChild(fsBox);
-    box.appendChild(xBox);
-    box.appendChild(yBox);
+    // box.appendChild(xBox);
+    // box.appendChild(yBox);
     return box;
 }
 
@@ -187,10 +187,8 @@ function getScaledSize(rect, bbox) {
 }
 
 
-function withContext(canvas, state, fn) {
+function withContext(canvas, ss, fn) {
     var context = new ContextCanvas(canvas);
-    const { width, height, offset } = state;
-    const ss = getScaledSize(canvas, { width, height });
 
     context.clear();
     // few visual niceties for on screen rendering
@@ -203,24 +201,8 @@ function withContext(canvas, state, fn) {
     rawCtx.strokeRect(ss.offset.x, ss.offset.y, ss.width, ss.height);
     rawCtx.restore();
 
-    fn(context, state, false);
+    fn(context);
     rawCtx.restore();
-
-    const sc = new ContextStore(canvas.width, canvas.height);
-    fn(sc, state, false);
-    const check = sc.operations.reduce((memo, op) => {
-        if (op[0] === OP_SAVE) {
-            memo[0] += 1;
-        }
-        else if (op[0] === OP_RESTORE) {
-            memo[1] += 1;
-        }
-        return memo;
-    }, [0, 0]);
-
-    // if (check[0] !== check[1]) {
-    //     throw (new Error(`save/restore not balanced ${check[0]} !== ${check[1]}`));
-    // }
 
 }
 
@@ -252,7 +234,17 @@ export default function main() {
         'colorBackground', 'colorExtrusion', 'colorForeground'
     ];
     onStateChange((state) => {
-        withContext(canvas, state, extrude);
+        const { width, height, offset } = state;
+        const ss = getScaledSize(canvas, { width, height });
+
+        withContext(canvas, ss, (ctx) => {
+            const h = extrude(ctx, state, false);
+            const diff = Math.abs(h - ss.height);
+            if ((h > 0) && (diff > 12)) {
+                console.log(ss.height, h, diff);
+                setState('height', Math.ceil(h / ss.scale));
+            }
+        });
     }, keys);
 
     xyLay(xyBox, rect);
