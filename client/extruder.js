@@ -127,11 +127,19 @@ function extentTool() {
 
 function colorTool() {
     const box = createElement('div', { class: 'tool-color' });
-    const labels = ['Background', 'Extrusion', 'Foreground'];
+    const options = [
+        {
+            label: 'Background',
+            keys: ['colorBackground', 'colorForeground']
+        },
+        {
+            label: 'Shadow',
+            keys: ['colorExtrusion']
+        }
+        ];
 
-    labels.forEach((label) => {
-        const key = `color${label}`;
-        box.appendChild(palette({ label, key }));
+    options.forEach((option) => {
+        box.appendChild(palette(option));
     });
     return box;
 }

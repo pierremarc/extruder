@@ -53,9 +53,9 @@ function extrudeLine(ctx, rect, x, y, text, font, fontSize, knockout) {
 
 
 function makeBackground(min, max) {
-    const bg = getState('colorBackground', 'none');
+    const bg = getState('colorBackground', 'transparent');
     const ops = [];
-    if (bg !== 'none') {
+    if (bg !== 'transparent') {
         ops.push(save());
         ops.push(gs('fillStyle', bg));
         ops.push(moveTo(min));

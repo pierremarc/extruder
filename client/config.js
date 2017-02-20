@@ -17,12 +17,12 @@ export default {
         colorExtrusion: 'black',
         colorBackground: 'white',
         colorForeground: 'white',
-        palette: ['black', 'white', 'red', 'green', 'blue']
     },
     fonts: [
         '/fonts/Volkart/Volkart-Light.otf',
         '/fonts/Volkart/Volkart-Regular.otf',
         '/fonts/Volkart/Volkart-Bold.otf',
         '/fonts/Volkart/Volkart-Extrabold.otf',
-    ]
+    ],
+    palette: ['#da291c', '#ffffff', '#dde1e4', '#768692', '#000000']
 };
