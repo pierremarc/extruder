@@ -59,7 +59,7 @@
 /******/ 	
 /******/ 	
 /******/ 	var hotApplyOnUpdate = true;
-/******/ 	var hotCurrentHash = "025edc4bc14442a40ecf"; // eslint-disable-line no-unused-vars
+/******/ 	var hotCurrentHash = "4dc961a9f93cafd71afd"; // eslint-disable-line no-unused-vars
 /******/ 	var hotCurrentModuleData = {};
 /******/ 	var hotMainModule = true; // eslint-disable-line no-unused-vars
 /******/ 	var hotCurrentParents = []; // eslint-disable-line no-unused-vars
@@ -1294,7 +1294,7 @@ eval("(function(self) {\n  'use strict';\n\n  if (self.fetch) {\n    return\n  }
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
-eval("\n/* harmony default export */ __webpack_exports__[\"a\"] = {\n    initialState: {\n        x: 64,\n        y: 64,\n        fixedSize: true,\n        width: 1920,\n        height: 1080,\n        text: 'Welcome',\n        font: null,\n        fontSize: 300,\n        lineHeightFactor: 1.16,\n        margin: 0.2,\n        isMoving: false,\n        startPos: null,\n        numSplit: 32,\n        colorExtrusion: 'black',\n        colorBackground: 'white',\n        colorForeground: 'white',\n        palette: ['black', 'white', 'red', 'green', 'blue']\n    },\n    fonts: ['/fonts/Volkart/Volkart-BlackItalic.otf', '/fonts/Volkart/Volkart-Black.otf', '/fonts/Volkart/Volkart-BoldItalic.otf', '/fonts/Volkart/Volkart-Bold.otf', '/fonts/Volkart/Volkart-ExtraboldItalic.otf', '/fonts/Volkart/Volkart-Extrabold.otf', '/fonts/Volkart/Volkart-ExtralightItalic.otf', '/fonts/Volkart/Volkart-Extralight.otf', '/fonts/Volkart/Volkart-HairlineItalic.otf', '/fonts/Volkart/Volkart-Hairline.otf', '/fonts/Volkart/Volkart-Italic.otf', '/fonts/Volkart/Volkart-LightItalic.otf', '/fonts/Volkart/Volkart-Light.otf', '/fonts/Volkart/Volkart-MediumItalic.otf', '/fonts/Volkart/Volkart-Medium.otf', '/fonts/Volkart/Volkart-Regular.otf', '/fonts/Volkart/Volkart-ThinItalic.otf', '/fonts/Volkart/Volkart-Thin.otf']\n};\n\n//////////////////\n// WEBPACK FOOTER\n// ./config.js\n// module id = ./config.js\n// module chunks = 0\n\n//# sourceURL=webpack:///./config.js?");
+eval("\n/* harmony default export */ __webpack_exports__[\"a\"] = {\n    initialState: {\n        x: 64,\n        y: 64,\n        fixedSize: true,\n        width: 1920,\n        height: 1080,\n        text: 'Welcome',\n        font: null,\n        fontSize: 300,\n        lineHeightFactor: 1.16,\n        margin: 0.2,\n        isMoving: false,\n        startPos: null,\n        numSplit: 32,\n        colorExtrusion: 'black',\n        colorBackground: 'white',\n        colorForeground: 'white',\n        palette: ['black', 'white', 'red', 'green', 'blue']\n    },\n    fonts: ['/fonts/Volkart/Volkart-Light.otf', '/fonts/Volkart/Volkart-Regular.otf', '/fonts/Volkart/Volkart-Bold.otf', '/fonts/Volkart/Volkart-Extrabold.otf']\n};\n\n//////////////////\n// WEBPACK FOOTER\n// ./config.js\n// module id = ./config.js\n// module chunks = 0\n\n//# sourceURL=webpack:///./config.js?");
 
 /***/ }),
 
