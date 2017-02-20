@@ -219,7 +219,7 @@ export default function main() {
     const colorBox = colorTool();
     container.appendChild(canvas);
     container.appendChild(xyBox);
-    container.appendChild(sizeBox);
+    // container.appendChild(sizeBox);
     container.appendChild(colorBox);
     body().appendChild(container);
 
