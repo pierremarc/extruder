@@ -195,11 +195,16 @@ function withContext(canvas, ss, fn) {
     const rawCtx = context.ctx;
     rawCtx.save();
     rawCtx.setTransform(0.9, 0, 0, 0.9, canvas.width * 0.05, canvas.height * 0.05);
-    rawCtx.save();
-    rawCtx.strokeStyle = '#60A8FF';
-    rawCtx.lineWidth = 0.5;
-    rawCtx.strokeRect(ss.offset.x, ss.offset.y, ss.width, ss.height);
-    rawCtx.restore();
+    // rawCtx.strokeStyle = '#60A8FF';
+    // rawCtx.lineWidth = 0.5;
+    rawCtx.beginPath();
+    rawCtx.moveTo(ss.offset.x, ss.offset.y);
+    rawCtx.lineTo(ss.offset.x + ss.width, ss.offset.y);
+    rawCtx.lineTo(ss.offset.x + ss.width, ss.offset.y + ss.height);
+    rawCtx.lineTo(ss.offset.x, ss.offset.y + ss.height);
+    rawCtx.closePath();
+    // rawCtx.rect(ss.offset.x, ss.offset.y, ss.width, ss.height);
+    rawCtx.clip();
 
     fn(context);
     rawCtx.restore();
@@ -234,6 +239,9 @@ export default function main() {
         'colorBackground', 'colorExtrusion', 'colorForeground'
     ];
     onStateChange((state) => {
+        
+        canvas.style.backgroundColor = state.colorBackground;
+
         const { width, height, offset } = state;
         const ss = getScaledSize(canvas, { width, height });
 
@@ -246,6 +254,7 @@ export default function main() {
             }
         });
     }, keys);
+
 
     xyLay(xyBox, rect);
     sizeLay(sizeBox, rect);
