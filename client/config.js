@@ -1,13 +1,13 @@
 
 export default {
     initialState: {
-        x: 64,
-        y: 64,
+        x: 16,
+        y: 16,
         fixedSize: true,
         width: 1920,
         height: 1080,
         text: 'Welcome',
-        font: null,
+        font: "Volkart-Light:JeremieHornus:1.200",
         fontSize: 300,
         lineHeightFactor: 1.16,
         margin: 0.2,

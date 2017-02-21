@@ -59,7 +59,7 @@
 /******/ 	
 /******/ 	
 /******/ 	var hotApplyOnUpdate = true;
-/******/ 	var hotCurrentHash = "44412c94e96e98f087ac"; // eslint-disable-line no-unused-vars
+/******/ 	var hotCurrentHash = "0e944d2dd2fa144bbd0f"; // eslint-disable-line no-unused-vars
 /******/ 	var hotCurrentModuleData = {};
 /******/ 	var hotMainModule = true; // eslint-disable-line no-unused-vars
 /******/ 	var hotCurrentParents = []; // eslint-disable-line no-unused-vars
@@ -1294,7 +1294,7 @@ eval("(function(self) {\n  'use strict';\n\n  if (self.fetch) {\n    return\n  }
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
-eval("\n/* harmony default export */ __webpack_exports__[\"a\"] = {\n    initialState: {\n        x: 64,\n        y: 64,\n        fixedSize: true,\n        width: 1920,\n        height: 1080,\n        text: 'Welcome',\n        font: null,\n        fontSize: 300,\n        lineHeightFactor: 1.16,\n        margin: 0.2,\n        isMoving: false,\n        startPos: null,\n        numSplit: 32,\n        colorExtrusion: 'black',\n        colorBackground: 'white',\n        colorForeground: 'white'\n    },\n    fonts: ['/fonts/Volkart/Volkart-Light.otf', '/fonts/Volkart/Volkart-Regular.otf', '/fonts/Volkart/Volkart-Bold.otf', '/fonts/Volkart/Volkart-Extrabold.otf'],\n    palette: ['#da291c', '#ffffff', '#dde1e4', '#768692', '#000000']\n};\n\n//////////////////\n// WEBPACK FOOTER\n// ./config.js\n// module id = ./config.js\n// module chunks = 0\n\n//# sourceURL=webpack:///./config.js?");
+eval("\n/* harmony default export */ __webpack_exports__[\"a\"] = {\n    initialState: {\n        x: 16,\n        y: 16,\n        fixedSize: true,\n        width: 1920,\n        height: 1080,\n        text: 'Welcome',\n        font: \"Volkart-Light:JeremieHornus:1.200\",\n        fontSize: 300,\n        lineHeightFactor: 1.16,\n        margin: 0.2,\n        isMoving: false,\n        startPos: null,\n        numSplit: 32,\n        colorExtrusion: 'black',\n        colorBackground: 'white',\n        colorForeground: 'white'\n    },\n    fonts: ['/fonts/Volkart/Volkart-Light.otf', '/fonts/Volkart/Volkart-Regular.otf', '/fonts/Volkart/Volkart-Bold.otf', '/fonts/Volkart/Volkart-Extrabold.otf'],\n    palette: ['#da291c', '#ffffff', '#dde1e4', '#768692', '#000000']\n};\n\n//////////////////\n// WEBPACK FOOTER\n// ./config.js\n// module id = ./config.js\n// module chunks = 0\n\n//# sourceURL=webpack:///./config.js?");
 
 /***/ }),
 
