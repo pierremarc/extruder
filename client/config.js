@@ -10,7 +10,7 @@ export default {
         font: "Volkart-Light:JeremieHornus:1.200",
         fontSize: 300,
         lineHeightFactor: 1.16,
-        margin: 0.2,
+        margin: 0.05,
         isMoving: false,
         startPos: null,
         numSplit: 32,

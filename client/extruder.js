@@ -27,8 +27,8 @@ function startMoving(e) {
 }
 
 function isMoving(e) {
-    const startPos = point(getState('startPos'));
-    const isMovingState = getState('isMoving');
+    const startPos = point(getState('startPos', point()));
+    const isMovingState = getState('isMoving', false);
 
     if (isMovingState && (startPos !== null)) {
         // console.log('isMoving', e.clientX, e.clientY);

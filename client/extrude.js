@@ -1,8 +1,6 @@
 
 import point from '../lib/point';
-import { getState } from '../lib/state';
 import PaperContext from '../lib/ctx-paper';
-import BBoxContext from '../lib/ctx-bbox';
 import draw, { getWidth } from './draw';
 import {
     render,
@@ -17,9 +15,9 @@ import {
 } from '../lib/operation';
 
 
-function extrudeLine(ctx, rect, x, y, text, font, fontSize, knockout) {
+function extrudeLine(state, ctx, rect, x, y, text, font, fontSize, knockout) {
     const anchor = point(rect.minx, rect.miny);
-    const { extrusion, mask } = draw(text, font, fontSize, x, y, anchor);
+    const { extrusion, mask } = draw(state, text, font, fontSize, x, y, anchor);
     if (knockout) {
         const paperEx = new PaperContext();
         const maskOps = [];
@@ -52,8 +50,7 @@ function extrudeLine(ctx, rect, x, y, text, font, fontSize, knockout) {
 }
 
 
-function makeBackground(min, max) {
-    const bg = getState('colorBackground', 'transparent');
+function makeBackground(min, max, bg) {
     const ops = [];
     if (bg !== 'transparent') {
         ops.push(save());
@@ -99,7 +96,7 @@ function computeLines(lineWidth, text, font, fontSize, x, lines) {
 }
 
 export default function extrude(ctx, state, knockout = false) {
-    const { x, y, text, font, fontSize, lineHeightFactor, margin, width, height } = state;
+    const { x, y, text, font, fontSize, lineHeightFactor, margin, width, height, colorBackground } = state;
     const hScale = ctx.width / width;
     const vScale = ctx.height / height;
     let scale = 1;
@@ -135,7 +132,8 @@ export default function extrude(ctx, state, knockout = false) {
     if (lines.length > 0) {
         render(ctx, makeBackground(
             offset,
-            point(offset.x + adjWidth, offset.y + adjHeight)
+            point(offset.x + adjWidth, offset.y + adjHeight),
+            colorBackground
         ));
 
         const processLine = (line, idx) => {
@@ -149,7 +147,7 @@ export default function extrude(ctx, state, knockout = false) {
                     height: lineHeight
                 };
                 extrudeLine(
-                    ctx, rect,
+                    state, ctx, rect,
                     x * scale, y * scale,
                     `${line} `,
                     font, fontSize * scale,

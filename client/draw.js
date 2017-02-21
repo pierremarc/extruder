@@ -21,17 +21,16 @@ import {
 } from '../lib/operation';
 
 import point from '../lib/point';
-import { getState } from '../lib/state';
 import { getFont } from './font';
 
 
-function drawMaskImpl(paths) {
+function drawMaskImpl(state, paths) {
     const mask = [];
-    const fgColor = getState('colorForeground', 'white');
+    const fgColor = state.colorForeground;
     mask.push(save());
     mask.push(gs('fillStyle', fgColor));
     mask.push(gs('strokeStyle', fgColor));
-    mask.push(gs('lineWidth', 2));
+    mask.push(gs('lineWidth', state.maskLineWidth || 2));
     paths.forEach((path) => {
         const commands = path.commands;
         let lastMove = null;
@@ -86,14 +85,13 @@ export function getWidth(text, font, fontSize) {
 }
 
 
-export function drawMask(text, font, fontSize, anchor = point(0, 0)) {
+export function drawMask(state, text, font, fontSize, anchor = point(0, 0)) {
     const paths = getFont(font).getPaths(text, anchor.x, anchor.y, fontSize);
-    return drawMaskImpl(paths);
+    return drawMaskImpl(state, paths);
 }
 
-export default function draw(text, font, fontSize, xOffset, yOffset, anchor = point(0, 0)) {
+export default function draw(state, text, font, fontSize, xOffset, yOffset, anchor = point(0, 0)) {
     const extrusion = [];
-
     const paths = getFont(font).getPaths(text, anchor.x, anchor.y, fontSize);
 
 
@@ -110,7 +108,7 @@ export default function draw(text, font, fontSize, xOffset, yOffset, anchor = po
                 break;
 
             case 'L':
-                extrudeLine(extrusion, xOffset, yOffset, currentPosition, point(cmd.x, cmd.y));
+                extrudeLine(state, extrusion, xOffset, yOffset, currentPosition, point(cmd.x, cmd.y));
                 currentPosition = point(cmd.x, cmd.y);
                 break;
 
@@ -118,7 +116,7 @@ export default function draw(text, font, fontSize, xOffset, yOffset, anchor = po
                 const c1 = point(cmd.x1, cmd.y1);
                 const c2 = point(cmd.x2, cmd.y2);
                 const p2 = point(cmd.x, cmd.y);
-                extrudeBezier(extrusion, xOffset, yOffset, currentPosition, c1, c2, p2);
+                extrudeBezier(state, extrusion, xOffset, yOffset, currentPosition, c1, c2, p2);
                 currentPosition = p2;
                 break;
             }
@@ -126,13 +124,13 @@ export default function draw(text, font, fontSize, xOffset, yOffset, anchor = po
             case 'Q': {
                 const c1 = point(cmd.x1, cmd.y1);
                 const p2 = point(cmd.x, cmd.y);
-                extrudeQuadratic(extrusion, xOffset, yOffset, currentPosition, c1, p2);
+                extrudeQuadratic(state, extrusion, xOffset, yOffset, currentPosition, c1, p2);
                 currentPosition = p2;
                 break;
             }
 
             case 'Z':
-                extrudeLine(extrusion, xOffset, yOffset, currentPosition, firstMove);
+                extrudeLine(state, extrusion, xOffset, yOffset, currentPosition, firstMove);
                 currentPosition = firstMove;
                 break;
 
@@ -141,7 +139,7 @@ export default function draw(text, font, fontSize, xOffset, yOffset, anchor = po
         }
     });
 
-    const mask = drawMaskImpl(paths);
+    const mask = drawMaskImpl(state, paths);
     
     return { extrusion, mask };
 }
