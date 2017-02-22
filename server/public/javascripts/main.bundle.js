@@ -59,7 +59,7 @@
 /******/ 	
 /******/ 	
 /******/ 	var hotApplyOnUpdate = true;
-/******/ 	var hotCurrentHash = "d4bea4935e6732c295d8"; // eslint-disable-line no-unused-vars
+/******/ 	var hotCurrentHash = "09b5720fff9ee32c3ecd"; // eslint-disable-line no-unused-vars
 /******/ 	var hotCurrentModuleData = {};
 /******/ 	var hotMainModule = true; // eslint-disable-line no-unused-vars
 /******/ 	var hotCurrentParents = []; // eslint-disable-line no-unused-vars
@@ -37635,6 +37635,8 @@ function draw(state, text, font, fontSize, xOffset, yOffset) {
     var extrusion = [];
     var paths = __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_3__font__["b" /* getFont */])(font).getPaths(text, anchor.x, anchor.y, fontSize);
 
+    extrusion.push(__webpack_require__.i(__WEBPACK_IMPORTED_MODULE_1__lib_operation__["d" /* gs */])('lineJoin', 'round'));
+
     paths.forEach(function (path) {
         var commands = path.commands;
         var currentPosition = __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_2__lib_point__["a" /* default */])(0, 0);
@@ -38522,7 +38524,7 @@ function exportTool(box) {
                         ctx.operations.push(op);
                     });
                     ctx.operations.push(__webpack_require__.i(__WEBPACK_IMPORTED_MODULE_9__lib_operation__["n" /* transform */])(1, 0, 0, 1, margin, margin));
-                    state.extrusionLineWidth = 0;
+                    state.extrusionLineWidth = 0.1;
                     state.maskLineWidth = 0;
                     state.colorBackground = 'transparent';
 

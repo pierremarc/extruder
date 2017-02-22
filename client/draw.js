@@ -99,6 +99,7 @@ export default function draw(state, text, font, fontSize, xOffset, yOffset, anch
     const extrusion = [];
     const paths = getFont(font).getPaths(text, anchor.x, anchor.y, fontSize);
 
+    extrusion.push(gs('lineJoin', 'round'));
 
     paths.forEach((path) => {
         const commands = path.commands;
