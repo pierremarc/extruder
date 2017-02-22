@@ -4,11 +4,18 @@ Object.defineProperty(exports, "__esModule", {
     value: true
 });
 
+var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; };
+
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
 var _glMatrix = require('gl-matrix');
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+function snap(n) {
+    var p = 1000000;
+    return Math.floor(n * p) / p;
+}
 
 var Point = function () {
     function Point(x, y) {
@@ -103,13 +110,15 @@ var Point = function () {
 }();
 
 function point(x, y) {
-    if (!x && !y) {
-        return new Point(0, 0);
-    } else if (Array.isArray(x)) {
+
+    if (Array.isArray(x)) {
         return new Point(x[0], x[1]);
-    } else if (y === undefined && 'x' in x && 'y' in x) {
+    } else if (x !== null && (typeof x === 'undefined' ? 'undefined' : _typeof(x)) === 'object' && 'x' in x && 'y' in x) {
         return new Point(x.x, x.y);
+    } else if (x === void 0 || x === null || y === void 0 || y === null) {
+        return new Point(0, 0);
     }
+
     return new Point(x, y);
 }
 

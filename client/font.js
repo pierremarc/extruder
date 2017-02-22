@@ -37,7 +37,7 @@ class FontName {
 function fetchFont(url) {
     // message(`fetch font: ${url}`, DEBUG);
     return fetch(url, {
-        mode: 'no-cors'
+        mode: 'no-cors',
     });
 }
 
@@ -65,7 +65,7 @@ export function loadFonts(urls) {
         Promise.all(fontResponses)
             .then(makeBuffers)
             .then(makeFonts)
-        );
+    );
 }
 
 export function getFont(name) {

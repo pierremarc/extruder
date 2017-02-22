@@ -43,17 +43,19 @@ function init(initialState) {
     var storage = getLocaleStorage();
     if (storage) {
         if (storage.getItem(EXTR_STORAGE_ID)) {
-            // we've been there once
-            var state = {};
-            Object.keys(initialState).forEach(function (key) {
-                var val = JSON.parse(storage.getItem(key));
-                if (val === void 0) {
-                    state[key] = initialState[key];
-                } else {
-                    state[key] = val;
-                }
-            });
-            stateStack.push(state);
+            (function () {
+                // we've been there once
+                var state = {};
+                Object.keys(initialState).forEach(function (key) {
+                    var val = JSON.parse(storage.getItem(key));
+                    if (val === void 0) {
+                        state[key] = initialState[key];
+                    } else {
+                        state[key] = val;
+                    }
+                });
+                stateStack.push(state);
+            })();
         } else {
             storage.setItem(EXTR_STORAGE_ID, true);
             Object.keys(initialState).forEach(function (key) {

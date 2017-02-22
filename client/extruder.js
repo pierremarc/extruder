@@ -1,15 +1,11 @@
 
 import point from '../lib/point';
 import ContextCanvas from '../lib/ctx-canvas';
-import message from '../lib/message';
 import { body, createElement, px } from '../lib/dom';
 import { onStateChange, getState, setState } from '../lib/state';
 import slider from '../lib/slider';
 import palette from './palette';
 import extrude from './extrude';
-import ContextStore from '../lib/ctx-store';
-import { OP_SAVE, OP_RESTORE } from '../lib/operation';
-const debug = require('debug')('extruder');
 
 
 function mouseEventPos(e) {
@@ -22,7 +18,7 @@ function startMoving(e) {
     const current = point(getState('x'), getState('y'));
     setState(
         ['isMoving', 'startPos'],
-        [true, mouseEventPos(e).minus(current).toObject()]
+        [true, mouseEventPos(e).minus(current).toObject()],
     );
 }
 
@@ -35,7 +31,7 @@ function isMoving(e) {
         const move = mouseEventPos(e).minus(startPos);
         setState(
             ['x', 'y'],
-            [move.x, move.y]
+            [move.x, move.y],
         );
     }
 }
@@ -49,7 +45,7 @@ function stopMoving(e) {
     if (isMovingState && (startPos !== null) && (move.x !== 0 || move.y !== 0)) {
         setState(
             ['x', 'y', 'isMoving', 'startPos'],
-            [move.x, move.y, false, null]
+            [move.x, move.y, false, null],
         );
     }
 }
@@ -66,21 +62,21 @@ function xyTool() {
         label: 'horizontal',
         min: -300,
         max: 300,
-        parser: Math.ceil
+        parser: Math.ceil,
     }));
     yBox.appendChild(slider({
         key: 'y',
         label: 'vertical',
         min: -300,
         max: 300,
-        parser: Math.ceil
+        parser: Math.ceil,
     }));
     fsBox.appendChild(slider({
         key: 'fontSize',
         label: 'font size',
         min: 70,
         max: 700,
-        parser: Math.ceil
+        parser: Math.ceil,
     }));
     box.appendChild(fsBox);
     // box.appendChild(xBox);
@@ -90,8 +86,7 @@ function xyTool() {
 
 function extentTool() {
     const box = createElement('div', { class: 'tool-size' });
-    if(!getState('fixedSize', false)) {
-
+    if (!getState('fixedSize', false)) {
         const widthBox = createElement('div', { class: 'tool-extent-box tool-extent-width' });
         const heightBox = createElement('div', { class: 'tool-extent-box tool-extent-height' });
 
@@ -100,14 +95,14 @@ function extentTool() {
             label: 'page width',
             min: 100,
             max: 4000,
-            parser: Math.ceil
+            parser: Math.ceil,
         }));
         heightBox.appendChild(slider({
             key: 'height',
             label: 'page height',
             min: 100,
             max: 4000,
-            parser: Math.ceil
+            parser: Math.ceil,
         }));
         box.appendChild(widthBox);
         box.appendChild(heightBox);
@@ -119,7 +114,7 @@ function extentTool() {
         label: 'left margin',
         min: 0,
         max: 0.2,
-        parser: (v) => v.toFixed(2)
+        parser: v => v.toFixed(2),
     }));
     box.appendChild(marginBox);
     return box;
@@ -130,13 +125,13 @@ function colorTool() {
     const options = [
         {
             label: 'Background',
-            keys: ['colorBackground', 'colorForeground']
+            keys: ['colorBackground', 'colorForeground'],
         },
         {
             label: 'Shadow',
-            keys: ['colorExtrusion']
-        }
-        ];
+            keys: ['colorExtrusion'],
+        },
+    ];
 
     options.forEach((option) => {
         box.appendChild(palette(option));
@@ -190,33 +185,38 @@ function getScaledSize(rect, bbox) {
         width: bbox.width * scale,
         height: bbox.height * scale,
         offset,
-        scale
+        scale,
     };
 }
 
 
 function withContext(canvas, ss, fn) {
-    var context = new ContextCanvas(canvas);
-
+    const context = new ContextCanvas(canvas);
+    const { scale, width, height } = ss;
+    const offset = point(0, canvas.height * 0.02);
     context.clear();
     // few visual niceties for on screen rendering
     const rawCtx = context.ctx;
     rawCtx.save();
-    rawCtx.setTransform(0.9, 0, 0, 0.9, canvas.width * 0.05, canvas.height * 0.05);
-    // rawCtx.strokeStyle = '#60A8FF';
-    // rawCtx.lineWidth = 0.5;
+
+    // rawCtx.setTransform(0.9, 0, 0, 0.9, canvas.width * 0.05, canvas.height * 0.05);
+    rawCtx.strokeStyle = '#60A8FF';
+    rawCtx.lineWidth = 0.5;
     rawCtx.beginPath();
-    rawCtx.moveTo(ss.offset.x, ss.offset.y);
-    rawCtx.lineTo(ss.offset.x + ss.width, ss.offset.y);
-    rawCtx.lineTo(ss.offset.x + ss.width, ss.offset.y + ss.height);
-    rawCtx.lineTo(ss.offset.x, ss.offset.y + ss.height);
+    rawCtx.moveTo(offset.x, offset.y);
+    rawCtx.lineTo(offset.x + width, offset.y);
+    rawCtx.lineTo(offset.x + width, offset.y + height);
+    rawCtx.lineTo(offset.x, offset.y + height);
     rawCtx.closePath();
-    // rawCtx.rect(ss.offset.x, ss.offset.y, ss.width, ss.height);
-    rawCtx.clip();
+
+    // rawCtx.rect(offset.x, offset.y, width, height);
+    // rawCtx.clip();
+    rawCtx.stroke();
+
+    rawCtx.setTransform(scale, 0, 0, scale, offset.x, offset.y);
 
     fn(context);
     rawCtx.restore();
-
 }
 
 export default function main() {
@@ -244,21 +244,20 @@ export default function main() {
         'x', 'y',
         'width', 'height', 'margin',
         'font', 'fontSize', 'text',
-        'colorBackground', 'colorExtrusion', 'colorForeground'
+        'colorBackground', 'colorExtrusion', 'colorForeground',
     ];
     onStateChange((state) => {
-        
         canvas.style.backgroundColor = state.colorBackground;
 
-        const { width, height, offset } = state;
+        const { width, height } = state;
         const ss = getScaledSize(canvas, { width, height });
 
         withContext(canvas, ss, (ctx) => {
-            const h = extrude(ctx, state, false);
-            const diff = Math.abs(h - ss.height);
-            if ((h > 0) && (diff > 12)) {
-                console.log(ss.height, h, diff);
-                setState('height', Math.ceil(h / ss.scale));
+            const sz = extrude(ctx, state, false);
+            const hasLines = sz.height > 0;
+            const diff = Math.abs(sz.height - height);
+            if (hasLines && (diff > 12)) {
+                setState('height', sz.height);
             }
         });
     }, keys);

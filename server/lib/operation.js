@@ -92,7 +92,8 @@ function renderBegin(ctx, op) {
 }
 
 function renderMoveTo(ctx, op) {
-    var p = (0, _point2.default)(op[1]);
+    var coordinates = op[1];
+    var p = (0, _point2.default)(coordinates);
     ctx.moveTo(p, op);
 }
 

@@ -2,7 +2,7 @@
 import {
     extrudeLine,
     extrudeBezier,
-    extrudeQuadratic
+    extrudeQuadratic,
 } from '../lib/extruders';
 
 import {
@@ -13,11 +13,9 @@ import {
     quadraticTo,
     closePath,
     gs,
-    stroke,
-    fill,
     fillAndStroke,
     save,
-    restore
+    restore,
 } from '../lib/operation';
 
 import point from '../lib/point';
@@ -38,36 +36,36 @@ function drawMaskImpl(state, paths) {
         for (let i = 0; i < commands.length; i += 1) {
             const cmd = commands[i];
             switch (cmd.type) {
-            case 'M':
-                lastMove = point(cmd.x, cmd.y);
-                mask.push(moveTo(lastMove));
-                break;
+                case 'M':
+                    lastMove = point(cmd.x, cmd.y);
+                    mask.push(moveTo(lastMove));
+                    break;
 
-            case 'L':
-                mask.push(lineTo(point(cmd.x, cmd.y)));
-                break;
+                case 'L':
+                    mask.push(lineTo(point(cmd.x, cmd.y)));
+                    break;
 
-            case 'C': {
-                const c1 = point(cmd.x1, cmd.y1);
-                const c2 = point(cmd.x2, cmd.y2);
-                const p2 = point(cmd.x, cmd.y);
-                mask.push(cubicTo(c1, c2, p2));
-                break;
-            }
+                case 'C': {
+                    const c1 = point(cmd.x1, cmd.y1);
+                    const c2 = point(cmd.x2, cmd.y2);
+                    const p2 = point(cmd.x, cmd.y);
+                    mask.push(cubicTo(c1, c2, p2));
+                    break;
+                }
 
-            case 'Q': {
-                const c1 = point(cmd.x1, cmd.y1);
-                const p2 = point(cmd.x, cmd.y);
-                mask.push(quadraticTo(c1, p2));
-                break;
-            }
+                case 'Q': {
+                    const c1 = point(cmd.x1, cmd.y1);
+                    const p2 = point(cmd.x, cmd.y);
+                    mask.push(quadraticTo(c1, p2));
+                    break;
+                }
 
-            case 'Z':
-                mask.push(lineTo(lastMove));
-                mask.push(closePath());
-                break;
+                case 'Z':
+                    mask.push(lineTo(lastMove));
+                    mask.push(closePath());
+                    break;
 
-            default: break;
+                default: break;
             }
         }
         mask.push(fillAndStroke());
@@ -78,10 +76,16 @@ function drawMaskImpl(state, paths) {
 }
 
 
+const simpleWidthCache = {};
+
 export function getWidth(text, font, fontSize) {
-    const path = getFont(font).getPath(text, 0, 0, fontSize);
-    const bbox = path.getBoundingBox();
-    return (bbox.x2 - bbox.x1);
+    const k = [text, font, fontSize.toString()].join('..');
+    if (!(k in simpleWidthCache)) {
+        const path = getFont(font).getPath(text, 0, 0, fontSize);
+        const bbox = path.getBoundingBox();
+        simpleWidthCache[k] = (bbox.x2 - bbox.x1);
+    }
+    return simpleWidthCache[k];
 }
 
 
@@ -102,44 +106,45 @@ export default function draw(state, text, font, fontSize, xOffset, yOffset, anch
         for (let i = 0; i < commands.length; i += 1) {
             const cmd = commands[i];
             switch (cmd.type) {
-            case 'M':
-                currentPosition = point(cmd.x, cmd.y);
-                firstMove = point(cmd.x, cmd.y);
-                break;
+                case 'M':
+                    currentPosition = point(cmd.x, cmd.y);
+                    firstMove = point(cmd.x, cmd.y);
+                    break;
 
-            case 'L':
-                extrudeLine(state, extrusion, xOffset, yOffset, currentPosition, point(cmd.x, cmd.y));
-                currentPosition = point(cmd.x, cmd.y);
-                break;
+                case 'L':
+                    extrudeLine(state, extrusion, xOffset, yOffset,
+                        currentPosition, point(cmd.x, cmd.y));
+                    currentPosition = point(cmd.x, cmd.y);
+                    break;
 
-            case 'C': {
-                const c1 = point(cmd.x1, cmd.y1);
-                const c2 = point(cmd.x2, cmd.y2);
-                const p2 = point(cmd.x, cmd.y);
-                extrudeBezier(state, extrusion, xOffset, yOffset, currentPosition, c1, c2, p2);
-                currentPosition = p2;
-                break;
-            }
+                case 'C': {
+                    const c1 = point(cmd.x1, cmd.y1);
+                    const c2 = point(cmd.x2, cmd.y2);
+                    const p2 = point(cmd.x, cmd.y);
+                    extrudeBezier(state, extrusion, xOffset, yOffset, currentPosition, c1, c2, p2);
+                    currentPosition = p2;
+                    break;
+                }
 
-            case 'Q': {
-                const c1 = point(cmd.x1, cmd.y1);
-                const p2 = point(cmd.x, cmd.y);
-                extrudeQuadratic(state, extrusion, xOffset, yOffset, currentPosition, c1, p2);
-                currentPosition = p2;
-                break;
-            }
+                case 'Q': {
+                    const c1 = point(cmd.x1, cmd.y1);
+                    const p2 = point(cmd.x, cmd.y);
+                    extrudeQuadratic(state, extrusion, xOffset, yOffset, currentPosition, c1, p2);
+                    currentPosition = p2;
+                    break;
+                }
 
-            case 'Z':
-                extrudeLine(state, extrusion, xOffset, yOffset, currentPosition, firstMove);
-                currentPosition = firstMove;
-                break;
+                case 'Z':
+                    extrudeLine(state, extrusion, xOffset, yOffset, currentPosition, firstMove);
+                    currentPosition = firstMove;
+                    break;
 
-            default: break;
+                default: break;
             }
         }
     });
 
     const mask = drawMaskImpl(state, paths);
-    
+
     return { extrusion, mask };
 }

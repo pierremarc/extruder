@@ -28,11 +28,13 @@ var max = Math.max;
 var ContextBBox = function (_BaseContext) {
     _inherits(ContextBBox, _BaseContext);
 
-    function ContextBBox() {
+    function ContextBBox(width, height) {
         _classCallCheck(this, ContextBBox);
 
         var _this = _possibleConstructorReturn(this, (ContextBBox.__proto__ || Object.getPrototypeOf(ContextBBox)).call(this));
 
+        Object.defineProperty(_this, "width", { value: width });
+        Object.defineProperty(_this, "height", { value: height });
         _this.resultObject = {
             minx: Number.POSITIVE_INFINITY,
             miny: Number.POSITIVE_INFINITY,
@@ -132,7 +134,7 @@ var ContextBBox = function (_BaseContext) {
             return Math.ceil(this.resultObject.maxy);
         }
     }, {
-        key: 'width',
+        key: 'rectWidth',
         get: function get() {
             var _resultObject = this.resultObject,
                 minx = _resultObject.minx,
@@ -144,7 +146,7 @@ var ContextBBox = function (_BaseContext) {
             return Math.ceil(maxx - minx);
         }
     }, {
-        key: 'height',
+        key: 'rectHeight',
         get: function get() {
             var _resultObject2 = this.resultObject,
                 miny = _resultObject2.miny,

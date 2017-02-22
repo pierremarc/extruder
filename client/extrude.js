@@ -1,6 +1,7 @@
 
 import point from '../lib/point';
 import PaperContext from '../lib/ctx-paper';
+import BBoxContext from '../lib/ctx-bbox';
 import draw, { getWidth } from './draw';
 import {
     render,
@@ -11,13 +12,14 @@ import {
     lineTo,
     closePath,
     fill,
-    gs
+    gs,
 } from '../lib/operation';
 
 
 function extrudeLine(state, ctx, rect, x, y, text, font, fontSize, knockout) {
     const anchor = point(rect.minx, rect.miny);
     const { extrusion, mask } = draw(state, text, font, fontSize, x, y, anchor);
+    let ops = extrusion.concat(mask);
     if (knockout) {
         const paperEx = new PaperContext();
         const maskOps = [];
@@ -41,18 +43,15 @@ function extrudeLine(state, ctx, rect, x, y, text, font, fontSize, knockout) {
         masks.forEach((m) => {
             paperEx.substract(m);
         });
-        const knockoutOps = paperEx.exportOperations();
-        render(ctx, knockoutOps);
+        ops = paperEx.exportOperations();
     }
-    else {
-        render(ctx, extrusion.concat(mask));
-    }
+    render(ctx, ops);
 }
 
 
 function makeBackground(min, max, bg) {
     const ops = [];
-    if (bg !== 'transparent') {
+    if (false /*bg !== 'transparent'*/) {
         ops.push(save());
         ops.push(gs('fillStyle', bg));
         ops.push(moveTo(min));
@@ -67,92 +66,88 @@ function makeBackground(min, max, bg) {
 }
 
 
-function computeLines(lineWidth, text, font, fontSize, x, lines) {
+function computeLines(lineWidth, text, font, fontSize, lines) {
     if (text.length === 0) {
         return;
     }
 
-    const next = (i) => {
+    const next = (width, i) => {
         const tail = text.slice(i).trim();
-        lines.push(text.slice(0, i));
-        return computeLines(lineWidth, tail, font, fontSize, x, lines);
+        lines.push({
+            width,
+            text: text.slice(0, i),
+        });
+        return computeLines(lineWidth, tail, font, fontSize, lines);
     };
 
     let i;
     for (i = 1; i < text.length; i += 1) {
         if (text.charAt(i) === '\n') {
-                return next(Math.max(1, i + 1));
+            next(Math.floor(getWidth(text.slice(0, i - 1), font, fontSize)),
+                Math.max(1, i + 1));
+            return;
         }
-        else {
-            const seq = text.slice(0, i);
-            const absX = Math.floor(Math.abs(x));
-            const seqWidth = Math.floor(getWidth(seq, font, fontSize)) + absX;
-            if (seqWidth > lineWidth) {
-                return next(Math.max(1, i - 1));
-            }
+        const seq = text.slice(0, i);
+        const seqWidth = Math.floor(getWidth(seq, font, fontSize));
+        if (seqWidth > lineWidth) {
+            next(seqWidth, Math.max(1, i - 1));
+            return;
         }
     }
-    lines.push(text);
+    lines.push({
+        text,
+        width: Math.floor(getWidth(text, font, fontSize)),
+    });
 }
 
 export default function extrude(ctx, state, knockout = false) {
-    const { x, y, text, font, fontSize, lineHeightFactor, margin, width, height, colorBackground } = state;
-    const hScale = ctx.width / width;
-    const vScale = ctx.height / height;
-    let scale = 1;
-    let offset = point(0, 0);
+    const { x, y, text, font, fontSize,
+        lineHeightFactor, width, height, colorBackground } = state;
 
-    if (hScale < vScale) {
-        scale = hScale;
-        offset = point(0, (ctx.height - (height * scale)) / 2);
-    }
-    else {
-        scale = vScale;
-        offset = point((ctx.width - (width * scale)) / 2, 0);
-    }
-    const adjWidth = width * scale;
-    const adjHeight = height * scale;
-
-    const scaledMargin = margin * adjWidth; //Math.max(margin * adjWidth, margin * adjHeight);
-    const innerWidth = adjWidth - (scaledMargin); // * 2);
-    const innerHeight = adjHeight; // - (scaledMargin * 2);
-    const lineHeight = (fontSize * scale) * (lineHeightFactor || 1.2);
+    const offset = point(0, 0);
+    const lineHeight = fontSize * lineHeightFactor;
     const baseFactor = 0.8;
-    const left = offset.x + scaledMargin;
+    const left = offset.x;
     const top = offset.y;
-    
-    const lines = []; 
-    computeLines(innerWidth, text, font, fontSize * scale, x * scale, lines);
+
+    const lines = [];
+    const unionBox = {
+        width: 0,
+        height: 0,
+    };
+    computeLines(width, text, font, fontSize, lines);
 
 
     if (!font) {
-        return 0;
+        return null;
     }
 
     if (lines.length > 0) {
         render(ctx, makeBackground(
             offset,
-            point(offset.x + adjWidth, offset.y + adjHeight),
-            colorBackground
+            point(offset.x + width, offset.y + height),
+            colorBackground,
         ));
 
         const processLine = (line, idx) => {
-            if (line.length > 0) {
+            if (line.text.length > 0) {
                 const rect = {
                     minx: left,
                     miny: top + (idx * lineHeight) + (baseFactor * lineHeight),
                     maxx: left + innerWidth,
                     maxy: top + (idx * lineHeight),
                     width: innerWidth,
-                    height: lineHeight
+                    height: lineHeight,
                 };
                 extrudeLine(
-                    state, ctx, rect,
-                    x * scale, y * scale,
-                    `${line} `,
-                    font, fontSize * scale,
-                    knockout
+                    state, ctx, rect, x, y,
+                    `${line.text} `,
+                    font, fontSize,
+                    knockout,
                 );
+
+                unionBox.width = Math.max(line.width, unionBox.width);
+                unionBox.height = Math.max((idx + 1) * lineHeight, unionBox.height);
             }
         };
 
@@ -166,5 +161,6 @@ export default function extrude(ctx, state, knockout = false) {
         }
     }
 
-    return (lines.length * (fontSize * scale) * (lineHeightFactor || 1.2));
+    // const computedHeight = lines.length * fontSize * (lineHeightFactor || 1.2);
+    return unionBox;
 }

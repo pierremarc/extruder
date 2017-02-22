@@ -18,7 +18,7 @@ var _operation = require('./operation');
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 function isZero(d) {
-    return !!(d < 0.0000001 && d > 0.0000001);
+    return !!(d < 0.0000001 && d > -0.0000001);
 }
 
 function getPoint(p1, c1, c2, p2, t) {
@@ -92,24 +92,27 @@ function getMarker(p1, c1, c2, p2, t) {
     return [b, r0, r1, q0, q1, q2];
 }
 
-function extrudeLine(ops, x, y, p1, p2) {
-    var color = (0, _state.getState)('colorExtrusion', 'rgba(0,0,0,1)');
+function extrudeLine(state, ops, x, y, p1, p2) {
+    var color = state.colorExtrusion;
     ops.push((0, _operation.save)());
     ops.push((0, _operation.gs)('fillStyle', color));
     ops.push((0, _operation.gs)('strokeStyle', color));
-    ops.push((0, _operation.gs)('lineWidth', 1));
+    ops.push((0, _operation.gs)('lineWidth', state.extrusionLineWidth || 0.5));
     ops.push((0, _operation.begin)());
     ops.push((0, _operation.moveTo)(p1));
     ops.push((0, _operation.lineTo)(p2));
     ops.push((0, _operation.lineTo)((0, _point2.default)(p2.x + x, p2.y + y)));
     ops.push((0, _operation.lineTo)((0, _point2.default)(p1.x + x, p1.y + y)));
     ops.push((0, _operation.closePath)());
-    ops.push((0, _operation.fillAndStroke)());
-    // ops.push(fill());
+    if (isZero(state.extrusionLineWidth)) {
+        ops.push((0, _operation.fill)());
+    } else {
+        ops.push((0, _operation.fillAndStroke)());
+    }
     ops.push((0, _operation.restore)());
 }
 
-function extrudeBezierSplit(ops, bz, t, x, y) {
+function extrudeBezierSplit(state, ops, bz, t, x, y) {
     var p1 = bz[BZ.P1];
     var c1 = p1.lerp(bz[BZ.C1], t);
     var mark = getMarker(bz[BZ.P1], bz[BZ.C1], bz[BZ.C2], bz[BZ.P2], t);
@@ -131,30 +134,34 @@ function extrudeBezierSplit(ops, bz, t, x, y) {
     ops.push((0, _operation.lineTo)(xp2));
     ops.push((0, _operation.cubicTo)(xc2, xc1, xp1));
     ops.push((0, _operation.closePath)());
-    ops.push((0, _operation.fillAndStroke)());
+    if (isZero(state.extrusionLineWidth)) {
+        ops.push((0, _operation.fill)());
+    } else {
+        ops.push((0, _operation.fillAndStroke)());
+    }
 
     return [p2, mark[MRK.R1], bz[BZ.C2].lerp(bz[BZ.P2], t), bz[BZ.P2]];
 }
 
-function extrudeBezier(ops, x, y, p1, c1, c2, p2) {
-    var color = (0, _state.getState)('colorExtrusion', 'rgba(0,0,0,1)');
-    var numSplit = (0, _state.getState)('numSplit', 6);
+function extrudeBezier(state, ops, x, y, p1, c1, c2, p2) {
+    var color = state.colorExtrusion;
+    var numSplit = state.numSplit;
 
     ops.push((0, _operation.save)());
     ops.push((0, _operation.gs)('fillStyle', color));
     ops.push((0, _operation.gs)('strokeStyle', color));
-    ops.push((0, _operation.gs)('lineWidth', 0));
+    ops.push((0, _operation.gs)('lineWidth', state.extrusionLineWidth || 0.5));
 
     var step = 1 / numSplit;
     var bz = [p1, c1, c2, p2];
     for (var i = 1; i < numSplit + 1; i += 1) {
         var t = i * step;
         if (t > 1) {
-            extrudeBezierSplit(ops, bz, 1, x, y);
+            extrudeBezierSplit(state, ops, bz, 1, x, y);
             break;
         }
-        extrudeBezierSplit(ops, bz, t * 1.05, x, y);
-        bz = extrudeBezierSplit([], bz, t, x, y);
+        extrudeBezierSplit(state, ops, bz, t * 1.2, x, y);
+        bz = extrudeBezierSplit(state, [], bz, t, x, y);
         if (numSplit - i > 0) {
             step = 1 / (numSplit - i);
         }
@@ -163,8 +170,8 @@ function extrudeBezier(ops, x, y, p1, c1, c2, p2) {
     ops.push((0, _operation.restore)());
 }
 
-function extrudeQuadratic(ops, x, y, p1, c1, p2) {
-    extrudeBezier(ops, x, y, p1, p1.lerp(c1, 2 / 3), p2.lerp(c1, 2 / 3), p2);
+function extrudeQuadratic(state, ops, x, y, p1, c1, p2) {
+    extrudeBezier(state, ops, x, y, p1, p1.lerp(c1, 2 / 3), p2.lerp(c1, 2 / 3), p2);
 }
 
 exports.extrudeLine = extrudeLine;

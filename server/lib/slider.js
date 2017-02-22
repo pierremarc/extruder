@@ -222,7 +222,7 @@ var styles = {
     },
 
     input: {
-        flex: '0 10 0%'
+        flex: '0 10 7%'
     }
 };
 

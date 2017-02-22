@@ -1,5 +1,5 @@
 
-import { getState, setState } from '../lib/state';
+import { setState } from '../lib/state';
 import { createElement, appendText, px } from '../lib/dom';
 import config from './config';
 

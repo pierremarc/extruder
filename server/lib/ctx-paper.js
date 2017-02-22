@@ -120,6 +120,7 @@ var ContextPaper = function (_BaseContext) {
             var subs = [];
             var mask = ref.mask.clone({ insert: false, deep: true });
             this.paths.forEach(function (path) {
+                path.closePath();
                 var cp = path.clone({ insert: false, deep: true });
                 if (mask.intersects(cp)) {
                     subs.push(cp.subtract(mask));
@@ -206,10 +207,14 @@ var ContextPaper = function (_BaseContext) {
     }, {
         key: 'begin',
         value: function begin(opArg) {
-            if (this.isMask && !this.isStarted) {
-                this.storeOp(opArg);
-                this.paths.push(new _paper.CompoundPath());
-                this.isStarted = true;
+            if (this.isMask) {
+                if (!this.isStarted) {
+                    this.storeOp(opArg);
+                    this.paths.push(new _paper.CompoundPath());
+                    this.isStarted = true;
+                } else {
+                    this.currentPath.closePath();
+                }
             } else {
                 this.storeOp(opArg);
                 this.paths.push(new _paper.Path());

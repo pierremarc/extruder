@@ -1,7 +1,7 @@
 
 import 'whatwg-fetch';
 import { saveAs } from 'file-saver';
-import { assign } from "lodash/fp";
+import { assign } from 'lodash/fp';
 import ContextCanvas from '../lib/ctx-canvas';
 import ContextStore from '../lib/ctx-store';
 import ContextBBox from '../lib/ctx-bbox';
@@ -11,15 +11,14 @@ import {
     createElement,
     appendText,
     addClass,
-    removeClass
+    removeClass,
 } from '../lib/dom';
 import extrude from './extrude';
 
 
-
 function createfontItem(font) {
     const currentFont = getState('font', '');
-    
+
     const elem = createElement('div', { class: 'tool-font-item clickable' });
     if (font.identifier === currentFont) {
         addClass(elem, 'tool-font-item-selected');
@@ -42,10 +41,10 @@ function createfontItem(font) {
 
 function wrapTool(name, fn, ...args) {
     const box = createElement('div', {
-        class: `tool tool-${name}`
+        class: `tool tool-${name}`,
     });
     const title = createElement('div', {
-        class: 'tool-title'
+        class: 'tool-title',
     });
     appendText(title, name);
     box.appendChild(title);
@@ -91,7 +90,7 @@ function textTool(box) {
 function exportButton(label, handler) {
     const button = createElement('button', {
         class: 'button',
-        type: 'button'
+        type: 'button',
     });
     appendText(button, label);
     button.addEventListener('click', handler);
@@ -100,31 +99,31 @@ function exportButton(label, handler) {
 
 
 function getAdjustedState(localState) {
-    const bboxState = assign(localState, {colorBackground: "transparent"});
+    const bboxState = assign(localState, { colorBackground: 'transparent' });
     const bbox = new ContextBBox(bboxState.width, bboxState.height);
-    const h = extrude(bbox, bboxState);
-    const w = bbox.rectWidth;
-    
+    const sz = extrude(bbox, bboxState);
+    // const w = bbox.rectWidth;
+
     return assign(localState, {
-        width:  w + (2 * w * localState.margin),
-        height: h + (2 * h * localState.margin)
+        width: sz.width,
+        height: sz.height,
     });
 }
 
 function exportTool(box) {
     const wrap0 = createElement('div', { class: 'tool-export-button-wrapper' });
     const wrap1 = createElement('div', { class: 'tool-export-button-wrapper' });
-    
-    
+
+
     box.appendChild(wrap0);
     box.appendChild(wrap1);
-    
+
     const offScreen = createElement('canvas');
     let localState = null;
     onStateChange((state) => {
         localState = state;
     });
-    
+
     wrap0.appendChild(exportButton('PNG', () => {
         if (localState) {
             const state = getAdjustedState(localState);
@@ -141,36 +140,35 @@ function exportTool(box) {
             }
         }
     }));
-    
-    const pdfHandler = (knockout) => (e) => {
+
+    const pdfHandler = knockout => () => {
         if (localState) {
             const state = getAdjustedState(localState);
             state.extrusionLineWidth = 0;
             state.maskLineWidth = 0;
             const ctx = new ContextStore(state.width, state.height);
-            if (extrude(ctx, state, knockout) > 0) {
+            const extResult = extrude(ctx, state, knockout);
+            if (extResult !== null) {
                 const data = {
                     width: state.width,
                     height: state.height,
                     operations: ctx.operations,
-                }
+                };
                 fetch('/pdf', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify(data)
+                    body: JSON.stringify(data),
                 })
-                .then((response) => {
-                    return response.blob();
-                })
-                .then((blob) => {
-                    const fn = knockout ? 'extruder-knockout.pdf' : 'extruder.pdf';
-                    saveAs(blob, fn);
-                });
+                    .then(response => response.blob())
+                    .then((blob) => {
+                        const fn = knockout ? 'shadowtype-knockout.pdf' : 'shadowtype.pdf';
+                        saveAs(blob, fn);
+                    });
                 // exportPDF.href = offScreen.toDataURL('image/png');
             }
         }
     };
-    
+
     wrap1.appendChild(exportButton('PDF', pdfHandler(false)));
     wrap1.appendChild(exportButton('PDF (knockout)', pdfHandler(true)));
 }
@@ -182,8 +180,8 @@ export default function install(fonts) {
     const exportBox = wrapTool('export', exportTool);
     // const xyBox = wrapTool('xy', xyTool);
     // const extentBox = wrapTool('size', extentTool);
-    
-    
+
+
     [textBox, fontBox, exportBox].forEach(box => sidebar.appendChild(box));
     body().appendChild(sidebar);
     // body().appendChild(xyBox);

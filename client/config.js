@@ -7,10 +7,10 @@ export default {
         width: 1920,
         height: 1080,
         text: 'Welcome',
-        font: "Volkart-Light:JeremieHornus:1.200",
+        font: 'Volkart-Light:JeremieHornus:1.200',
         fontSize: 300,
         lineHeightFactor: 1.16,
-        margin: 0.05,
+        margin: 0,
         isMoving: false,
         startPos: null,
         numSplit: 32,
@@ -24,5 +24,5 @@ export default {
         '/fonts/Volkart/Volkart-Bold.otf',
         '/fonts/Volkart/Volkart-Extrabold.otf',
     ],
-    palette: ['#da291c', '#ffffff', '#dde1e4', '#768692', '#000000']
+    palette: ['#da291c', '#ffffff', '#dde1e4', '#768692', '#000000'],
 };
