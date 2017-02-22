@@ -59,7 +59,7 @@
 /******/ 	
 /******/ 	
 /******/ 	var hotApplyOnUpdate = true;
-/******/ 	var hotCurrentHash = "09b5720fff9ee32c3ecd"; // eslint-disable-line no-unused-vars
+/******/ 	var hotCurrentHash = "d63b11f47bff9a75877c"; // eslint-disable-line no-unused-vars
 /******/ 	var hotCurrentModuleData = {};
 /******/ 	var hotMainModule = true; // eslint-disable-line no-unused-vars
 /******/ 	var hotCurrentParents = []; // eslint-disable-line no-unused-vars
@@ -1124,15 +1124,6 @@ var ContextPaper = function (_BaseContext) {
                 } else {
                     subs.push(path);
                 }
-                // const sub = ref.paths.reduce((path, mask) => {
-                //     const cp = path.clone({ insert: false, deep: true });
-                //     const cm = mask.clone({ insert: false, deep: true });
-                //     if (cm.intersects(cp)) {
-                //         return cp.subtract(cm);
-                //     }
-                //     return path;
-                // }, p);
-                // subs.push(sub);
             });
             this.paths = subs;
         }
@@ -37526,7 +37517,9 @@ module.exports = function(module) {
         numSplit: 32,
         colorExtrusion: 'black',
         colorBackground: 'white',
-        colorForeground: 'white'
+        colorForeground: 'white',
+        extrusionLineWidth: 1,
+        maskLineWidth: 4
     },
     fonts: ['/fonts/Volkart/Volkart-Light.otf', '/fonts/Volkart/Volkart-Regular.otf', '/fonts/Volkart/Volkart-Bold.otf', '/fonts/Volkart/Volkart-Extrabold.otf'],
     palette: ['#da291c', '#ffffff', '#dde1e4', '#768692', '#000000']
@@ -37775,7 +37768,7 @@ function computeLines(lineWidth, text, font, fontSize, lines) {
     };
 
     var i = void 0;
-    for (i = 1; i < text.length; i += 1) {
+    for (i = 1; i <= text.length; i += 1) {
         if (text.charAt(i) === '\n') {
             next(Math.floor(__webpack_require__.i(__WEBPACK_IMPORTED_MODULE_2__draw__["b" /* getWidth */])(text.slice(0, i - 1), font, fontSize)), Math.max(1, i + 1));
             return;
@@ -38060,18 +38053,18 @@ function withContext(canvas, ss, fn) {
     rawCtx.save();
 
     // rawCtx.setTransform(0.9, 0, 0, 0.9, canvas.width * 0.05, canvas.height * 0.05);
-    rawCtx.strokeStyle = '#60A8FF';
-    rawCtx.lineWidth = 0.5;
-    rawCtx.beginPath();
-    rawCtx.moveTo(offset.x, offset.y);
-    rawCtx.lineTo(offset.x + width, offset.y);
-    rawCtx.lineTo(offset.x + width, offset.y + height);
-    rawCtx.lineTo(offset.x, offset.y + height);
-    rawCtx.closePath();
+    // rawCtx.strokeStyle = '#60A8FF';
+    // rawCtx.lineWidth = 0.5;
+    // rawCtx.beginPath();
+    // rawCtx.moveTo(offset.x, offset.y);
+    // rawCtx.lineTo(offset.x + width, offset.y);
+    // rawCtx.lineTo(offset.x + width, offset.y + height);
+    // rawCtx.lineTo(offset.x, offset.y + height);
+    // rawCtx.closePath();
 
-    // rawCtx.rect(offset.x, offset.y, width, height);
-    // rawCtx.clip();
-    rawCtx.stroke();
+    // // rawCtx.rect(offset.x, offset.y, width, height);
+    // // rawCtx.clip();
+    // rawCtx.stroke();
 
     rawCtx.setTransform(scale, 0, 0, scale, offset.x, offset.y);
 

@@ -56,7 +56,7 @@ function computeLines(lineWidth, text, font, fontSize, lines) {
     };
 
     let i;
-    for (i = 1; i < text.length; i += 1) {
+    for (i = 1; i <= text.length; i += 1) {
         if (text.charAt(i) === '\n') {
             next(Math.floor(getWidth(text.slice(0, i - 1), font, fontSize)),
                 Math.max(1, i + 1));

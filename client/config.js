@@ -17,6 +17,8 @@ export default {
         colorExtrusion: 'black',
         colorBackground: 'white',
         colorForeground: 'white',
+        extrusionLineWidth: 1,
+        maskLineWidth: 4,
     },
     fonts: [
         '/fonts/Volkart/Volkart-Light.otf',

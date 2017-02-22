@@ -200,18 +200,18 @@ function withContext(canvas, ss, fn) {
     rawCtx.save();
 
     // rawCtx.setTransform(0.9, 0, 0, 0.9, canvas.width * 0.05, canvas.height * 0.05);
-    rawCtx.strokeStyle = '#60A8FF';
-    rawCtx.lineWidth = 0.5;
-    rawCtx.beginPath();
-    rawCtx.moveTo(offset.x, offset.y);
-    rawCtx.lineTo(offset.x + width, offset.y);
-    rawCtx.lineTo(offset.x + width, offset.y + height);
-    rawCtx.lineTo(offset.x, offset.y + height);
-    rawCtx.closePath();
+    // rawCtx.strokeStyle = '#60A8FF';
+    // rawCtx.lineWidth = 0.5;
+    // rawCtx.beginPath();
+    // rawCtx.moveTo(offset.x, offset.y);
+    // rawCtx.lineTo(offset.x + width, offset.y);
+    // rawCtx.lineTo(offset.x + width, offset.y + height);
+    // rawCtx.lineTo(offset.x, offset.y + height);
+    // rawCtx.closePath();
 
-    // rawCtx.rect(offset.x, offset.y, width, height);
-    // rawCtx.clip();
-    rawCtx.stroke();
+    // // rawCtx.rect(offset.x, offset.y, width, height);
+    // // rawCtx.clip();
+    // rawCtx.stroke();
 
     rawCtx.setTransform(scale, 0, 0, scale, offset.x, offset.y);
 
