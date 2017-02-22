@@ -59,7 +59,7 @@
 /******/ 	
 /******/ 	
 /******/ 	var hotApplyOnUpdate = true;
-/******/ 	var hotCurrentHash = "ebafe7b20b2d5c9ebaf5"; // eslint-disable-line no-unused-vars
+/******/ 	var hotCurrentHash = "d4bea4935e6732c295d8"; // eslint-disable-line no-unused-vars
 /******/ 	var hotCurrentModuleData = {};
 /******/ 	var hotMainModule = true; // eslint-disable-line no-unused-vars
 /******/ 	var hotCurrentParents = []; // eslint-disable-line no-unused-vars
@@ -801,6 +801,11 @@ var BaseContext = function () {
         value: function fillAndStroke() {
             __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0_lodash_fp__["noop"])();
         }
+    }, {
+        key: 'transform',
+        value: function transform() {
+            __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0_lodash_fp__["noop"])();
+        }
 
         /* eslint-enable */
 
@@ -828,170 +833,6 @@ var BaseContext = function () {
 }();
 
 /* harmony default export */ __webpack_exports__["a"] = BaseContext;
-
-/***/ }),
-
-/***/ "../lib/ctx-bbox.js":
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_lodash_fp__ = __webpack_require__("../node_modules/lodash/fp.js");
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_lodash_fp___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_0_lodash_fp__);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__ctx_base__ = __webpack_require__("../lib/ctx-base.js");
-var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
-
-function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
-
-function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
-
-function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
-
-
-
-
-var debug = __webpack_require__("../node_modules/debug/src/browser.js")('extruder');
-
-var min = Math.min;
-var max = Math.max;
-
-var ContextBBox = function (_BaseContext) {
-    _inherits(ContextBBox, _BaseContext);
-
-    function ContextBBox(width, height) {
-        _classCallCheck(this, ContextBBox);
-
-        var _this = _possibleConstructorReturn(this, (ContextBBox.__proto__ || Object.getPrototypeOf(ContextBBox)).call(this));
-
-        Object.defineProperty(_this, "width", { value: width });
-        Object.defineProperty(_this, "height", { value: height });
-        _this.resultObject = {
-            minx: Number.POSITIVE_INFINITY,
-            miny: Number.POSITIVE_INFINITY,
-            maxx: Number.NEGATIVE_INFINITY,
-            maxy: Number.NEGATIVE_INFINITY
-        };
-        return _this;
-    }
-
-    _createClass(ContextBBox, [{
-        key: 'updateRef',
-        value: function updateRef() {
-            var _this2 = this;
-
-            for (var _len = arguments.length, args = Array(_len), _key = 0; _key < _len; _key++) {
-                args[_key] = arguments[_key];
-            }
-
-            args.forEach(function (p) {
-                _this2.resultObject.minx = min(p.x, _this2.resultObject.minx);
-                _this2.resultObject.miny = min(p.y, _this2.resultObject.miny);
-
-                _this2.resultObject.maxx = max(p.x, _this2.resultObject.maxx);
-                _this2.resultObject.maxy = max(p.y, _this2.resultObject.maxy);
-                ['minx', 'miny', 'maxx', 'maxy'].forEach(function (k) {
-                    if (Number.isNaN(_this2.resultObject[k])) {
-                        throw new Error('[updateRef] ' + k + ' is  p [' + p.x + ', ' + p.y + ']');
-                    }
-                });
-            });
-        }
-    }, {
-        key: 'bezierCurveTo',
-        value: function bezierCurveTo() {
-            this.cubicTo.apply(this, arguments);
-        }
-    }, {
-        key: 'quadraticCurveTo',
-        value: function quadraticCurveTo() {
-            this.quadraticTo.apply(this, arguments);
-        }
-    }, {
-        key: 'moveTo',
-        value: function moveTo(p) {
-            this.updateRef(p);
-        }
-    }, {
-        key: 'lineTo',
-        value: function lineTo(p) {
-            this.updateRef(p);
-        }
-    }, {
-        key: 'cubicTo',
-        value: function cubicTo(c1, c2, p) {
-            this.updateRef(c1, c2, p);
-        }
-    }, {
-        key: 'quadraticTo',
-        value: function quadraticTo(c1, p) {
-            this.updateRef(c1, p);
-        }
-    }, {
-        key: 'result',
-        get: function get() {
-            return __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0_lodash_fp__["assign"])(this.resultObject, {});
-        }
-    }, {
-        key: 'minx',
-        get: function get() {
-            if (this.resultObject.minx === Number.POSITIVE_INFINITY) {
-                throw new Error('BoundingBoxNotSet');
-            }
-            return Math.floor(this.resultObject.minx);
-        }
-    }, {
-        key: 'miny',
-        get: function get() {
-            if (this.resultObject.miny === Number.POSITIVE_INFINITY) {
-                throw new Error('BoundingBoxNotSet');
-            }
-            return Math.floor(this.resultObject.miny);
-        }
-    }, {
-        key: 'maxx',
-        get: function get() {
-            if (this.resultObject.maxx === Number.NEGATIVE_INFINITY) {
-                throw new Error('BoundingBoxNotSet');
-            }
-            return Math.ceil(this.resultObject.maxx);
-        }
-    }, {
-        key: 'maxy',
-        get: function get() {
-            if (this.resultObject.maxy === Number.NEGATIVE_INFINITY) {
-                throw new Error('BoundingBoxNotSet');
-            }
-            return Math.ceil(this.resultObject.maxy);
-        }
-    }, {
-        key: 'rectWidth',
-        get: function get() {
-            var _resultObject = this.resultObject,
-                minx = _resultObject.minx,
-                maxx = _resultObject.maxx;
-
-            if (minx === Number.INFINITY || maxx === Number.NEGATIVE_INFINITY) {
-                throw new Error('BoundingBoxNotSet');
-            }
-            return Math.ceil(maxx - minx);
-        }
-    }, {
-        key: 'rectHeight',
-        get: function get() {
-            var _resultObject2 = this.resultObject,
-                miny = _resultObject2.miny,
-                maxy = _resultObject2.maxy;
-
-            if (miny === Number.INFINITY || maxy === Number.NEGATIVE_INFINITY) {
-                throw new Error('BoundingBoxNotSet');
-            }
-            return Math.ceil(maxy - miny);
-        }
-    }]);
-
-    return ContextBBox;
-}(__WEBPACK_IMPORTED_MODULE_1__ctx_base__["a" /* default */]);
-
-/* harmony default export */ __webpack_exports__["a"] = ContextBBox;
 
 /***/ }),
 
@@ -1309,15 +1150,15 @@ var ContextPaper = function (_BaseContext) {
         value: function exportOperations() {
             var ops = [];
             var mt = function mt(x, y) {
-                ops.push(__webpack_require__.i(__WEBPACK_IMPORTED_MODULE_2__lib_operation__["e" /* moveTo */])(__webpack_require__.i(__WEBPACK_IMPORTED_MODULE_3__point__["a" /* default */])(x, y)));
+                ops.push(__webpack_require__.i(__WEBPACK_IMPORTED_MODULE_2__lib_operation__["f" /* moveTo */])(__webpack_require__.i(__WEBPACK_IMPORTED_MODULE_3__point__["a" /* default */])(x, y)));
             };
 
             var lt = function lt(x, y) {
-                ops.push(__webpack_require__.i(__WEBPACK_IMPORTED_MODULE_2__lib_operation__["f" /* lineTo */])(__webpack_require__.i(__WEBPACK_IMPORTED_MODULE_3__point__["a" /* default */])(x, y)));
+                ops.push(__webpack_require__.i(__WEBPACK_IMPORTED_MODULE_2__lib_operation__["g" /* lineTo */])(__webpack_require__.i(__WEBPACK_IMPORTED_MODULE_3__point__["a" /* default */])(x, y)));
             };
 
             var ct = function ct(cx, cy, ccx, ccy, x, y) {
-                ops.push(__webpack_require__.i(__WEBPACK_IMPORTED_MODULE_2__lib_operation__["k" /* cubicTo */])(__webpack_require__.i(__WEBPACK_IMPORTED_MODULE_3__point__["a" /* default */])(cx, cy), __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_3__point__["a" /* default */])(ccx, ccy), __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_3__point__["a" /* default */])(x, y)));
+                ops.push(__webpack_require__.i(__WEBPACK_IMPORTED_MODULE_2__lib_operation__["h" /* cubicTo */])(__webpack_require__.i(__WEBPACK_IMPORTED_MODULE_3__point__["a" /* default */])(cx, cy), __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_3__point__["a" /* default */])(ccx, ccy), __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_3__point__["a" /* default */])(x, y)));
             };
 
             for (var i = 0; i < this.paths.length; i += 1) {
@@ -1328,14 +1169,14 @@ var ContextPaper = function (_BaseContext) {
                 if (path instanceof __WEBPACK_IMPORTED_MODULE_0_paper__["CompoundPath"]) {
                     console.warn('CompoundPath!');
                     path.children.forEach(function (c) {
-                        ops.push(__webpack_require__.i(__WEBPACK_IMPORTED_MODULE_2__lib_operation__["j" /* begin */])());
+                        ops.push(__webpack_require__.i(__WEBPACK_IMPORTED_MODULE_2__lib_operation__["e" /* begin */])());
                         drawSegments(c, mt, lt, ct);
-                        ops.push(__webpack_require__.i(__WEBPACK_IMPORTED_MODULE_2__lib_operation__["g" /* closePath */])());
+                        ops.push(__webpack_require__.i(__WEBPACK_IMPORTED_MODULE_2__lib_operation__["j" /* closePath */])());
                     });
                 } else {
-                    ops.push(__webpack_require__.i(__WEBPACK_IMPORTED_MODULE_2__lib_operation__["j" /* begin */])());
+                    ops.push(__webpack_require__.i(__WEBPACK_IMPORTED_MODULE_2__lib_operation__["e" /* begin */])());
                     drawSegments(path, mt, lt, ct);
-                    ops.push(__webpack_require__.i(__WEBPACK_IMPORTED_MODULE_2__lib_operation__["g" /* closePath */])());
+                    ops.push(__webpack_require__.i(__WEBPACK_IMPORTED_MODULE_2__lib_operation__["j" /* closePath */])());
                 }
             }
             return ops;
@@ -1544,6 +1385,11 @@ var ContextStore = function (_BaseContext) {
     }, {
         key: 'fillAndStroke',
         value: function fillAndStroke(op) {
+            this.operations.push(op);
+        }
+    }, {
+        key: 'transform',
+        value: function transform(a, b, c, d, e, f, op) {
             this.operations.push(op);
         }
     }]);
@@ -1766,18 +1612,18 @@ function extrudeLine(state, ops, x, y, p1, p2) {
     ops.push(__webpack_require__.i(__WEBPACK_IMPORTED_MODULE_2__operation__["d" /* gs */])('fillStyle', color));
     ops.push(__webpack_require__.i(__WEBPACK_IMPORTED_MODULE_2__operation__["d" /* gs */])('strokeStyle', color));
     ops.push(__webpack_require__.i(__WEBPACK_IMPORTED_MODULE_2__operation__["d" /* gs */])('lineWidth', state.extrusionLineWidth || 0.5));
-    ops.push(__webpack_require__.i(__WEBPACK_IMPORTED_MODULE_2__operation__["j" /* begin */])());
-    ops.push(__webpack_require__.i(__WEBPACK_IMPORTED_MODULE_2__operation__["e" /* moveTo */])(p1));
-    ops.push(__webpack_require__.i(__WEBPACK_IMPORTED_MODULE_2__operation__["f" /* lineTo */])(p2));
-    ops.push(__webpack_require__.i(__WEBPACK_IMPORTED_MODULE_2__operation__["f" /* lineTo */])(__webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__point__["a" /* default */])(p2.x + x, p2.y + y)));
-    ops.push(__webpack_require__.i(__WEBPACK_IMPORTED_MODULE_2__operation__["f" /* lineTo */])(__webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__point__["a" /* default */])(p1.x + x, p1.y + y)));
-    ops.push(__webpack_require__.i(__WEBPACK_IMPORTED_MODULE_2__operation__["g" /* closePath */])());
+    ops.push(__webpack_require__.i(__WEBPACK_IMPORTED_MODULE_2__operation__["e" /* begin */])());
+    ops.push(__webpack_require__.i(__WEBPACK_IMPORTED_MODULE_2__operation__["f" /* moveTo */])(p1));
+    ops.push(__webpack_require__.i(__WEBPACK_IMPORTED_MODULE_2__operation__["g" /* lineTo */])(p2));
+    ops.push(__webpack_require__.i(__WEBPACK_IMPORTED_MODULE_2__operation__["g" /* lineTo */])(__webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__point__["a" /* default */])(p2.x + x, p2.y + y)));
+    ops.push(__webpack_require__.i(__WEBPACK_IMPORTED_MODULE_2__operation__["g" /* lineTo */])(__webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__point__["a" /* default */])(p1.x + x, p1.y + y)));
+    ops.push(__webpack_require__.i(__WEBPACK_IMPORTED_MODULE_2__operation__["j" /* closePath */])());
     if (isZero(state.extrusionLineWidth)) {
-        ops.push(__webpack_require__.i(__WEBPACK_IMPORTED_MODULE_2__operation__["h" /* fill */])());
+        ops.push(__webpack_require__.i(__WEBPACK_IMPORTED_MODULE_2__operation__["m" /* fill */])());
     } else {
-        ops.push(__webpack_require__.i(__WEBPACK_IMPORTED_MODULE_2__operation__["m" /* fillAndStroke */])());
+        ops.push(__webpack_require__.i(__WEBPACK_IMPORTED_MODULE_2__operation__["k" /* fillAndStroke */])());
     }
-    ops.push(__webpack_require__.i(__WEBPACK_IMPORTED_MODULE_2__operation__["i" /* restore */])());
+    ops.push(__webpack_require__.i(__WEBPACK_IMPORTED_MODULE_2__operation__["l" /* restore */])());
 }
 
 function extrudeBezierSplit(state, ops, bz, t, x, y) {
@@ -1796,16 +1642,16 @@ function extrudeBezierSplit(state, ops, bz, t, x, y) {
         xc2 = _map2[2],
         xp2 = _map2[3];
 
-    ops.push(__webpack_require__.i(__WEBPACK_IMPORTED_MODULE_2__operation__["j" /* begin */])());
-    ops.push(__webpack_require__.i(__WEBPACK_IMPORTED_MODULE_2__operation__["e" /* moveTo */])(p1));
-    ops.push(__webpack_require__.i(__WEBPACK_IMPORTED_MODULE_2__operation__["k" /* cubicTo */])(c1, c2, p2));
-    ops.push(__webpack_require__.i(__WEBPACK_IMPORTED_MODULE_2__operation__["f" /* lineTo */])(xp2));
-    ops.push(__webpack_require__.i(__WEBPACK_IMPORTED_MODULE_2__operation__["k" /* cubicTo */])(xc2, xc1, xp1));
-    ops.push(__webpack_require__.i(__WEBPACK_IMPORTED_MODULE_2__operation__["g" /* closePath */])());
+    ops.push(__webpack_require__.i(__WEBPACK_IMPORTED_MODULE_2__operation__["e" /* begin */])());
+    ops.push(__webpack_require__.i(__WEBPACK_IMPORTED_MODULE_2__operation__["f" /* moveTo */])(p1));
+    ops.push(__webpack_require__.i(__WEBPACK_IMPORTED_MODULE_2__operation__["h" /* cubicTo */])(c1, c2, p2));
+    ops.push(__webpack_require__.i(__WEBPACK_IMPORTED_MODULE_2__operation__["g" /* lineTo */])(xp2));
+    ops.push(__webpack_require__.i(__WEBPACK_IMPORTED_MODULE_2__operation__["h" /* cubicTo */])(xc2, xc1, xp1));
+    ops.push(__webpack_require__.i(__WEBPACK_IMPORTED_MODULE_2__operation__["j" /* closePath */])());
     if (isZero(state.extrusionLineWidth)) {
-        ops.push(__webpack_require__.i(__WEBPACK_IMPORTED_MODULE_2__operation__["h" /* fill */])());
+        ops.push(__webpack_require__.i(__WEBPACK_IMPORTED_MODULE_2__operation__["m" /* fill */])());
     } else {
-        ops.push(__webpack_require__.i(__WEBPACK_IMPORTED_MODULE_2__operation__["m" /* fillAndStroke */])());
+        ops.push(__webpack_require__.i(__WEBPACK_IMPORTED_MODULE_2__operation__["k" /* fillAndStroke */])());
     }
 
     return [p2, mark[MRK.R1], bz[BZ.C2].lerp(bz[BZ.P2], t), bz[BZ.P2]];
@@ -1835,7 +1681,7 @@ function extrudeBezier(state, ops, x, y, p1, c1, c2, p2) {
         }
     }
 
-    ops.push(__webpack_require__.i(__WEBPACK_IMPORTED_MODULE_2__operation__["i" /* restore */])());
+    ops.push(__webpack_require__.i(__WEBPACK_IMPORTED_MODULE_2__operation__["l" /* restore */])());
 }
 
 function extrudeQuadratic(state, ops, x, y, p1, c1, p2) {
@@ -1908,18 +1754,20 @@ function message(text) {
 /* unused harmony export OP_FILL_STROKE */
 /* unused harmony export OP_SAVE */
 /* unused harmony export OP_RESTORE */
-/* harmony export (immutable) */ __webpack_exports__["j"] = begin;
-/* harmony export (immutable) */ __webpack_exports__["e"] = moveTo;
-/* harmony export (immutable) */ __webpack_exports__["f"] = lineTo;
-/* harmony export (immutable) */ __webpack_exports__["k"] = cubicTo;
-/* harmony export (immutable) */ __webpack_exports__["l"] = quadraticTo;
-/* harmony export (immutable) */ __webpack_exports__["g"] = closePath;
+/* unused harmony export OP_TRANSFORM */
+/* harmony export (immutable) */ __webpack_exports__["e"] = begin;
+/* harmony export (immutable) */ __webpack_exports__["f"] = moveTo;
+/* harmony export (immutable) */ __webpack_exports__["g"] = lineTo;
+/* harmony export (immutable) */ __webpack_exports__["h"] = cubicTo;
+/* harmony export (immutable) */ __webpack_exports__["i"] = quadraticTo;
+/* harmony export (immutable) */ __webpack_exports__["j"] = closePath;
 /* harmony export (immutable) */ __webpack_exports__["d"] = gs;
 /* unused harmony export stroke */
-/* harmony export (immutable) */ __webpack_exports__["h"] = fill;
-/* harmony export (immutable) */ __webpack_exports__["m"] = fillAndStroke;
+/* harmony export (immutable) */ __webpack_exports__["m"] = fill;
+/* harmony export (immutable) */ __webpack_exports__["k"] = fillAndStroke;
 /* harmony export (immutable) */ __webpack_exports__["c"] = save;
-/* harmony export (immutable) */ __webpack_exports__["i"] = restore;
+/* harmony export (immutable) */ __webpack_exports__["l"] = restore;
+/* harmony export (immutable) */ __webpack_exports__["n"] = transform;
 /* harmony export (immutable) */ __webpack_exports__["b"] = render;
 
 
@@ -1936,6 +1784,7 @@ var OP_FILL = 'F';
 var OP_FILL_STROKE = 'FS';
 var OP_SAVE = 'SA';
 var OP_RESTORE = 'R';
+var OP_TRANSFORM = 'T';
 
 function begin() {
     return [OP_BEGIN];
@@ -1983,6 +1832,10 @@ function save() {
 
 function restore() {
     return [OP_RESTORE];
+}
+
+function transform(a, b, c, d, e, f) {
+    return [OP_TRANSFORM, a, b, c, d, e, f];
 }
 
 // rendering
@@ -2043,6 +1896,10 @@ function renderRestore(ctx, op) {
     ctx.restore(op);
 }
 
+function renderTransform(ctx, op) {
+    ctx.transform(op[1], op[2], op[3], op[4], op[5], op[6], op);
+}
+
 function render(ctx, operations) {
     operations.forEach(function (op) {
         var opCode = op[0];
@@ -2071,6 +1928,13 @@ function render(ctx, operations) {
             renderSave(ctx, op);
         } else if (OP_RESTORE === opCode) {
             renderRestore(ctx, op);
+        } else if (OP_TRANSFORM === opCode) {
+            try {
+                renderTransform(ctx, op);
+            } catch (e) {
+                console.error('op', op);
+                console.error(e);
+            }
         }
     });
 }
@@ -37681,6 +37545,7 @@ module.exports = function(module) {
 /* harmony export (immutable) */ __webpack_exports__["b"] = getWidth;
 /* unused harmony export drawMask */
 /* harmony export (immutable) */ __webpack_exports__["a"] = draw;
+/* harmony export (immutable) */ __webpack_exports__["c"] = drawBackground;
 
 
 
@@ -37699,17 +37564,17 @@ function drawMaskImpl(state, paths) {
     paths.forEach(function (path) {
         var commands = path.commands;
         var lastMove = null;
-        mask.push(__webpack_require__.i(__WEBPACK_IMPORTED_MODULE_1__lib_operation__["j" /* begin */])());
+        mask.push(__webpack_require__.i(__WEBPACK_IMPORTED_MODULE_1__lib_operation__["e" /* begin */])());
         for (var i = 0; i < commands.length; i += 1) {
             var cmd = commands[i];
             switch (cmd.type) {
                 case 'M':
                     lastMove = __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_2__lib_point__["a" /* default */])(cmd.x, cmd.y);
-                    mask.push(__webpack_require__.i(__WEBPACK_IMPORTED_MODULE_1__lib_operation__["e" /* moveTo */])(lastMove));
+                    mask.push(__webpack_require__.i(__WEBPACK_IMPORTED_MODULE_1__lib_operation__["f" /* moveTo */])(lastMove));
                     break;
 
                 case 'L':
-                    mask.push(__webpack_require__.i(__WEBPACK_IMPORTED_MODULE_1__lib_operation__["f" /* lineTo */])(__webpack_require__.i(__WEBPACK_IMPORTED_MODULE_2__lib_point__["a" /* default */])(cmd.x, cmd.y)));
+                    mask.push(__webpack_require__.i(__WEBPACK_IMPORTED_MODULE_1__lib_operation__["g" /* lineTo */])(__webpack_require__.i(__WEBPACK_IMPORTED_MODULE_2__lib_point__["a" /* default */])(cmd.x, cmd.y)));
                     break;
 
                 case 'C':
@@ -37717,7 +37582,7 @@ function drawMaskImpl(state, paths) {
                         var c1 = __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_2__lib_point__["a" /* default */])(cmd.x1, cmd.y1);
                         var c2 = __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_2__lib_point__["a" /* default */])(cmd.x2, cmd.y2);
                         var p2 = __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_2__lib_point__["a" /* default */])(cmd.x, cmd.y);
-                        mask.push(__webpack_require__.i(__WEBPACK_IMPORTED_MODULE_1__lib_operation__["k" /* cubicTo */])(c1, c2, p2));
+                        mask.push(__webpack_require__.i(__WEBPACK_IMPORTED_MODULE_1__lib_operation__["h" /* cubicTo */])(c1, c2, p2));
                         break;
                     }
 
@@ -37725,22 +37590,22 @@ function drawMaskImpl(state, paths) {
                     {
                         var _c = __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_2__lib_point__["a" /* default */])(cmd.x1, cmd.y1);
                         var _p = __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_2__lib_point__["a" /* default */])(cmd.x, cmd.y);
-                        mask.push(__webpack_require__.i(__WEBPACK_IMPORTED_MODULE_1__lib_operation__["l" /* quadraticTo */])(_c, _p));
+                        mask.push(__webpack_require__.i(__WEBPACK_IMPORTED_MODULE_1__lib_operation__["i" /* quadraticTo */])(_c, _p));
                         break;
                     }
 
                 case 'Z':
-                    mask.push(__webpack_require__.i(__WEBPACK_IMPORTED_MODULE_1__lib_operation__["f" /* lineTo */])(lastMove));
-                    mask.push(__webpack_require__.i(__WEBPACK_IMPORTED_MODULE_1__lib_operation__["g" /* closePath */])());
+                    mask.push(__webpack_require__.i(__WEBPACK_IMPORTED_MODULE_1__lib_operation__["g" /* lineTo */])(lastMove));
+                    mask.push(__webpack_require__.i(__WEBPACK_IMPORTED_MODULE_1__lib_operation__["j" /* closePath */])());
                     break;
 
                 default:
                     break;
             }
         }
-        mask.push(__webpack_require__.i(__WEBPACK_IMPORTED_MODULE_1__lib_operation__["m" /* fillAndStroke */])());
+        mask.push(__webpack_require__.i(__WEBPACK_IMPORTED_MODULE_1__lib_operation__["k" /* fillAndStroke */])());
     });
-    mask.push(__webpack_require__.i(__WEBPACK_IMPORTED_MODULE_1__lib_operation__["i" /* restore */])());
+    mask.push(__webpack_require__.i(__WEBPACK_IMPORTED_MODULE_1__lib_operation__["l" /* restore */])());
 
     return mask;
 }
@@ -37822,17 +37687,32 @@ function draw(state, text, font, fontSize, xOffset, yOffset) {
     return { extrusion: extrusion, mask: mask };
 }
 
+function drawBackground(min, max, bg) {
+    var ops = [];
+    if (bg !== 'transparent') {
+        ops.push(__webpack_require__.i(__WEBPACK_IMPORTED_MODULE_1__lib_operation__["c" /* save */])());
+        ops.push(__webpack_require__.i(__WEBPACK_IMPORTED_MODULE_1__lib_operation__["d" /* gs */])('fillStyle', bg));
+        ops.push(__webpack_require__.i(__WEBPACK_IMPORTED_MODULE_1__lib_operation__["f" /* moveTo */])(min));
+        ops.push(__webpack_require__.i(__WEBPACK_IMPORTED_MODULE_1__lib_operation__["g" /* lineTo */])(__webpack_require__.i(__WEBPACK_IMPORTED_MODULE_2__lib_point__["a" /* default */])(max.x, min.y)));
+        ops.push(__webpack_require__.i(__WEBPACK_IMPORTED_MODULE_1__lib_operation__["g" /* lineTo */])(__webpack_require__.i(__WEBPACK_IMPORTED_MODULE_2__lib_point__["a" /* default */])(max.x, max.y)));
+        ops.push(__webpack_require__.i(__WEBPACK_IMPORTED_MODULE_1__lib_operation__["g" /* lineTo */])(__webpack_require__.i(__WEBPACK_IMPORTED_MODULE_2__lib_point__["a" /* default */])(min.x, max.y)));
+        ops.push(__webpack_require__.i(__WEBPACK_IMPORTED_MODULE_1__lib_operation__["j" /* closePath */])());
+        ops.push(__webpack_require__.i(__WEBPACK_IMPORTED_MODULE_1__lib_operation__["m" /* fill */])());
+        ops.push(__webpack_require__.i(__WEBPACK_IMPORTED_MODULE_1__lib_operation__["l" /* restore */])());
+    }
+    return ops;
+}
+
 /***/ }),
 
 /***/ "./extrude.js":
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__font__ = __webpack_require__("./font.js");
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__lib_point__ = __webpack_require__("../lib/point.js");
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__lib_ctx_paper__ = __webpack_require__("../lib/ctx-paper.js");
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__draw__ = __webpack_require__("./draw.js");
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_4__lib_operation__ = __webpack_require__("../lib/operation.js");
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__lib_point__ = __webpack_require__("../lib/point.js");
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__lib_ctx_paper__ = __webpack_require__("../lib/ctx-paper.js");
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__draw__ = __webpack_require__("./draw.js");
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__lib_operation__ = __webpack_require__("../lib/operation.js");
 /* harmony export (immutable) */ __webpack_exports__["a"] = extrude;
 
 
@@ -37840,22 +37720,21 @@ function draw(state, text, font, fontSize, xOffset, yOffset) {
 
 
 
-
 function extrudeLine(state, ctx, rect, x, y, text, font, fontSize, knockout) {
-    var anchor = __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_1__lib_point__["a" /* default */])(rect.minx, rect.miny);
+    var anchor = __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__lib_point__["a" /* default */])(rect.minx, rect.miny);
 
-    var _draw = __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_3__draw__["a" /* default */])(state, text, font, fontSize, x, y, anchor),
+    var _draw = __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_2__draw__["a" /* default */])(state, text, font, fontSize, x, y, anchor),
         extrusion = _draw.extrusion,
         mask = _draw.mask;
 
     var ops = extrusion.concat(mask);
     if (knockout) {
         (function () {
-            var paperEx = new __WEBPACK_IMPORTED_MODULE_2__lib_ctx_paper__["a" /* default */]();
+            var paperEx = new __WEBPACK_IMPORTED_MODULE_1__lib_ctx_paper__["a" /* default */]();
             var maskOps = [];
             mask.forEach(function (operation) {
                 var opCode = operation[0];
-                if (opCode === __WEBPACK_IMPORTED_MODULE_4__lib_operation__["a" /* OP_BEGIN */]) {
+                if (opCode === __WEBPACK_IMPORTED_MODULE_3__lib_operation__["a" /* OP_BEGIN */]) {
                     maskOps.push([]);
                 }
                 if (maskOps.length > 0) {
@@ -37864,35 +37743,19 @@ function extrudeLine(state, ctx, rect, x, y, text, font, fontSize, knockout) {
             });
             var masks = [];
             maskOps.forEach(function (maskOp) {
-                var m = new __WEBPACK_IMPORTED_MODULE_2__lib_ctx_paper__["a" /* default */](true);
-                __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_4__lib_operation__["b" /* render */])(m, maskOp);
+                var m = new __WEBPACK_IMPORTED_MODULE_1__lib_ctx_paper__["a" /* default */](true);
+                __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_3__lib_operation__["b" /* render */])(m, maskOp);
                 masks.push(m);
             });
 
-            __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_4__lib_operation__["b" /* render */])(paperEx, extrusion);
+            __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_3__lib_operation__["b" /* render */])(paperEx, extrusion);
             masks.forEach(function (m) {
                 paperEx.substract(m);
             });
             ops = paperEx.exportOperations();
         })();
     }
-    __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_4__lib_operation__["b" /* render */])(ctx, ops);
-}
-
-function makeBackground(min, max, bg) {
-    var ops = [];
-    if (bg !== 'transparent') {
-        ops.push(__webpack_require__.i(__WEBPACK_IMPORTED_MODULE_4__lib_operation__["c" /* save */])());
-        ops.push(__webpack_require__.i(__WEBPACK_IMPORTED_MODULE_4__lib_operation__["d" /* gs */])('fillStyle', bg));
-        ops.push(__webpack_require__.i(__WEBPACK_IMPORTED_MODULE_4__lib_operation__["e" /* moveTo */])(min));
-        ops.push(__webpack_require__.i(__WEBPACK_IMPORTED_MODULE_4__lib_operation__["f" /* lineTo */])(__webpack_require__.i(__WEBPACK_IMPORTED_MODULE_1__lib_point__["a" /* default */])(max.x, min.y)));
-        ops.push(__webpack_require__.i(__WEBPACK_IMPORTED_MODULE_4__lib_operation__["f" /* lineTo */])(__webpack_require__.i(__WEBPACK_IMPORTED_MODULE_1__lib_point__["a" /* default */])(max.x, max.y)));
-        ops.push(__webpack_require__.i(__WEBPACK_IMPORTED_MODULE_4__lib_operation__["f" /* lineTo */])(__webpack_require__.i(__WEBPACK_IMPORTED_MODULE_1__lib_point__["a" /* default */])(min.x, max.y)));
-        ops.push(__webpack_require__.i(__WEBPACK_IMPORTED_MODULE_4__lib_operation__["g" /* closePath */])());
-        ops.push(__webpack_require__.i(__WEBPACK_IMPORTED_MODULE_4__lib_operation__["h" /* fill */])());
-        ops.push(__webpack_require__.i(__WEBPACK_IMPORTED_MODULE_4__lib_operation__["i" /* restore */])());
-    }
-    return ops;
+    __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_3__lib_operation__["b" /* render */])(ctx, ops);
 }
 
 function computeLines(lineWidth, text, font, fontSize, lines) {
@@ -37912,11 +37775,11 @@ function computeLines(lineWidth, text, font, fontSize, lines) {
     var i = void 0;
     for (i = 1; i < text.length; i += 1) {
         if (text.charAt(i) === '\n') {
-            next(Math.floor(__webpack_require__.i(__WEBPACK_IMPORTED_MODULE_3__draw__["b" /* getWidth */])(text.slice(0, i - 1), font, fontSize)), Math.max(1, i + 1));
+            next(Math.floor(__webpack_require__.i(__WEBPACK_IMPORTED_MODULE_2__draw__["b" /* getWidth */])(text.slice(0, i - 1), font, fontSize)), Math.max(1, i + 1));
             return;
         }
         var seq = text.slice(0, i);
-        var seqWidth = Math.floor(__webpack_require__.i(__WEBPACK_IMPORTED_MODULE_3__draw__["b" /* getWidth */])(seq, font, fontSize));
+        var seqWidth = Math.floor(__webpack_require__.i(__WEBPACK_IMPORTED_MODULE_2__draw__["b" /* getWidth */])(seq, font, fontSize));
         if (seqWidth > lineWidth) {
             next(seqWidth, Math.max(1, i - 1));
             return;
@@ -37924,7 +37787,7 @@ function computeLines(lineWidth, text, font, fontSize, lines) {
     }
     lines.push({
         text: text,
-        width: Math.floor(__webpack_require__.i(__WEBPACK_IMPORTED_MODULE_3__draw__["b" /* getWidth */])(text, font, fontSize))
+        width: Math.floor(__webpack_require__.i(__WEBPACK_IMPORTED_MODULE_2__draw__["b" /* getWidth */])(text, font, fontSize))
     });
 }
 
@@ -37946,7 +37809,7 @@ function extrude(ctx, state) {
     // (which led me to see there were some other options for types in the browsers (typr, etc.))
 
     var ascent = 0.8;
-    var offset = __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_1__lib_point__["a" /* default */])(0, 0);
+    var offset = __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__lib_point__["a" /* default */])(0, 0);
     var lineHeight = fontSize * lineHeightFactor;
     var left = offset.x;
     var top = offset.y;
@@ -37962,7 +37825,7 @@ function extrude(ctx, state) {
     }
 
     if (lines.length > 0) {
-        __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_4__lib_operation__["b" /* render */])(ctx, makeBackground(offset, __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_1__lib_point__["a" /* default */])(offset.x + width, offset.y + height), colorBackground));
+        __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_3__lib_operation__["b" /* render */])(ctx, __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_2__draw__["c" /* drawBackground */])(offset, __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__lib_point__["a" /* default */])(offset.x + width, offset.y + height), colorBackground));
 
         var processLine = function processLine(line, idx) {
             if (line.text.length > 0) {
@@ -38484,13 +38347,15 @@ function palette(options) {
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_1_file_saver___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_1_file_saver__);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_2_lodash_fp__ = __webpack_require__("../node_modules/lodash/fp.js");
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_2_lodash_fp___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_2_lodash_fp__);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__lib_ctx_canvas__ = __webpack_require__("../lib/ctx-canvas.js");
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_4__lib_ctx_store__ = __webpack_require__("../lib/ctx-store.js");
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_5__lib_ctx_bbox__ = __webpack_require__("../lib/ctx-bbox.js");
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__lib_point__ = __webpack_require__("../lib/point.js");
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_4__lib_ctx_canvas__ = __webpack_require__("../lib/ctx-canvas.js");
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_5__lib_ctx_store__ = __webpack_require__("../lib/ctx-store.js");
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_6__lib_ctx_null__ = __webpack_require__("../lib/ctx-null.js");
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_7__lib_state__ = __webpack_require__("../lib/state.js");
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_8__lib_dom__ = __webpack_require__("../lib/dom.js");
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_9__extrude__ = __webpack_require__("./extrude.js");
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_7__draw__ = __webpack_require__("./draw.js");
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_8__lib_state__ = __webpack_require__("../lib/state.js");
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_9__lib_operation__ = __webpack_require__("../lib/operation.js");
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_10__lib_dom__ = __webpack_require__("../lib/dom.js");
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_11__extrude__ = __webpack_require__("./extrude.js");
 /* harmony export (immutable) */ __webpack_exports__["a"] = install;
 
 
@@ -38504,36 +38369,38 @@ function palette(options) {
 
 
 
-function createfontItem(font) {
-    var currentFont = __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_7__lib_state__["c" /* getState */])('font', '');
 
-    var elem = __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_8__lib_dom__["b" /* createElement */])('div', { class: 'tool-font-item clickable' });
+
+function createfontItem(font) {
+    var currentFont = __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_8__lib_state__["c" /* getState */])('font', '');
+
+    var elem = __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_10__lib_dom__["b" /* createElement */])('div', { class: 'tool-font-item clickable' });
     if (font.identifier === currentFont) {
-        __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_8__lib_dom__["f" /* addClass */])(elem, 'tool-font-item-selected');
+        __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_10__lib_dom__["f" /* addClass */])(elem, 'tool-font-item-selected');
     }
     elem.addEventListener('click', function () {
         var nodeList = document.querySelectorAll('.tool-font-item-selected');
         var selected = Array.prototype.slice.call(nodeList, 0);
         selected.forEach(function (node) {
-            __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_8__lib_dom__["g" /* removeClass */])(node, 'tool-font-item-selected');
+            __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_10__lib_dom__["g" /* removeClass */])(node, 'tool-font-item-selected');
         });
-        __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_8__lib_dom__["f" /* addClass */])(elem, 'tool-font-item-selected');
-        __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_7__lib_state__["b" /* setState */])('font', font.identifier);
+        __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_10__lib_dom__["f" /* addClass */])(elem, 'tool-font-item-selected');
+        __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_8__lib_state__["b" /* setState */])('font', font.identifier);
     });
-    var label = __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_8__lib_dom__["b" /* createElement */])('span');
-    __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_8__lib_dom__["e" /* appendText */])(label, font.subFamily);
+    var label = __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_10__lib_dom__["b" /* createElement */])('span');
+    __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_10__lib_dom__["e" /* appendText */])(label, font.subFamily);
     elem.appendChild(label);
     return elem;
 }
 
 function wrapTool(name, fn) {
-    var box = __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_8__lib_dom__["b" /* createElement */])('div', {
+    var box = __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_10__lib_dom__["b" /* createElement */])('div', {
         class: 'tool tool-' + name
     });
-    var title = __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_8__lib_dom__["b" /* createElement */])('div', {
+    var title = __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_10__lib_dom__["b" /* createElement */])('div', {
         class: 'tool-title'
     });
-    __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_8__lib_dom__["e" /* appendText */])(title, name);
+    __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_10__lib_dom__["e" /* appendText */])(title, name);
     box.appendChild(title);
 
     for (var _len = arguments.length, args = Array(_len > 2 ? _len - 2 : 0), _key = 2; _key < _len; _key++) {
@@ -38549,9 +38416,9 @@ function fontTool(box, fonts) {
     var getGroup = function getGroup(font) {
         var family = font.family;
         if (!(family in groups)) {
-            var element = __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_8__lib_dom__["b" /* createElement */])('div', { class: 'font-family' });
-            var title = __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_8__lib_dom__["b" /* createElement */])('span', { class: 'font-family-title' });
-            __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_8__lib_dom__["e" /* appendText */])(title, family);
+            var element = __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_10__lib_dom__["b" /* createElement */])('div', { class: 'font-family' });
+            var title = __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_10__lib_dom__["b" /* createElement */])('span', { class: 'font-family-title' });
+            __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_10__lib_dom__["e" /* appendText */])(title, family);
             element.appendChild(title);
             box.appendChild(element);
             groups[family] = element;
@@ -38566,50 +38433,38 @@ function fontTool(box, fonts) {
 }
 
 function textTool(box) {
-    var textArea = __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_8__lib_dom__["b" /* createElement */])('textarea', { class: 'tool-text-area' });
-    var text = __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_7__lib_state__["c" /* getState */])('text');
+    var textArea = __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_10__lib_dom__["b" /* createElement */])('textarea', { class: 'tool-text-area' });
+    var text = __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_8__lib_state__["c" /* getState */])('text');
     textArea.value = text;
     textArea.addEventListener('keyup', function () {
         if (textArea.value !== text) {
             text = textArea.value;
-            __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_7__lib_state__["b" /* setState */])('text', text);
+            __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_8__lib_state__["b" /* setState */])('text', text);
         }
     });
     box.appendChild(textArea);
 }
 
 function exportButton(label, handler) {
-    var button = __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_8__lib_dom__["b" /* createElement */])('button', {
+    var button = __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_10__lib_dom__["b" /* createElement */])('button', {
         class: 'button',
         type: 'button'
     });
-    __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_8__lib_dom__["e" /* appendText */])(button, label);
+    __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_10__lib_dom__["e" /* appendText */])(button, label);
     button.addEventListener('click', handler);
     return button;
 }
 
-function getAdjustedState(localState) {
-    var bboxState = __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_2_lodash_fp__["assign"])(localState, { colorBackground: 'transparent' });
-    var bbox = new __WEBPACK_IMPORTED_MODULE_5__lib_ctx_bbox__["a" /* default */](bboxState.width, bboxState.height);
-    var sz = __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_9__extrude__["a" /* default */])(bbox, bboxState);
-    // const w = bbox.rectWidth;
-
-    return __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_2_lodash_fp__["assign"])(localState, {
-        width: sz.width,
-        height: sz.height
-    });
-}
-
 function exportTool(box) {
-    var wrap0 = __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_8__lib_dom__["b" /* createElement */])('div', { class: 'tool-export-button-wrapper' });
-    var wrap1 = __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_8__lib_dom__["b" /* createElement */])('div', { class: 'tool-export-button-wrapper' });
+    var wrap0 = __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_10__lib_dom__["b" /* createElement */])('div', { class: 'tool-export-button-wrapper' });
+    var wrap1 = __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_10__lib_dom__["b" /* createElement */])('div', { class: 'tool-export-button-wrapper' });
 
     box.appendChild(wrap0);
     box.appendChild(wrap1);
 
-    var offScreen = __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_8__lib_dom__["b" /* createElement */])('canvas');
+    var offScreen = __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_10__lib_dom__["b" /* createElement */])('canvas');
     var localState = null;
-    __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_7__lib_state__["d" /* onStateChange */])(function (state) {
+    __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_8__lib_state__["d" /* onStateChange */])(function (state) {
         localState = state;
     });
 
@@ -38618,7 +38473,7 @@ function exportTool(box) {
             var state = __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_2_lodash_fp__["assign"])(localState, {});
             var nc = new __WEBPACK_IMPORTED_MODULE_6__lib_ctx_null__["a" /* default */](state.width, state.height);
 
-            var _extrude = __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_9__extrude__["a" /* default */])(nc, state),
+            var _extrude = __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_11__extrude__["a" /* default */])(nc, state),
                 width = _extrude.width,
                 height = _extrude.height;
 
@@ -38627,22 +38482,19 @@ function exportTool(box) {
             var fullHeight = height + margin * 2;
             offScreen.width = fullWidth;
             offScreen.height = fullHeight;
-            console.log(width, height, fullWidth, fullHeight);
 
-            var ctx = new __WEBPACK_IMPORTED_MODULE_3__lib_ctx_canvas__["a" /* default */](offScreen);
+            var ctx = new __WEBPACK_IMPORTED_MODULE_4__lib_ctx_canvas__["a" /* default */](offScreen);
             var rawCtx = ctx.ctx;
             rawCtx.fillStyle = state.colorBackground;
             rawCtx.fillRect(0, 0, fullWidth, fullHeight);
             rawCtx.setTransform(1, 0, 0, 1, margin, margin);
-            // rawCtx.strokeStyle = 'green';
-            // rawCtx.strokeRect(0, 0, width, height);
 
             state.extrusionLineWidth = 1;
             state.maskLineWidth = 6;
             state.width = width;
             state.height = height;
 
-            if (__webpack_require__.i(__WEBPACK_IMPORTED_MODULE_9__extrude__["a" /* default */])(ctx, state)) {
+            if (__webpack_require__.i(__WEBPACK_IMPORTED_MODULE_11__extrude__["a" /* default */])(ctx, state)) {
                 offScreen.toBlob(function (blob) {
                     __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_1_file_saver__["saveAs"])(blob, 'shadowtype.png');
                 });
@@ -38653,29 +38505,46 @@ function exportTool(box) {
     var pdfHandler = function pdfHandler(knockout) {
         return function () {
             if (localState) {
-                var state = getAdjustedState(localState);
-                state.extrusionLineWidth = 0;
-                state.maskLineWidth = 0;
-                var ctx = new __WEBPACK_IMPORTED_MODULE_4__lib_ctx_store__["a" /* default */](state.width, state.height);
-                var extResult = __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_9__extrude__["a" /* default */])(ctx, state, knockout);
-                if (extResult !== null) {
-                    var data = {
-                        width: state.width,
-                        height: state.height,
-                        operations: ctx.operations
-                    };
-                    fetch('/pdf', {
-                        method: 'POST',
-                        headers: { 'Content-Type': 'application/json' },
-                        body: JSON.stringify(data)
-                    }).then(function (response) {
-                        return response.blob();
-                    }).then(function (blob) {
-                        var fn = knockout ? 'shadowtype-knockout.pdf' : 'shadowtype.pdf';
-                        __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_1_file_saver__["saveAs"])(blob, fn);
+                (function () {
+                    var state = __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_2_lodash_fp__["assign"])(localState, {});
+                    var nc = new __WEBPACK_IMPORTED_MODULE_6__lib_ctx_null__["a" /* default */](state.width, state.height);
+
+                    var _extrude2 = __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_11__extrude__["a" /* default */])(nc, state),
+                        width = _extrude2.width,
+                        height = _extrude2.height;
+
+                    var margin = 100;
+                    var fullWidth = width + margin * 2;
+                    var fullHeight = height + margin * 2;
+
+                    var ctx = new __WEBPACK_IMPORTED_MODULE_5__lib_ctx_store__["a" /* default */](state.width, state.height);
+                    __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_7__draw__["c" /* drawBackground */])(__webpack_require__.i(__WEBPACK_IMPORTED_MODULE_3__lib_point__["a" /* default */])(0, 0), __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_3__lib_point__["a" /* default */])(fullWidth, fullHeight), state.colorBackground).forEach(function (op) {
+                        ctx.operations.push(op);
                     });
-                    // exportPDF.href = offScreen.toDataURL('image/png');
-                }
+                    ctx.operations.push(__webpack_require__.i(__WEBPACK_IMPORTED_MODULE_9__lib_operation__["n" /* transform */])(1, 0, 0, 1, margin, margin));
+                    state.extrusionLineWidth = 0;
+                    state.maskLineWidth = 0;
+                    state.colorBackground = 'transparent';
+
+                    var extResult = __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_11__extrude__["a" /* default */])(ctx, state, knockout);
+                    if (extResult !== null) {
+                        var data = {
+                            width: fullWidth,
+                            height: fullHeight,
+                            operations: ctx.operations
+                        };
+                        fetch('/pdf', {
+                            method: 'POST',
+                            headers: { 'Content-Type': 'application/json' },
+                            body: JSON.stringify(data)
+                        }).then(function (response) {
+                            return response.blob();
+                        }).then(function (blob) {
+                            var fn = knockout ? 'shadowtype-knockout.pdf' : 'shadowtype.pdf';
+                            __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_1_file_saver__["saveAs"])(blob, fn);
+                        });
+                    }
+                })();
             }
         };
     };
@@ -38685,7 +38554,7 @@ function exportTool(box) {
 }
 
 function install(fonts) {
-    var sidebar = __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_8__lib_dom__["b" /* createElement */])('div', { class: 'tool-box' });
+    var sidebar = __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_10__lib_dom__["b" /* createElement */])('div', { class: 'tool-box' });
     var fontBox = wrapTool('font', fontTool, fonts);
     var textBox = wrapTool('text', textTool);
     var exportBox = wrapTool('export', exportTool);
@@ -38696,7 +38565,7 @@ function install(fonts) {
     [textBox, fontBox, exportBox].forEach(function (box) {
         return sidebar.appendChild(box);
     });
-    __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_8__lib_dom__["c" /* body */])().appendChild(sidebar);
+    __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_10__lib_dom__["c" /* body */])().appendChild(sidebar);
     // body().appendChild(xyBox);
     // body().appendChild(extentBox);
 }

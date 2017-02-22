@@ -88,6 +88,11 @@ var BaseContext = function () {
         value: function fillAndStroke() {
             (0, _fp.noop)();
         }
+    }, {
+        key: 'transform',
+        value: function transform() {
+            (0, _fp.noop)();
+        }
 
         /* eslint-enable */
 

@@ -2,11 +2,13 @@
 import 'whatwg-fetch';
 import { saveAs } from 'file-saver';
 import { assign } from 'lodash/fp';
+import point from '../lib/point';
 import ContextCanvas from '../lib/ctx-canvas';
 import ContextStore from '../lib/ctx-store';
-import ContextBBox from '../lib/ctx-bbox';
 import ContextNull from '../lib/ctx-null';
+import { drawBackground } from './draw';
 import { setState, getState, onStateChange } from '../lib/state';
+import { transform } from '../lib/operation';
 import {
     body,
     createElement,
@@ -99,18 +101,6 @@ function exportButton(label, handler) {
 }
 
 
-function getAdjustedState(localState) {
-    const bboxState = assign(localState, { colorBackground: 'transparent' });
-    const bbox = new ContextBBox(bboxState.width, bboxState.height);
-    const sz = extrude(bbox, bboxState);
-    // const w = bbox.rectWidth;
-
-    return assign(localState, {
-        width: sz.width,
-        height: sz.height,
-    });
-}
-
 function exportTool(box) {
     const wrap0 = createElement('div', { class: 'tool-export-button-wrapper' });
     const wrap1 = createElement('div', { class: 'tool-export-button-wrapper' });
@@ -136,15 +126,12 @@ function exportTool(box) {
             const fullHeight = (height + (margin * 2));
             offScreen.width = fullWidth;
             offScreen.height = fullHeight;
-            console.log(width, height, fullWidth, fullHeight);
 
             const ctx = new ContextCanvas(offScreen);
             const rawCtx = ctx.ctx;
             rawCtx.fillStyle = state.colorBackground;
             rawCtx.fillRect(0, 0, fullWidth, fullHeight);
             rawCtx.setTransform(1, 0, 0, 1, margin, margin);
-            // rawCtx.strokeStyle = 'green';
-            // rawCtx.strokeRect(0, 0, width, height);
 
             state.extrusionLineWidth = 1;
             state.maskLineWidth = 6;
@@ -161,15 +148,30 @@ function exportTool(box) {
 
     const pdfHandler = knockout => () => {
         if (localState) {
-            const state = getAdjustedState(localState);
+            const state = assign(localState, {});
+            const nc = new ContextNull(state.width, state.height);
+            const { width, height } = extrude(nc, state);
+
+            const margin = 100;
+            const fullWidth = (width + (margin * 2));
+            const fullHeight = (height + (margin * 2));
+
+            const ctx = new ContextStore(state.width, state.height);
+            drawBackground(point(0, 0), point(fullWidth, fullHeight),
+                state.colorBackground)
+                .forEach((op) => {
+                    ctx.operations.push(op);
+                });
+            ctx.operations.push(transform(1, 0, 0, 1, margin, margin));
             state.extrusionLineWidth = 0;
             state.maskLineWidth = 0;
-            const ctx = new ContextStore(state.width, state.height);
+            state.colorBackground = 'transparent';
+
             const extResult = extrude(ctx, state, knockout);
             if (extResult !== null) {
                 const data = {
-                    width: state.width,
-                    height: state.height,
+                    width: fullWidth,
+                    height: fullHeight,
                     operations: ctx.operations,
                 };
                 fetch('/pdf', {
@@ -182,7 +184,6 @@ function exportTool(box) {
                         const fn = knockout ? 'shadowtype-knockout.pdf' : 'shadowtype.pdf';
                         saveAs(blob, fn);
                     });
-                // exportPDF.href = offScreen.toDataURL('image/png');
             }
         }
     };

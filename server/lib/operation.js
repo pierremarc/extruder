@@ -3,7 +3,7 @@
 Object.defineProperty(exports, "__esModule", {
     value: true
 });
-exports.OP_RESTORE = exports.OP_SAVE = exports.OP_FILL_STROKE = exports.OP_FILL = exports.OP_STROKE = exports.OP_SET = exports.OP_CLOSE = exports.OP_QUADRATIC = exports.OP_CUBIC = exports.OP_LINE = exports.OP_MOVE = exports.OP_BEGIN = undefined;
+exports.OP_TRANSFORM = exports.OP_RESTORE = exports.OP_SAVE = exports.OP_FILL_STROKE = exports.OP_FILL = exports.OP_STROKE = exports.OP_SET = exports.OP_CLOSE = exports.OP_QUADRATIC = exports.OP_CUBIC = exports.OP_LINE = exports.OP_MOVE = exports.OP_BEGIN = undefined;
 exports.begin = begin;
 exports.moveTo = moveTo;
 exports.lineTo = lineTo;
@@ -16,6 +16,7 @@ exports.fill = fill;
 exports.fillAndStroke = fillAndStroke;
 exports.save = save;
 exports.restore = restore;
+exports.transform = transform;
 exports.render = render;
 
 var _point = require('./point');
@@ -36,6 +37,7 @@ var OP_FILL = exports.OP_FILL = 'F';
 var OP_FILL_STROKE = exports.OP_FILL_STROKE = 'FS';
 var OP_SAVE = exports.OP_SAVE = 'SA';
 var OP_RESTORE = exports.OP_RESTORE = 'R';
+var OP_TRANSFORM = exports.OP_TRANSFORM = 'T';
 
 function begin() {
     return [OP_BEGIN];
@@ -83,6 +85,10 @@ function save() {
 
 function restore() {
     return [OP_RESTORE];
+}
+
+function transform(a, b, c, d, e, f) {
+    return [OP_TRANSFORM, a, b, c, d, e, f];
 }
 
 // rendering
@@ -143,6 +149,10 @@ function renderRestore(ctx, op) {
     ctx.restore(op);
 }
 
+function renderTransform(ctx, op) {
+    ctx.transform(op[1], op[2], op[3], op[4], op[5], op[6], op);
+}
+
 function render(ctx, operations) {
     operations.forEach(function (op) {
         var opCode = op[0];
@@ -171,6 +181,13 @@ function render(ctx, operations) {
             renderSave(ctx, op);
         } else if (OP_RESTORE === opCode) {
             renderRestore(ctx, op);
+        } else if (OP_TRANSFORM === opCode) {
+            try {
+                renderTransform(ctx, op);
+            } catch (e) {
+                console.error('op', op);
+                console.error(e);
+            }
         }
     });
 }

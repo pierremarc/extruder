@@ -102,6 +102,11 @@ var ContextStore = function (_BaseContext) {
         value: function fillAndStroke(op) {
             this.operations.push(op);
         }
+    }, {
+        key: 'transform',
+        value: function transform(a, b, c, d, e, f, op) {
+            this.operations.push(op);
+        }
     }]);
 
     return ContextStore;

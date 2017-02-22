@@ -19,10 +19,68 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
 var debug = require('debug')('extruder');
 
 var EXTR_STORAGE_ID = '__extruder__';
+// I keep it low for the case where one would own a Cray
+// On my laptop the average frame takes 100ms, we're not gaming :/
+var STATE_RATE = 20;
 
 var stateStack = [];
-
 var handlers = [];
+
+var pendings = function () {
+    var keys = [];
+    var refTime = null;
+
+    var push = function push(ks) {
+        keys = (0, _fp.uniq)(keys.concat(ks));
+    };
+
+    var popKeys = function popKeys() {
+        var ks = keys;
+        keys = [];
+        return ks;
+    };
+
+    var applyHandlers = function applyHandlers() {
+        var localKeys = popKeys();
+        if (localKeys.length > 0) {
+            handlers.forEach(function (handler) {
+                var _handler = _slicedToArray(handler, 2),
+                    callback = _handler[0],
+                    checkKeys = _handler[1];
+
+                if (checkKeys) {
+                    if (checkKeys(localKeys).length > 0) {
+                        callback(createState(), localKeys);
+                    }
+                } else {
+                    callback(createState(), localKeys);
+                }
+            });
+        }
+    };
+
+    var checkTime = function checkTime(ts) {
+        if (refTime === null) {
+            refTime = ts;
+            return false;
+        }
+        return ts - refTime > STATE_RATE;
+    };
+
+    var frame = function frame(ts) {
+        if (checkTime(ts)) {
+            applyHandlers();
+            refTime = ts;
+        }
+        requestAnimationFrame(frame);
+    };
+
+    var start = function start() {
+        requestAnimationFrame(frame);
+    };
+
+    return { start: start, push: push };
+}();
 
 function getLocaleStorage() {
     try {
@@ -66,26 +124,12 @@ function init(initialState) {
     } else {
         stateStack.push(initialState);
     }
+
+    pendings.start();
 }
 
 function createState() {
     return (0, _fp.assign)((0, _fp.last)(stateStack), {});
-}
-
-function applyHandlers(keys) {
-    handlers.forEach(function (handler) {
-        var _handler = _slicedToArray(handler, 2),
-            callback = _handler[0],
-            checkKeys = _handler[1];
-
-        if (checkKeys) {
-            if (checkKeys(keys).length > 0) {
-                callback(createState(), keys);
-            }
-        } else {
-            callback(createState(), keys);
-        }
-    });
 }
 
 function onStateChange(callback) {
@@ -116,9 +160,7 @@ function getStateFactory(k, factory) {
     return factory(getState(k));
 }
 
-function setState(key, value) {
-    var silent = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : false;
-
+function setStateNext(key, value, silent) {
     if (stateStack.length === 0) {
         throw new Error('[state.init] state not initialised');
     }
@@ -133,14 +175,20 @@ function setState(key, value) {
         value = [value];
     }
 
-    if (!silent) {
-        applyHandlers(key);
-    }
-
     var storage = getLocaleStorage();
     if (storage) {
         key.forEach(function (k, idx) {
             storage.setItem(k, JSON.stringify(value[idx]));
         });
     }
+
+    if (!silent) {
+        pendings.push(key);
+    }
+}
+
+function setState(key, value) {
+    var silent = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : false;
+
+    setStateNext(key, value, silent);
 }

@@ -134,6 +134,16 @@ var ContextPDF = function (_BaseContext) {
             this.ctx.fillAndStroke();
         }
     }, {
+        key: 'transform',
+        value: function transform(a, b, c, d, e, f) {
+            try {
+                this.ctx.transform(a, b, c, d, e, f);
+            } catch (e) {
+                console.error('PDF failed to transform', a, b, c, d, e, f);
+                console.error(e);
+            }
+        }
+    }, {
         key: 'width',
         get: function get() {
             return this.width;

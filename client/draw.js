@@ -13,6 +13,7 @@ import {
     quadraticTo,
     closePath,
     gs,
+    fill,
     fillAndStroke,
     save,
     restore,
@@ -147,4 +148,21 @@ export default function draw(state, text, font, fontSize, xOffset, yOffset, anch
     const mask = drawMaskImpl(state, paths);
 
     return { extrusion, mask };
+}
+
+
+export function drawBackground(min, max, bg) {
+    const ops = [];
+    if (bg !== 'transparent') {
+        ops.push(save());
+        ops.push(gs('fillStyle', bg));
+        ops.push(moveTo(min));
+        ops.push(lineTo(point(max.x, min.y)));
+        ops.push(lineTo(point(max.x, max.y)));
+        ops.push(lineTo(point(min.x, max.y)));
+        ops.push(closePath());
+        ops.push(fill());
+        ops.push(restore());
+    }
+    return ops;
 }

@@ -8,17 +8,22 @@ console.log(ContextPDF);
 const router = express.Router();
 
 
-router.post('/', function(req, res, next) {
+router.post('/', function (req, res, next) {
     const body = req.body;
     const options = {
         width: body.width,
         height: body.height,
         stream: res,
     }
-    const ctx = new ContextPDF(options);
-    res.set('Content-Type', 'application/pdf');
-    op.render(ctx, body.operations);
-    ctx.end();
+    try {
+        const ctx = new ContextPDF(options);
+        res.set('Content-Type', 'application/pdf');
+        op.render(ctx, body.operations);
+        ctx.end();
+    }
+    catch (e) {
+        console.error('pdf-gen', e);
+    }
 });
 
 module.exports = router;

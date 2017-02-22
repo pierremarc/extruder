@@ -1,18 +1,10 @@
 
-import { getFont } from './font';
 import point from '../lib/point';
 import PaperContext from '../lib/ctx-paper';
-import draw, { getWidth } from './draw';
+import draw, { getWidth, drawBackground } from './draw';
 import {
     render,
     OP_BEGIN,
-    save,
-    restore,
-    moveTo,
-    lineTo,
-    closePath,
-    fill,
-    gs,
 } from '../lib/operation';
 
 
@@ -46,23 +38,6 @@ function extrudeLine(state, ctx, rect, x, y, text, font, fontSize, knockout) {
         ops = paperEx.exportOperations();
     }
     render(ctx, ops);
-}
-
-
-function makeBackground(min, max, bg) {
-    const ops = [];
-    if (bg !== 'transparent') {
-        ops.push(save());
-        ops.push(gs('fillStyle', bg));
-        ops.push(moveTo(min));
-        ops.push(lineTo(point(max.x, min.y)));
-        ops.push(lineTo(point(max.x, max.y)));
-        ops.push(lineTo(point(min.x, max.y)));
-        ops.push(closePath());
-        ops.push(fill());
-        ops.push(restore());
-    }
-    return ops;
 }
 
 
@@ -126,7 +101,7 @@ export default function extrude(ctx, state, knockout = false) {
     }
 
     if (lines.length > 0) {
-        render(ctx, makeBackground(
+        render(ctx, drawBackground(
             offset,
             point(offset.x + width, offset.y + height),
             colorBackground,
