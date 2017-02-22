@@ -2,3 +2,5 @@ node_modules/
 build/
 server/public/fonts/
 **.hot-update.*
+.vscode/
+**.map

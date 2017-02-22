@@ -1,7 +1,7 @@
 
+import { getFont } from './font';
 import point from '../lib/point';
 import PaperContext from '../lib/ctx-paper';
-import BBoxContext from '../lib/ctx-bbox';
 import draw, { getWidth } from './draw';
 import {
     render,
@@ -51,7 +51,7 @@ function extrudeLine(state, ctx, rect, x, y, text, font, fontSize, knockout) {
 
 function makeBackground(min, max, bg) {
     const ops = [];
-    if (false /*bg !== 'transparent'*/) {
+    if (bg !== 'transparent') {
         ops.push(save());
         ops.push(gs('fillStyle', bg));
         ops.push(moveTo(min));
@@ -101,15 +101,18 @@ function computeLines(lineWidth, text, font, fontSize, lines) {
 }
 
 export default function extrude(ctx, state, knockout = false) {
-    const { x, y, text, font, fontSize,
-        lineHeightFactor, width, height, colorBackground } = state;
+    const { x, y, text, font, fontSize, lineHeightFactor,
+        width, height, colorBackground } = state;
 
+    // const fontObj = getFont(font);
+    // const ascent = fontObj.ascender / fontObj.unitsPerEm;
+    // opentype.js reports wrong values
+    // (which led me to see there were some other options for types in the browsers (typr, etc.))
+    const ascent = 0.8;
     const offset = point(0, 0);
     const lineHeight = fontSize * lineHeightFactor;
-    const baseFactor = 0.8;
     const left = offset.x;
     const top = offset.y;
-
     const lines = [];
     const unionBox = {
         width: 0,
@@ -132,12 +135,12 @@ export default function extrude(ctx, state, knockout = false) {
         const processLine = (line, idx) => {
             if (line.text.length > 0) {
                 const rect = {
+                    width,
+                    height,
                     minx: left,
-                    miny: top + (idx * lineHeight) + (baseFactor * lineHeight),
-                    maxx: left + innerWidth,
+                    miny: top + (idx * lineHeight) + (ascent * lineHeight),
+                    maxx: left + width,
                     maxy: top + (idx * lineHeight),
-                    width: innerWidth,
-                    height: lineHeight,
                 };
                 extrudeLine(
                     state, ctx, rect, x, y,
@@ -161,6 +164,5 @@ export default function extrude(ctx, state, knockout = false) {
         }
     }
 
-    // const computedHeight = lines.length * fontSize * (lineHeightFactor || 1.2);
     return unionBox;
 }

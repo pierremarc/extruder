@@ -83,7 +83,7 @@ export function getWidth(text, font, fontSize) {
     if (!(k in simpleWidthCache)) {
         const path = getFont(font).getPath(text, 0, 0, fontSize);
         const bbox = path.getBoundingBox();
-        simpleWidthCache[k] = (bbox.x2 - bbox.x1);
+        simpleWidthCache[k] = bbox.x1 + (bbox.x2 - bbox.x1);
     }
     return simpleWidthCache[k];
 }

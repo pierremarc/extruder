@@ -5,6 +5,7 @@ import { assign } from 'lodash/fp';
 import ContextCanvas from '../lib/ctx-canvas';
 import ContextStore from '../lib/ctx-store';
 import ContextBBox from '../lib/ctx-bbox';
+import ContextNull from '../lib/ctx-null';
 import { setState, getState, onStateChange } from '../lib/state';
 import {
     body,
@@ -126,13 +127,30 @@ function exportTool(box) {
 
     wrap0.appendChild(exportButton('PNG', () => {
         if (localState) {
-            const state = getAdjustedState(localState);
+            const state = assign(localState, {});
+            const nc = new ContextNull(state.width, state.height);
+            const { width, height } = extrude(nc, state);
+
+            const margin = 100;
+            const fullWidth = (width + (margin * 2));
+            const fullHeight = (height + (margin * 2));
+            offScreen.width = fullWidth;
+            offScreen.height = fullHeight;
+            console.log(width, height, fullWidth, fullHeight);
+
             const ctx = new ContextCanvas(offScreen);
-            ctx.clear();
-            offScreen.width = state.width;
-            offScreen.height = state.height;
+            const rawCtx = ctx.ctx;
+            rawCtx.fillStyle = state.colorBackground;
+            rawCtx.fillRect(0, 0, fullWidth, fullHeight);
+            rawCtx.setTransform(1, 0, 0, 1, margin, margin);
+            // rawCtx.strokeStyle = 'green';
+            // rawCtx.strokeRect(0, 0, width, height);
+
             state.extrusionLineWidth = 1;
             state.maskLineWidth = 6;
+            state.width = width;
+            state.height = height;
+
             if (extrude(ctx, state)) {
                 offScreen.toBlob((blob) => {
                     saveAs(blob, 'shadowtype.png');
