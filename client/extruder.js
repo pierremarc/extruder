@@ -56,6 +56,7 @@ function xyTool() {
     const xBox = createElement('div', { class: 'tool-xy-box tool-xy-x' });
     const yBox = createElement('div', { class: 'tool-xy-box tool-xy-y' });
     const fsBox = createElement('div', { class: 'tool-xy-box tool-xy-fs' });
+    const marginBox = createElement('div', { class: 'tool-extent-box tool-extent-margin' });
 
     xBox.appendChild(slider({
         key: 'x',
@@ -78,47 +79,55 @@ function xyTool() {
         max: 700,
         parser: Math.ceil,
     }));
+    marginBox.appendChild(slider({
+        key: 'margin',
+        label: 'move horizontal',
+        min: 0,
+        max: 100,
+        parser: Math.floor,
+    }));
     box.appendChild(fsBox);
+    box.appendChild(marginBox);
     // box.appendChild(xBox);
     // box.appendChild(yBox);
     return box;
 }
 
-function extentTool() {
-    const box = createElement('div', { class: 'tool-size' });
-    if (!getState('fixedSize', false)) {
-        const widthBox = createElement('div', { class: 'tool-extent-box tool-extent-width' });
-        const heightBox = createElement('div', { class: 'tool-extent-box tool-extent-height' });
+// function extentTool() {
+//     const box = createElement('div', { class: 'tool-size' });
+//     // if (!getState('fixedSize', false)) {
+//     //     const widthBox = createElement('div', { class: 'tool-extent-box tool-extent-width' });
+//     //     const heightBox = createElement('div', { class: 'tool-extent-box tool-extent-height' });
 
-        widthBox.appendChild(slider({
-            key: 'width',
-            label: 'page width',
-            min: 100,
-            max: 4000,
-            parser: Math.ceil,
-        }));
-        heightBox.appendChild(slider({
-            key: 'height',
-            label: 'page height',
-            min: 100,
-            max: 4000,
-            parser: Math.ceil,
-        }));
-        box.appendChild(widthBox);
-        box.appendChild(heightBox);
-    }
-    const marginBox = createElement('div', { class: 'tool-extent-box tool-extent-margin' });
+//     //     widthBox.appendChild(slider({
+//     //         key: 'width',
+//     //         label: 'page width',
+//     //         min: 100,
+//     //         max: 4000,
+//     //         parser: Math.ceil,
+//     //     }));
+//     //     heightBox.appendChild(slider({
+//     //         key: 'height',
+//     //         label: 'page height',
+//     //         min: 100,
+//     //         max: 4000,
+//     //         parser: Math.ceil,
+//     //     }));
+//     //     box.appendChild(widthBox);
+//     //     box.appendChild(heightBox);
+//     // }
+//     const marginBox = createElement('div', { class: 'tool-extent-box tool-extent-margin' });
 
-    marginBox.appendChild(slider({
-        key: 'margin',
-        label: 'left margin',
-        min: 0,
-        max: 0.2,
-        parser: v => v.toFixed(2),
-    }));
-    box.appendChild(marginBox);
-    return box;
-}
+//     marginBox.appendChild(slider({
+//         key: 'margin',
+//         label: 'left margin',
+//         min: 0,
+//         max: 100,
+//         parser: Math.floor,
+//     }));
+//     box.appendChild(marginBox);
+//     return box;
+// }
 
 function colorTool() {
     const box = createElement('div', { class: 'tool-color' });
@@ -149,13 +158,13 @@ function xyLay(box, rect) {
 }
 
 
-function sizeLay(box, rect) {
-    const s = box.style;
-    s.position = 'absolute';
-    s.bottom = px(0);
-    s.right = px(0);
-    s.width = px(rect.width * 0.5);
-}
+// function sizeLay(box, rect) {
+//     const s = box.style;
+//     s.position = 'absolute';
+//     s.bottom = px(0);
+//     s.right = px(0);
+//     s.width = px(rect.width * 0.5);
+// }
 
 function colorLay(box, rect) {
     const s = box.style;
@@ -192,7 +201,7 @@ function getScaledSize(rect, bbox) {
 
 function withContext(canvas, ss, fn) {
     const context = new ContextCanvas(canvas);
-    const { scale, width, height } = ss;
+    const { scale } = ss;
     const offset = point(0, canvas.height * 0.02);
     context.clear();
     // few visual niceties for on screen rendering
@@ -223,7 +232,7 @@ export default function main() {
     const container = createElement('div', { class: 'extruder-box' });
     const canvas = createElement('canvas');
     const xyBox = xyTool();
-    const sizeBox = extentTool();
+    // const sizeBox = extentTool();
     const colorBox = colorTool();
     container.appendChild(canvas);
     container.appendChild(xyBox);
@@ -256,6 +265,7 @@ export default function main() {
             const sz = extrude(ctx, state, false);
             const hasLines = sz.height > 0;
             const diff = Math.abs(sz.height - height);
+
             if (hasLines && (diff > 12)) {
                 setState('height', sz.height);
             }
@@ -264,6 +274,6 @@ export default function main() {
 
 
     xyLay(xyBox, rect);
-    sizeLay(sizeBox, rect);
+    // sizeLay(sizeBox, rect);
     colorLay(colorBox, rect);
 }

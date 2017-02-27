@@ -127,6 +127,9 @@ function exportTool(box) {
             offScreen.width = fullWidth;
             offScreen.height = fullHeight;
 
+            console.log(`union ${width}x${height}
+full ${fullWidth}x${fullHeight}`);
+
             const ctx = new ContextCanvas(offScreen);
             const rawCtx = ctx.ctx;
             rawCtx.fillStyle = state.colorBackground;

@@ -35,7 +35,7 @@ export default function palette(options) {
     const labelElement = createElement('div', { class: 'palette-title' });
     appendText(labelElement, label);
     container.appendChild(labelElement);
-    container.appendChild(paletteItemNone(keys));
+    // container.appendChild(paletteItemNone(keys));
     colorList.forEach((color) => {
         container.appendChild(paletteItem(keys, color));
     });

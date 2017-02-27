@@ -8,8 +8,7 @@ import {
 } from '../lib/operation';
 
 
-function extrudeLine(state, ctx, rect, x, y, text, font, fontSize, knockout) {
-    const anchor = point(rect.minx, rect.miny);
+function extrudeLine(state, ctx, anchor, x, y, text, font, fontSize, knockout) {
     const { extrusion, mask } = draw(state, text, font, fontSize, x, y, anchor);
     let ops = extrusion.concat(mask);
     if (knockout) {
@@ -58,8 +57,8 @@ function computeLines(lineWidth, text, font, fontSize, lines) {
     let i;
     for (i = 1; i <= text.length; i += 1) {
         if (text.charAt(i) === '\n') {
-            next(Math.floor(getWidth(text.slice(0, i - 1), font, fontSize)),
-                Math.max(1, i + 1));
+            next(Math.floor(getWidth(text.slice(0, i), font, fontSize)),
+                Math.max(1, i));
             return;
         }
         const seq = text.slice(0, i);
@@ -77,12 +76,13 @@ function computeLines(lineWidth, text, font, fontSize, lines) {
 
 export default function extrude(ctx, state, knockout = false) {
     const { x, y, text, font, fontSize, lineHeightFactor,
-        width, height, colorBackground } = state;
+        width, height, margin, colorBackground } = state;
 
     // const fontObj = getFont(font);
     // const ascent = fontObj.ascender / fontObj.unitsPerEm;
     // opentype.js reports wrong values
     // (which led me to see there were some other options for types in the browsers (typr, etc.))
+    const marginValue = width * (margin / 100);
     const ascent = 0.8;
     const offset = point(0, 0);
     const lineHeight = fontSize * lineHeightFactor;
@@ -93,12 +93,16 @@ export default function extrude(ctx, state, knockout = false) {
         width: 0,
         height: 0,
     };
-    computeLines(width, text, font, fontSize, lines);
+    computeLines(width - marginValue, text, font, fontSize, lines);
 
 
     if (!font) {
         return null;
     }
+
+    lines.forEach((l) => {
+        console.log(`line: ${l.text} [${l.width}]`);
+    });
 
     if (lines.length > 0) {
         render(ctx, drawBackground(
@@ -109,16 +113,22 @@ export default function extrude(ctx, state, knockout = false) {
 
         const processLine = (line, idx) => {
             if (line.text.length > 0) {
-                const rect = {
-                    width,
-                    height,
-                    minx: left,
-                    miny: top + (idx * lineHeight) + (ascent * lineHeight),
-                    maxx: left + width,
-                    maxy: top + (idx * lineHeight),
-                };
+                // const rect = {
+                //     width,
+                //     height,
+                //     minx: left,
+                //     miny: top + (idx * lineHeight) + (ascent * lineHeight),
+                //     maxx: left + width,
+                //     maxy: top + (idx * lineHeight),
+                // };
+
+                const anchor = point(
+                    left + marginValue,
+                    top + (idx * lineHeight) + (ascent * lineHeight)
+                );
+
                 extrudeLine(
-                    state, ctx, rect, x, y,
+                    state, ctx, anchor, x, y,
                     `${line.text} `,
                     font, fontSize,
                     knockout,

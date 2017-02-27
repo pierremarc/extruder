@@ -59,7 +59,7 @@
 /******/ 	
 /******/ 	
 /******/ 	var hotApplyOnUpdate = true;
-/******/ 	var hotCurrentHash = "d63b11f47bff9a75877c"; // eslint-disable-line no-unused-vars
+/******/ 	var hotCurrentHash = "1a35c9e43266058b1ec2"; // eslint-disable-line no-unused-vars
 /******/ 	var hotCurrentModuleData = {};
 /******/ 	var hotMainModule = true; // eslint-disable-line no-unused-vars
 /******/ 	var hotCurrentParents = []; // eslint-disable-line no-unused-vars
@@ -2311,10 +2311,6 @@ function applyStyle(styleName, elem) {
  * [slider description]
  * @method slider
  * @param  {[type]} options           [description]
- * @param  {[type]} min               [description]
- * @param  {[type]} max               [description]
- * @param  {[type]} [parser=identity] [description]
- * @return {[type]}                   [description]
  */
 function slider(options) {
     var key = options.key,
@@ -2349,10 +2345,14 @@ function slider(options) {
     applyStyle('input', input);
     applyStyle('label', labelBox);
 
-    var start = startHandler(key, parser || __WEBPACK_IMPORTED_MODULE_0_lodash_fp__["identity"], lineWrapper);
-    var stop = stopHandler(key, parser || __WEBPACK_IMPORTED_MODULE_0_lodash_fp__["identity"], lineWrapper, square);
-    var move = moveHandler(key, parser || __WEBPACK_IMPORTED_MODULE_0_lodash_fp__["identity"], lineWrapper, square);
-    var cancel = cancelHandler(key, parser || __WEBPACK_IMPORTED_MODULE_0_lodash_fp__["identity"]);
+    var clampedParser = function clampedParser(v) {
+        return __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0_lodash_fp__["clamp"])(min, max, parser(v));
+    };
+
+    var start = startHandler(key, clampedParser || __WEBPACK_IMPORTED_MODULE_0_lodash_fp__["identity"], lineWrapper);
+    var stop = stopHandler(key, clampedParser || __WEBPACK_IMPORTED_MODULE_0_lodash_fp__["identity"], lineWrapper, square);
+    var move = moveHandler(key, clampedParser || __WEBPACK_IMPORTED_MODULE_0_lodash_fp__["identity"], lineWrapper, square);
+    var cancel = cancelHandler(key, clampedParser || __WEBPACK_IMPORTED_MODULE_0_lodash_fp__["identity"]);
 
     lineWrapper.addEventListener('mousedown', start);
     lineWrapper.addEventListener('mouseup', stop);
@@ -2360,7 +2360,7 @@ function slider(options) {
     lineWrapper.addEventListener('mouseleave', cancel);
 
     input.addEventListener('change', function () {
-        __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_2__state__["b" /* setState */])(key, Number(input.value));
+        __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_2__state__["b" /* setState */])(key, __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0_lodash_fp__["clamp"])(min, max, Number(input.value)));
     });
 
     lineWrapper.appendChild(line);
@@ -37715,9 +37715,7 @@ function drawBackground(min, max, bg) {
 
 
 
-function extrudeLine(state, ctx, rect, x, y, text, font, fontSize, knockout) {
-    var anchor = __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__lib_point__["a" /* default */])(rect.minx, rect.miny);
-
+function extrudeLine(state, ctx, anchor, x, y, text, font, fontSize, knockout) {
     var _draw = __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_2__draw__["a" /* default */])(state, text, font, fontSize, x, y, anchor),
         extrusion = _draw.extrusion,
         mask = _draw.mask;
@@ -37770,7 +37768,7 @@ function computeLines(lineWidth, text, font, fontSize, lines) {
     var i = void 0;
     for (i = 1; i <= text.length; i += 1) {
         if (text.charAt(i) === '\n') {
-            next(Math.floor(__webpack_require__.i(__WEBPACK_IMPORTED_MODULE_2__draw__["b" /* getWidth */])(text.slice(0, i - 1), font, fontSize)), Math.max(1, i + 1));
+            next(Math.floor(__webpack_require__.i(__WEBPACK_IMPORTED_MODULE_2__draw__["b" /* getWidth */])(text.slice(0, i), font, fontSize)), Math.max(1, i));
             return;
         }
         var seq = text.slice(0, i);
@@ -37796,6 +37794,7 @@ function extrude(ctx, state) {
         lineHeightFactor = state.lineHeightFactor,
         width = state.width,
         height = state.height,
+        margin = state.margin,
         colorBackground = state.colorBackground;
 
     // const fontObj = getFont(font);
@@ -37803,6 +37802,7 @@ function extrude(ctx, state) {
     // opentype.js reports wrong values
     // (which led me to see there were some other options for types in the browsers (typr, etc.))
 
+    var marginValue = width * (margin / 100);
     var ascent = 0.8;
     var offset = __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__lib_point__["a" /* default */])(0, 0);
     var lineHeight = fontSize * lineHeightFactor;
@@ -37813,26 +37813,33 @@ function extrude(ctx, state) {
         width: 0,
         height: 0
     };
-    computeLines(width, text, font, fontSize, lines);
+    computeLines(width - marginValue, text, font, fontSize, lines);
 
     if (!font) {
         return null;
     }
+
+    lines.forEach(function (l) {
+        console.log('line: ' + l.text + ' [' + l.width + ']');
+    });
 
     if (lines.length > 0) {
         __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_3__lib_operation__["b" /* render */])(ctx, __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_2__draw__["c" /* drawBackground */])(offset, __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__lib_point__["a" /* default */])(offset.x + width, offset.y + height), colorBackground));
 
         var processLine = function processLine(line, idx) {
             if (line.text.length > 0) {
-                var rect = {
-                    width: width,
-                    height: height,
-                    minx: left,
-                    miny: top + idx * lineHeight + ascent * lineHeight,
-                    maxx: left + width,
-                    maxy: top + idx * lineHeight
-                };
-                extrudeLine(state, ctx, rect, x, y, line.text + ' ', font, fontSize, knockout);
+                // const rect = {
+                //     width,
+                //     height,
+                //     minx: left,
+                //     miny: top + (idx * lineHeight) + (ascent * lineHeight),
+                //     maxx: left + width,
+                //     maxy: top + (idx * lineHeight),
+                // };
+
+                var anchor = __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__lib_point__["a" /* default */])(left + marginValue, top + idx * lineHeight + ascent * lineHeight);
+
+                extrudeLine(state, ctx, anchor, x, y, line.text + ' ', font, fontSize, knockout);
 
                 unionBox.width = Math.max(line.width, unionBox.width);
                 unionBox.height = Math.max((idx + 1) * lineHeight, unionBox.height);
@@ -37912,6 +37919,7 @@ function xyTool() {
     var xBox = __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_2__lib_dom__["b" /* createElement */])('div', { class: 'tool-xy-box tool-xy-x' });
     var yBox = __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_2__lib_dom__["b" /* createElement */])('div', { class: 'tool-xy-box tool-xy-y' });
     var fsBox = __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_2__lib_dom__["b" /* createElement */])('div', { class: 'tool-xy-box tool-xy-fs' });
+    var marginBox = __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_2__lib_dom__["b" /* createElement */])('div', { class: 'tool-extent-box tool-extent-margin' });
 
     xBox.appendChild(__webpack_require__.i(__WEBPACK_IMPORTED_MODULE_4__lib_slider__["a" /* default */])({
         key: 'x',
@@ -37934,49 +37942,55 @@ function xyTool() {
         max: 700,
         parser: Math.ceil
     }));
+    marginBox.appendChild(__webpack_require__.i(__WEBPACK_IMPORTED_MODULE_4__lib_slider__["a" /* default */])({
+        key: 'margin',
+        label: 'move horizontal',
+        min: 0,
+        max: 100,
+        parser: Math.floor
+    }));
     box.appendChild(fsBox);
+    box.appendChild(marginBox);
     // box.appendChild(xBox);
     // box.appendChild(yBox);
     return box;
 }
 
-function extentTool() {
-    var box = __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_2__lib_dom__["b" /* createElement */])('div', { class: 'tool-size' });
-    if (!__webpack_require__.i(__WEBPACK_IMPORTED_MODULE_3__lib_state__["c" /* getState */])('fixedSize', false)) {
-        var widthBox = __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_2__lib_dom__["b" /* createElement */])('div', { class: 'tool-extent-box tool-extent-width' });
-        var heightBox = __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_2__lib_dom__["b" /* createElement */])('div', { class: 'tool-extent-box tool-extent-height' });
+// function extentTool() {
+//     const box = createElement('div', { class: 'tool-size' });
+//     // if (!getState('fixedSize', false)) {
+//     //     const widthBox = createElement('div', { class: 'tool-extent-box tool-extent-width' });
+//     //     const heightBox = createElement('div', { class: 'tool-extent-box tool-extent-height' });
 
-        widthBox.appendChild(__webpack_require__.i(__WEBPACK_IMPORTED_MODULE_4__lib_slider__["a" /* default */])({
-            key: 'width',
-            label: 'page width',
-            min: 100,
-            max: 4000,
-            parser: Math.ceil
-        }));
-        heightBox.appendChild(__webpack_require__.i(__WEBPACK_IMPORTED_MODULE_4__lib_slider__["a" /* default */])({
-            key: 'height',
-            label: 'page height',
-            min: 100,
-            max: 4000,
-            parser: Math.ceil
-        }));
-        box.appendChild(widthBox);
-        box.appendChild(heightBox);
-    }
-    var marginBox = __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_2__lib_dom__["b" /* createElement */])('div', { class: 'tool-extent-box tool-extent-margin' });
+//     //     widthBox.appendChild(slider({
+//     //         key: 'width',
+//     //         label: 'page width',
+//     //         min: 100,
+//     //         max: 4000,
+//     //         parser: Math.ceil,
+//     //     }));
+//     //     heightBox.appendChild(slider({
+//     //         key: 'height',
+//     //         label: 'page height',
+//     //         min: 100,
+//     //         max: 4000,
+//     //         parser: Math.ceil,
+//     //     }));
+//     //     box.appendChild(widthBox);
+//     //     box.appendChild(heightBox);
+//     // }
+//     const marginBox = createElement('div', { class: 'tool-extent-box tool-extent-margin' });
 
-    marginBox.appendChild(__webpack_require__.i(__WEBPACK_IMPORTED_MODULE_4__lib_slider__["a" /* default */])({
-        key: 'margin',
-        label: 'left margin',
-        min: 0,
-        max: 0.2,
-        parser: function parser(v) {
-            return v.toFixed(2);
-        }
-    }));
-    box.appendChild(marginBox);
-    return box;
-}
+//     marginBox.appendChild(slider({
+//         key: 'margin',
+//         label: 'left margin',
+//         min: 0,
+//         max: 100,
+//         parser: Math.floor,
+//     }));
+//     box.appendChild(marginBox);
+//     return box;
+// }
 
 function colorTool() {
     var box = __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_2__lib_dom__["b" /* createElement */])('div', { class: 'tool-color' });
@@ -38002,13 +38016,13 @@ function xyLay(box, rect) {
     s.width = __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_2__lib_dom__["d" /* px */])(rect.width * 0.5);
 }
 
-function sizeLay(box, rect) {
-    var s = box.style;
-    s.position = 'absolute';
-    s.bottom = __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_2__lib_dom__["d" /* px */])(0);
-    s.right = __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_2__lib_dom__["d" /* px */])(0);
-    s.width = __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_2__lib_dom__["d" /* px */])(rect.width * 0.5);
-}
+// function sizeLay(box, rect) {
+//     const s = box.style;
+//     s.position = 'absolute';
+//     s.bottom = px(0);
+//     s.right = px(0);
+//     s.width = px(rect.width * 0.5);
+// }
 
 function colorLay(box, rect) {
     var s = box.style;
@@ -38042,9 +38056,7 @@ function getScaledSize(rect, bbox) {
 
 function withContext(canvas, ss, fn) {
     var context = new __WEBPACK_IMPORTED_MODULE_1__lib_ctx_canvas__["a" /* default */](canvas);
-    var scale = ss.scale,
-        width = ss.width,
-        height = ss.height;
+    var scale = ss.scale;
 
     var offset = __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__lib_point__["a" /* default */])(0, canvas.height * 0.02);
     context.clear();
@@ -38076,7 +38088,7 @@ function main() {
     var container = __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_2__lib_dom__["b" /* createElement */])('div', { class: 'extruder-box' });
     var canvas = __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_2__lib_dom__["b" /* createElement */])('canvas');
     var xyBox = xyTool();
-    var sizeBox = extentTool();
+    // const sizeBox = extentTool();
     var colorBox = colorTool();
     container.appendChild(canvas);
     container.appendChild(xyBox);
@@ -38105,6 +38117,7 @@ function main() {
             var sz = __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_6__extrude__["a" /* default */])(ctx, state, false);
             var hasLines = sz.height > 0;
             var diff = Math.abs(sz.height - height);
+
             if (hasLines && diff > 12) {
                 __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_3__lib_state__["b" /* setState */])('height', sz.height);
             }
@@ -38112,7 +38125,7 @@ function main() {
     }, keys);
 
     xyLay(xyBox, rect);
-    sizeLay(sizeBox, rect);
+    // sizeLay(sizeBox, rect);
     colorLay(colorBox, rect);
 }
 
@@ -38323,7 +38336,7 @@ function palette(options) {
     var labelElement = __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_1__lib_dom__["b" /* createElement */])('div', { class: 'palette-title' });
     __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_1__lib_dom__["e" /* appendText */])(labelElement, label);
     container.appendChild(labelElement);
-    container.appendChild(paletteItemNone(keys));
+    // container.appendChild(paletteItemNone(keys));
     colorList.forEach(function (color) {
         container.appendChild(paletteItem(keys, color));
     });
@@ -38477,6 +38490,8 @@ function exportTool(box) {
             var fullHeight = height + margin * 2;
             offScreen.width = fullWidth;
             offScreen.height = fullHeight;
+
+            console.log('union ' + width + 'x' + height + '\nfull ' + fullWidth + 'x' + fullHeight);
 
             var ctx = new __WEBPACK_IMPORTED_MODULE_4__lib_ctx_canvas__["a" /* default */](offScreen);
             var rawCtx = ctx.ctx;
