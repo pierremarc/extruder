@@ -59,7 +59,7 @@
 /******/ 	
 /******/ 	
 /******/ 	var hotApplyOnUpdate = true;
-/******/ 	var hotCurrentHash = "1a35c9e43266058b1ec2"; // eslint-disable-line no-unused-vars
+/******/ 	var hotCurrentHash = "06d9b1f9fa155b6b7132"; // eslint-disable-line no-unused-vars
 /******/ 	var hotCurrentModuleData = {};
 /******/ 	var hotMainModule = true; // eslint-disable-line no-unused-vars
 /******/ 	var hotCurrentParents = []; // eslint-disable-line no-unused-vars
@@ -37992,28 +37992,33 @@ function xyTool() {
 //     return box;
 // }
 
-function colorTool() {
-    var box = __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_2__lib_dom__["b" /* createElement */])('div', { class: 'tool-color' });
-    var options = [{
-        label: 'Background',
-        keys: ['colorBackground', 'colorForeground']
-    }, {
-        label: 'Shadow',
-        keys: ['colorExtrusion']
-    }];
+// function colorTool() {
+//     const box = createElement('div', { class: 'tool-color' });
+//     const options = [
+//         {
+//             label: 'Background',
+//             keys: ['colorBackground', 'colorForeground'],
+//         },
+//         {
+//             label: 'Shadow',
+//             keys: ['colorExtrusion'],
+//         },
+//     ];
 
-    options.forEach(function (option) {
-        box.appendChild(__webpack_require__.i(__WEBPACK_IMPORTED_MODULE_5__palette__["a" /* default */])(option));
-    });
-    return box;
-}
+//     options.forEach((option) => {
+//         box.appendChild(palette(option));
+//     });
+//     return box;
+// }
+
 
 function xyLay(box, rect) {
     var s = box.style;
+    var width = rect.width * 0.5;
     s.position = 'absolute';
     s.top = __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_2__lib_dom__["d" /* px */])(0);
-    s.left = __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_2__lib_dom__["d" /* px */])(rect.left);
-    s.width = __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_2__lib_dom__["d" /* px */])(rect.width * 0.5);
+    s.left = __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_2__lib_dom__["d" /* px */])(rect.left + (rect.width - width) / 2);
+    s.width = __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_2__lib_dom__["d" /* px */])(width);
 }
 
 // function sizeLay(box, rect) {
@@ -38024,13 +38029,14 @@ function xyLay(box, rect) {
 //     s.width = px(rect.width * 0.5);
 // }
 
-function colorLay(box, rect) {
-    var s = box.style;
-    s.position = 'absolute';
-    s.top = __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_2__lib_dom__["d" /* px */])(0);
-    s.right = __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_2__lib_dom__["d" /* px */])(0);
-    s.width = __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_2__lib_dom__["d" /* px */])(rect.width * 0.2);
-}
+// function colorLay(box, rect) {
+//     const s = box.style;
+//     s.position = 'absolute';
+//     s.top = px(0);
+//     s.right = px(0);
+//     s.width = px(rect.width * 0.2);
+// }
+
 
 function getScaledSize(rect, bbox) {
     var hScale = rect.width / bbox.width;
@@ -38089,11 +38095,11 @@ function main() {
     var canvas = __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_2__lib_dom__["b" /* createElement */])('canvas');
     var xyBox = xyTool();
     // const sizeBox = extentTool();
-    var colorBox = colorTool();
+    // const colorBox = colorTool();
     container.appendChild(canvas);
     container.appendChild(xyBox);
     // container.appendChild(sizeBox);
-    container.appendChild(colorBox);
+    // container.appendChild(colorBox);
     __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_2__lib_dom__["c" /* body */])().appendChild(container);
 
     var rect = container.getBoundingClientRect();
@@ -38126,7 +38132,7 @@ function main() {
 
     xyLay(xyBox, rect);
     // sizeLay(sizeBox, rect);
-    colorLay(colorBox, rect);
+    // colorLay(colorBox, rect);
 }
 
 /***/ }),
@@ -38363,8 +38369,10 @@ function palette(options) {
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_8__lib_state__ = __webpack_require__("../lib/state.js");
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_9__lib_operation__ = __webpack_require__("../lib/operation.js");
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_10__lib_dom__ = __webpack_require__("../lib/dom.js");
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_11__extrude__ = __webpack_require__("./extrude.js");
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_11__palette__ = __webpack_require__("./palette.js");
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_12__extrude__ = __webpack_require__("./extrude.js");
 /* harmony export (immutable) */ __webpack_exports__["a"] = install;
+
 
 
 
@@ -38453,6 +38461,21 @@ function textTool(box) {
     box.appendChild(textArea);
 }
 
+function colorTool(box) {
+    var options = [{
+        label: 'Background',
+        keys: ['colorBackground', 'colorForeground']
+    }, {
+        label: 'Shadow',
+        keys: ['colorExtrusion']
+    }];
+
+    options.forEach(function (option) {
+        box.appendChild(__webpack_require__.i(__WEBPACK_IMPORTED_MODULE_11__palette__["a" /* default */])(option));
+    });
+    return box;
+}
+
 function exportButton(label, handler) {
     var button = __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_10__lib_dom__["b" /* createElement */])('button', {
         class: 'button',
@@ -38481,7 +38504,7 @@ function exportTool(box) {
             var state = __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_2_lodash_fp__["assign"])(localState, {});
             var nc = new __WEBPACK_IMPORTED_MODULE_6__lib_ctx_null__["a" /* default */](state.width, state.height);
 
-            var _extrude = __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_11__extrude__["a" /* default */])(nc, state),
+            var _extrude = __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_12__extrude__["a" /* default */])(nc, state),
                 width = _extrude.width,
                 height = _extrude.height;
 
@@ -38504,7 +38527,7 @@ function exportTool(box) {
             state.width = width;
             state.height = height;
 
-            if (__webpack_require__.i(__WEBPACK_IMPORTED_MODULE_11__extrude__["a" /* default */])(ctx, state)) {
+            if (__webpack_require__.i(__WEBPACK_IMPORTED_MODULE_12__extrude__["a" /* default */])(ctx, state)) {
                 offScreen.toBlob(function (blob) {
                     __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_1_file_saver__["saveAs"])(blob, 'shadowtype.png');
                 });
@@ -38519,7 +38542,7 @@ function exportTool(box) {
                     var state = __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_2_lodash_fp__["assign"])(localState, {});
                     var nc = new __WEBPACK_IMPORTED_MODULE_6__lib_ctx_null__["a" /* default */](state.width, state.height);
 
-                    var _extrude2 = __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_11__extrude__["a" /* default */])(nc, state),
+                    var _extrude2 = __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_12__extrude__["a" /* default */])(nc, state),
                         width = _extrude2.width,
                         height = _extrude2.height;
 
@@ -38536,7 +38559,7 @@ function exportTool(box) {
                     state.maskLineWidth = 0;
                     state.colorBackground = 'transparent';
 
-                    var extResult = __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_11__extrude__["a" /* default */])(ctx, state, knockout);
+                    var extResult = __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_12__extrude__["a" /* default */])(ctx, state, knockout);
                     if (extResult !== null) {
                         var data = {
                             width: fullWidth,
@@ -38565,14 +38588,15 @@ function exportTool(box) {
 
 function install(fonts) {
     var sidebar = __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_10__lib_dom__["b" /* createElement */])('div', { class: 'tool-box' });
-    var fontBox = wrapTool('font', fontTool, fonts);
     var textBox = wrapTool('text', textTool);
+    var fontBox = wrapTool('font', fontTool, fonts);
+    var colorBox = wrapTool('colors', colorTool);
     var exportBox = wrapTool('export', exportTool);
     // const xyBox = wrapTool('xy', xyTool);
     // const extentBox = wrapTool('size', extentTool);
 
 
-    [textBox, fontBox, exportBox].forEach(function (box) {
+    [textBox, fontBox, colorBox, exportBox].forEach(function (box) {
         return sidebar.appendChild(box);
     });
     __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_10__lib_dom__["c" /* body */])().appendChild(sidebar);

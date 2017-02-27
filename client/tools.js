@@ -16,6 +16,7 @@ import {
     addClass,
     removeClass,
 } from '../lib/dom';
+import palette from './palette';
 import extrude from './extrude';
 
 
@@ -88,6 +89,25 @@ function textTool(box) {
     });
     box.appendChild(textArea);
 }
+
+function colorTool(box) {
+    const options = [
+        {
+            label: 'Background',
+            keys: ['colorBackground', 'colorForeground'],
+        },
+        {
+            label: 'Shadow',
+            keys: ['colorExtrusion'],
+        },
+    ];
+
+    options.forEach((option) => {
+        box.appendChild(palette(option));
+    });
+    return box;
+}
+
 
 
 function exportButton(label, handler) {
@@ -197,14 +217,15 @@ full ${fullWidth}x${fullHeight}`);
 
 export default function install(fonts) {
     const sidebar = createElement('div', { class: 'tool-box' });
-    const fontBox = wrapTool('font', fontTool, fonts);
     const textBox = wrapTool('text', textTool);
+    const fontBox = wrapTool('font', fontTool, fonts);
+    const colorBox = wrapTool('colors', colorTool);
     const exportBox = wrapTool('export', exportTool);
     // const xyBox = wrapTool('xy', xyTool);
     // const extentBox = wrapTool('size', extentTool);
 
 
-    [textBox, fontBox, exportBox].forEach(box => sidebar.appendChild(box));
+    [textBox, fontBox, colorBox, exportBox].forEach(box => sidebar.appendChild(box));
     body().appendChild(sidebar);
     // body().appendChild(xyBox);
     // body().appendChild(extentBox);

@@ -129,32 +129,33 @@ function xyTool() {
 //     return box;
 // }
 
-function colorTool() {
-    const box = createElement('div', { class: 'tool-color' });
-    const options = [
-        {
-            label: 'Background',
-            keys: ['colorBackground', 'colorForeground'],
-        },
-        {
-            label: 'Shadow',
-            keys: ['colorExtrusion'],
-        },
-    ];
+// function colorTool() {
+//     const box = createElement('div', { class: 'tool-color' });
+//     const options = [
+//         {
+//             label: 'Background',
+//             keys: ['colorBackground', 'colorForeground'],
+//         },
+//         {
+//             label: 'Shadow',
+//             keys: ['colorExtrusion'],
+//         },
+//     ];
 
-    options.forEach((option) => {
-        box.appendChild(palette(option));
-    });
-    return box;
-}
+//     options.forEach((option) => {
+//         box.appendChild(palette(option));
+//     });
+//     return box;
+// }
 
 
 function xyLay(box, rect) {
     const s = box.style;
+    const width = rect.width * 0.5;
     s.position = 'absolute';
     s.top = px(0);
-    s.left = px(rect.left);
-    s.width = px(rect.width * 0.5);
+    s.left = px(rect.left + ((rect.width - width) / 2));
+    s.width = px(width);
 }
 
 
@@ -166,13 +167,13 @@ function xyLay(box, rect) {
 //     s.width = px(rect.width * 0.5);
 // }
 
-function colorLay(box, rect) {
-    const s = box.style;
-    s.position = 'absolute';
-    s.top = px(0);
-    s.right = px(0);
-    s.width = px(rect.width * 0.2);
-}
+// function colorLay(box, rect) {
+//     const s = box.style;
+//     s.position = 'absolute';
+//     s.top = px(0);
+//     s.right = px(0);
+//     s.width = px(rect.width * 0.2);
+// }
 
 
 function getScaledSize(rect, bbox) {
@@ -233,11 +234,11 @@ export default function main() {
     const canvas = createElement('canvas');
     const xyBox = xyTool();
     // const sizeBox = extentTool();
-    const colorBox = colorTool();
+    // const colorBox = colorTool();
     container.appendChild(canvas);
     container.appendChild(xyBox);
     // container.appendChild(sizeBox);
-    container.appendChild(colorBox);
+    // container.appendChild(colorBox);
     body().appendChild(container);
 
     const rect = container.getBoundingClientRect();
@@ -275,5 +276,5 @@ export default function main() {
 
     xyLay(xyBox, rect);
     // sizeLay(sizeBox, rect);
-    colorLay(colorBox, rect);
+    // colorLay(colorBox, rect);
 }
