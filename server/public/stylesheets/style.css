@@ -65,10 +65,19 @@ table {
     overflow: hidden;
 }
 
-canvas {
+canvas, .slider, .slider-wrapper {
     -webkit-user-select: none;
     -moz-user-select: none;
     user-select: none;
+    cursor: default;
+}
+
+.slider-wrapper.is-moving  .slider-line {
+    background-color: #666;
+}
+.slider-wrapper.is-moving .slider-square{
+    background-color: #666;
+    /*border: 1px solid #aaa;*/
 }
 
 .clickable {

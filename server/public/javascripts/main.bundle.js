@@ -59,7 +59,7 @@
 /******/ 	
 /******/ 	
 /******/ 	var hotApplyOnUpdate = true;
-/******/ 	var hotCurrentHash = "06d9b1f9fa155b6b7132"; // eslint-disable-line no-unused-vars
+/******/ 	var hotCurrentHash = "084583800c8516740460"; // eslint-disable-line no-unused-vars
 /******/ 	var hotCurrentModuleData = {};
 /******/ 	var hotMainModule = true; // eslint-disable-line no-unused-vars
 /******/ 	var hotCurrentParents = []; // eslint-disable-line no-unused-vars
@@ -1401,10 +1401,10 @@ var ContextStore = function (_BaseContext) {
 /* harmony export (immutable) */ __webpack_exports__["c"] = body;
 /* unused harmony export setAttributes */
 /* harmony export (immutable) */ __webpack_exports__["b"] = createElement;
-/* harmony export (immutable) */ __webpack_exports__["e"] = appendText;
+/* harmony export (immutable) */ __webpack_exports__["g"] = appendText;
 /* unused harmony export hasClass */
-/* harmony export (immutable) */ __webpack_exports__["g"] = removeClass;
-/* harmony export (immutable) */ __webpack_exports__["f"] = addClass;
+/* harmony export (immutable) */ __webpack_exports__["f"] = removeClass;
+/* harmony export (immutable) */ __webpack_exports__["e"] = addClass;
 /* unused harmony export toggleClass */
 /* harmony export (immutable) */ __webpack_exports__["a"] = removeElement;
 /* unused harmony export emptyElement */
@@ -2219,17 +2219,19 @@ function updateSlider(key, line, square, input) {
     input.value = value;
 }
 
-function startHandler(key, parser, line) {
+function startHandler(key, parser, line, square) {
     return function () {
         var state = __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_2__state__["c" /* getState */])(name(key));
         var lineRect = line.getBoundingClientRect();
         state.started = true;
         state.sourceRange = [0, lineRect.width];
+        __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_1__dom__["e" /* addClass */])(line, 'is-moving');
+        __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_1__dom__["e" /* addClass */])(square, 'is-moving');
         __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_2__state__["b" /* setState */])(name(key), state);
     };
 }
 
-function stopHandler(key, parser, line) {
+function stopHandler(key, parser, line, square) {
     return function (e) {
         var state = __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_2__state__["c" /* getState */])(name(key));
         if (state.started) {
@@ -2238,12 +2240,14 @@ function stopHandler(key, parser, line) {
             var pos = mouseEventPos(e, line);
             var value = parser(proj.forward(pos.x));
             state.started = false;
+            __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_1__dom__["f" /* removeClass */])(line, 'is-moving');
+            __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_1__dom__["f" /* removeClass */])(square, 'is-moving');
             __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_2__state__["b" /* setState */])([key, name(key)], [value, state]);
         }
     };
 }
 
-function moveHandler(key, parser, line) {
+function moveHandler(key, parser, line, square) {
     return function (e) {
         var state = __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_2__state__["c" /* getState */])(name(key));
         if (state.started) {
@@ -2256,11 +2260,13 @@ function moveHandler(key, parser, line) {
     };
 }
 
-function cancelHandler(key) {
+function cancelHandler(key, parser, line, square) {
     return function () {
         var state = __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_2__state__["c" /* getState */])(name(key));
         if (state.started) {
             state.started = false;
+            __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_1__dom__["f" /* removeClass */])(line, 'is-moving');
+            __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_1__dom__["f" /* removeClass */])(square, 'is-moving');
             __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_2__state__["b" /* setState */])(name(key), state);
         }
     };
@@ -2327,7 +2333,7 @@ function slider(options) {
         max: max
     });
     var container = __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_1__dom__["b" /* createElement */])('div', { class: 'slider ' + name(key) });
-    var lineWrapper = __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_1__dom__["b" /* createElement */])('div');
+    var lineWrapper = __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_1__dom__["b" /* createElement */])('div', { class: 'slider-wrapper' });
     var line = __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_1__dom__["b" /* createElement */])('div', { class: 'slider-line' });
     var square = __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_1__dom__["b" /* createElement */])('div', { class: 'slider-square' });
     var input = __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_1__dom__["b" /* createElement */])('input', {
@@ -2337,7 +2343,7 @@ function slider(options) {
     });
     var labelBox = __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_1__dom__["b" /* createElement */])('div', { class: 'slider-label' });
 
-    __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_1__dom__["e" /* appendText */])(labelBox, label || key);
+    __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_1__dom__["g" /* appendText */])(labelBox, label || key);
     applyStyle('container', container);
     applyStyle('wrapper', lineWrapper);
     applyStyle('line', line);
@@ -2345,14 +2351,15 @@ function slider(options) {
     applyStyle('input', input);
     applyStyle('label', labelBox);
 
+    var sureParser = parser || __WEBPACK_IMPORTED_MODULE_0_lodash_fp__["identity"];
     var clampedParser = function clampedParser(v) {
-        return __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0_lodash_fp__["clamp"])(min, max, parser(v));
+        return __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0_lodash_fp__["clamp"])(min, max, sureParser(v));
     };
 
-    var start = startHandler(key, clampedParser || __WEBPACK_IMPORTED_MODULE_0_lodash_fp__["identity"], lineWrapper);
-    var stop = stopHandler(key, clampedParser || __WEBPACK_IMPORTED_MODULE_0_lodash_fp__["identity"], lineWrapper, square);
-    var move = moveHandler(key, clampedParser || __WEBPACK_IMPORTED_MODULE_0_lodash_fp__["identity"], lineWrapper, square);
-    var cancel = cancelHandler(key, clampedParser || __WEBPACK_IMPORTED_MODULE_0_lodash_fp__["identity"]);
+    var start = startHandler(key, clampedParser, lineWrapper, square);
+    var stop = stopHandler(key, clampedParser, lineWrapper, square);
+    var move = moveHandler(key, clampedParser, lineWrapper, square);
+    var cancel = cancelHandler(key, clampedParser, lineWrapper, square);
 
     lineWrapper.addEventListener('mousedown', start);
     lineWrapper.addEventListener('mouseup', stop);
@@ -38340,7 +38347,7 @@ function palette(options) {
     var colorList = __WEBPACK_IMPORTED_MODULE_2__config__["a" /* default */].palette;
     var container = __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_1__lib_dom__["b" /* createElement */])('div', { class: 'palette' });
     var labelElement = __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_1__lib_dom__["b" /* createElement */])('div', { class: 'palette-title' });
-    __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_1__lib_dom__["e" /* appendText */])(labelElement, label);
+    __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_1__lib_dom__["g" /* appendText */])(labelElement, label);
     container.appendChild(labelElement);
     // container.appendChild(paletteItemNone(keys));
     colorList.forEach(function (color) {
@@ -38392,19 +38399,19 @@ function createfontItem(font) {
 
     var elem = __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_10__lib_dom__["b" /* createElement */])('div', { class: 'tool-font-item clickable' });
     if (font.identifier === currentFont) {
-        __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_10__lib_dom__["f" /* addClass */])(elem, 'tool-font-item-selected');
+        __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_10__lib_dom__["e" /* addClass */])(elem, 'tool-font-item-selected');
     }
     elem.addEventListener('click', function () {
         var nodeList = document.querySelectorAll('.tool-font-item-selected');
         var selected = Array.prototype.slice.call(nodeList, 0);
         selected.forEach(function (node) {
-            __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_10__lib_dom__["g" /* removeClass */])(node, 'tool-font-item-selected');
+            __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_10__lib_dom__["f" /* removeClass */])(node, 'tool-font-item-selected');
         });
-        __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_10__lib_dom__["f" /* addClass */])(elem, 'tool-font-item-selected');
+        __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_10__lib_dom__["e" /* addClass */])(elem, 'tool-font-item-selected');
         __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_8__lib_state__["b" /* setState */])('font', font.identifier);
     });
     var label = __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_10__lib_dom__["b" /* createElement */])('span');
-    __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_10__lib_dom__["e" /* appendText */])(label, font.subFamily);
+    __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_10__lib_dom__["g" /* appendText */])(label, font.subFamily);
     elem.appendChild(label);
     return elem;
 }
@@ -38416,7 +38423,7 @@ function wrapTool(name, fn) {
     var title = __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_10__lib_dom__["b" /* createElement */])('div', {
         class: 'tool-title'
     });
-    __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_10__lib_dom__["e" /* appendText */])(title, name);
+    __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_10__lib_dom__["g" /* appendText */])(title, name);
     box.appendChild(title);
 
     for (var _len = arguments.length, args = Array(_len > 2 ? _len - 2 : 0), _key = 2; _key < _len; _key++) {
@@ -38434,7 +38441,7 @@ function fontTool(box, fonts) {
         if (!(family in groups)) {
             var element = __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_10__lib_dom__["b" /* createElement */])('div', { class: 'font-family' });
             var title = __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_10__lib_dom__["b" /* createElement */])('span', { class: 'font-family-title' });
-            __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_10__lib_dom__["e" /* appendText */])(title, family);
+            __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_10__lib_dom__["g" /* appendText */])(title, family);
             element.appendChild(title);
             box.appendChild(element);
             groups[family] = element;
@@ -38481,7 +38488,7 @@ function exportButton(label, handler) {
         class: 'button',
         type: 'button'
     });
-    __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_10__lib_dom__["e" /* appendText */])(button, label);
+    __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_10__lib_dom__["g" /* appendText */])(button, label);
     button.addEventListener('click', handler);
     return button;
 }
