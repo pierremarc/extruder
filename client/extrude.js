@@ -63,8 +63,12 @@ function computeLines(lineWidth, text, font, fontSize, lines) {
         }
         const seq = text.slice(0, i);
         const seqWidth = Math.floor(getWidth(seq, font, fontSize));
+        // console.log(`seq ${seq}; seqWidth ${seqWidth}; lineWidth ${lineWidth}`);
         if (seqWidth > lineWidth) {
-            next(seqWidth, Math.max(1, i - 1));
+            const idx = Math.max(1, i - 1);
+            const prevSeq = text.slice(0, idx);
+            const prevSeqWidth = Math.floor(getWidth(prevSeq, font, fontSize));
+            next(prevSeqWidth, idx);
             return;
         }
     }
@@ -82,7 +86,7 @@ export default function extrude(ctx, state, knockout = false) {
     // const ascent = fontObj.ascender / fontObj.unitsPerEm;
     // opentype.js reports wrong values
     // (which led me to see there were some other options for types in the browsers (typr, etc.))
-    const marginValue = width * (margin / 100);
+    const marginValue = margin;
     const ascent = 0.8;
     const offset = point(0, 0);
     const lineHeight = fontSize * lineHeightFactor;
@@ -99,9 +103,9 @@ export default function extrude(ctx, state, knockout = false) {
     if (!font) {
         return null;
     }
-
-    lines.forEach((l) => {
-        console.log(`line: ${l.text} [${l.width}]`);
+    console.log(`width: ${width}; height ${height}`);
+    lines.forEach((l, idx) => {
+        console.log(`line(${idx + 1}/${lines.length}): ${l.text} [${l.width}]`);
     });
 
     if (lines.length > 0) {
@@ -124,7 +128,7 @@ export default function extrude(ctx, state, knockout = false) {
 
                 const anchor = point(
                     left + marginValue,
-                    top + (idx * lineHeight) + (ascent * lineHeight)
+                    top + (idx * lineHeight) + (ascent * lineHeight),
                 );
 
                 extrudeLine(
@@ -134,7 +138,7 @@ export default function extrude(ctx, state, knockout = false) {
                     knockout,
                 );
 
-                unionBox.width = Math.max(line.width, unionBox.width);
+                unionBox.width = Math.max(line.width + marginValue, unionBox.width);
                 unionBox.height = Math.max((idx + 1) * lineHeight, unionBox.height);
             }
         };

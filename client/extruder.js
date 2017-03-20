@@ -83,7 +83,7 @@ function xyTool() {
         key: 'margin',
         label: 'move horizontal',
         min: 0,
-        max: 100,
+        max: 1000,
         parser: Math.floor,
     }));
     box.appendChild(fsBox);

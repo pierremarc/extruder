@@ -59,7 +59,7 @@
 /******/ 	
 /******/ 	
 /******/ 	var hotApplyOnUpdate = true;
-/******/ 	var hotCurrentHash = "084583800c8516740460"; // eslint-disable-line no-unused-vars
+/******/ 	var hotCurrentHash = "31e0daeaeeae1c9ec056"; // eslint-disable-line no-unused-vars
 /******/ 	var hotCurrentModuleData = {};
 /******/ 	var hotMainModule = true; // eslint-disable-line no-unused-vars
 /******/ 	var hotCurrentParents = []; // eslint-disable-line no-unused-vars
@@ -2219,19 +2219,18 @@ function updateSlider(key, line, square, input) {
     input.value = value;
 }
 
-function startHandler(key, parser, line, square) {
+function startHandler(key, parser, line) {
     return function () {
         var state = __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_2__state__["c" /* getState */])(name(key));
         var lineRect = line.getBoundingClientRect();
         state.started = true;
         state.sourceRange = [0, lineRect.width];
         __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_1__dom__["e" /* addClass */])(line, 'is-moving');
-        __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_1__dom__["e" /* addClass */])(square, 'is-moving');
         __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_2__state__["b" /* setState */])(name(key), state);
     };
 }
 
-function stopHandler(key, parser, line, square) {
+function stopHandler(key, parser, line) {
     return function (e) {
         var state = __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_2__state__["c" /* getState */])(name(key));
         if (state.started) {
@@ -2241,13 +2240,12 @@ function stopHandler(key, parser, line, square) {
             var value = parser(proj.forward(pos.x));
             state.started = false;
             __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_1__dom__["f" /* removeClass */])(line, 'is-moving');
-            __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_1__dom__["f" /* removeClass */])(square, 'is-moving');
             __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_2__state__["b" /* setState */])([key, name(key)], [value, state]);
         }
     };
 }
 
-function moveHandler(key, parser, line, square) {
+function moveHandler(key, parser, line) {
     return function (e) {
         var state = __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_2__state__["c" /* getState */])(name(key));
         if (state.started) {
@@ -2260,13 +2258,12 @@ function moveHandler(key, parser, line, square) {
     };
 }
 
-function cancelHandler(key, parser, line, square) {
+function cancelHandler(key, parser, line) {
     return function () {
         var state = __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_2__state__["c" /* getState */])(name(key));
         if (state.started) {
             state.started = false;
             __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_1__dom__["f" /* removeClass */])(line, 'is-moving');
-            __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_1__dom__["f" /* removeClass */])(square, 'is-moving');
             __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_2__state__["b" /* setState */])(name(key), state);
         }
     };
@@ -37780,8 +37777,12 @@ function computeLines(lineWidth, text, font, fontSize, lines) {
         }
         var seq = text.slice(0, i);
         var seqWidth = Math.floor(__webpack_require__.i(__WEBPACK_IMPORTED_MODULE_2__draw__["b" /* getWidth */])(seq, font, fontSize));
+        // console.log(`seq ${seq}; seqWidth ${seqWidth}; lineWidth ${lineWidth}`);
         if (seqWidth > lineWidth) {
-            next(seqWidth, Math.max(1, i - 1));
+            var idx = Math.max(1, i - 1);
+            var prevSeq = text.slice(0, idx);
+            var prevSeqWidth = Math.floor(__webpack_require__.i(__WEBPACK_IMPORTED_MODULE_2__draw__["b" /* getWidth */])(prevSeq, font, fontSize));
+            next(prevSeqWidth, idx);
             return;
         }
     }
@@ -37809,7 +37810,7 @@ function extrude(ctx, state) {
     // opentype.js reports wrong values
     // (which led me to see there were some other options for types in the browsers (typr, etc.))
 
-    var marginValue = width * (margin / 100);
+    var marginValue = margin;
     var ascent = 0.8;
     var offset = __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__lib_point__["a" /* default */])(0, 0);
     var lineHeight = fontSize * lineHeightFactor;
@@ -37825,9 +37826,9 @@ function extrude(ctx, state) {
     if (!font) {
         return null;
     }
-
-    lines.forEach(function (l) {
-        console.log('line: ' + l.text + ' [' + l.width + ']');
+    console.log('width: ' + width + '; height ' + height);
+    lines.forEach(function (l, idx) {
+        console.log('line(' + (idx + 1) + '/' + lines.length + '): ' + l.text + ' [' + l.width + ']');
     });
 
     if (lines.length > 0) {
@@ -37848,7 +37849,7 @@ function extrude(ctx, state) {
 
                 extrudeLine(state, ctx, anchor, x, y, line.text + ' ', font, fontSize, knockout);
 
-                unionBox.width = Math.max(line.width, unionBox.width);
+                unionBox.width = Math.max(line.width + marginValue, unionBox.width);
                 unionBox.height = Math.max((idx + 1) * lineHeight, unionBox.height);
             }
         };
@@ -37953,7 +37954,7 @@ function xyTool() {
         key: 'margin',
         label: 'move horizontal',
         min: 0,
-        max: 100,
+        max: 1000,
         parser: Math.floor
     }));
     box.appendChild(fsBox);
@@ -38521,7 +38522,7 @@ function exportTool(box) {
             offScreen.width = fullWidth;
             offScreen.height = fullHeight;
 
-            console.log('union ' + width + 'x' + height + '\nfull ' + fullWidth + 'x' + fullHeight);
+            // console.log(`union ${width}x${height} full ${fullWidth}x${fullHeight}`);
 
             var ctx = new __WEBPACK_IMPORTED_MODULE_4__lib_ctx_canvas__["a" /* default */](offScreen);
             var rawCtx = ctx.ctx;
