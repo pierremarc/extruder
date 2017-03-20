@@ -152,6 +152,7 @@ function startHandler(key, parser, line) {
         var lineRect = line.getBoundingClientRect();
         state.started = true;
         state.sourceRange = [0, lineRect.width];
+        (0, _dom.addClass)(line, 'is-moving');
         (0, _state.setState)(name(key), state);
     };
 }
@@ -165,6 +166,7 @@ function stopHandler(key, parser, line) {
             var pos = mouseEventPos(e, line);
             var value = parser(proj.forward(pos.x));
             state.started = false;
+            (0, _dom.removeClass)(line, 'is-moving');
             (0, _state.setState)([key, name(key)], [value, state]);
         }
     };
@@ -183,11 +185,12 @@ function moveHandler(key, parser, line) {
     };
 }
 
-function cancelHandler(key) {
+function cancelHandler(key, parser, line) {
     return function () {
         var state = (0, _state.getState)(name(key));
         if (state.started) {
             state.started = false;
+            (0, _dom.removeClass)(line, 'is-moving');
             (0, _state.setState)(name(key), state);
         }
     };
@@ -238,10 +241,6 @@ function applyStyle(styleName, elem) {
  * [slider description]
  * @method slider
  * @param  {[type]} options           [description]
- * @param  {[type]} min               [description]
- * @param  {[type]} max               [description]
- * @param  {[type]} [parser=identity] [description]
- * @return {[type]}                   [description]
  */
 function slider(options) {
     var key = options.key,
@@ -258,7 +257,7 @@ function slider(options) {
         max: max
     });
     var container = (0, _dom.createElement)('div', { class: 'slider ' + name(key) });
-    var lineWrapper = (0, _dom.createElement)('div');
+    var lineWrapper = (0, _dom.createElement)('div', { class: 'slider-wrapper' });
     var line = (0, _dom.createElement)('div', { class: 'slider-line' });
     var square = (0, _dom.createElement)('div', { class: 'slider-square' });
     var input = (0, _dom.createElement)('input', {
@@ -276,10 +275,15 @@ function slider(options) {
     applyStyle('input', input);
     applyStyle('label', labelBox);
 
-    var start = startHandler(key, parser || _fp.identity, lineWrapper);
-    var stop = stopHandler(key, parser || _fp.identity, lineWrapper, square);
-    var move = moveHandler(key, parser || _fp.identity, lineWrapper, square);
-    var cancel = cancelHandler(key, parser || _fp.identity);
+    var sureParser = parser || _fp.identity;
+    var clampedParser = function clampedParser(v) {
+        return (0, _fp.clamp)(min, max, sureParser(v));
+    };
+
+    var start = startHandler(key, clampedParser, lineWrapper, square);
+    var stop = stopHandler(key, clampedParser, lineWrapper, square);
+    var move = moveHandler(key, clampedParser, lineWrapper, square);
+    var cancel = cancelHandler(key, clampedParser, lineWrapper, square);
 
     lineWrapper.addEventListener('mousedown', start);
     lineWrapper.addEventListener('mouseup', stop);
@@ -287,7 +291,7 @@ function slider(options) {
     lineWrapper.addEventListener('mouseleave', cancel);
 
     input.addEventListener('change', function () {
-        (0, _state.setState)(key, Number(input.value));
+        (0, _state.setState)(key, (0, _fp.clamp)(min, max, Number(input.value)));
     });
 
     lineWrapper.appendChild(line);

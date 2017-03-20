@@ -127,15 +127,6 @@ var ContextPaper = function (_BaseContext) {
                 } else {
                     subs.push(path);
                 }
-                // const sub = ref.paths.reduce((path, mask) => {
-                //     const cp = path.clone({ insert: false, deep: true });
-                //     const cm = mask.clone({ insert: false, deep: true });
-                //     if (cm.intersects(cp)) {
-                //         return cp.subtract(cm);
-                //     }
-                //     return path;
-                // }, p);
-                // subs.push(sub);
             });
             this.paths = subs;
         }
