@@ -9,7 +9,7 @@ export default {
         text: 'Welcome',
         font: 'Volkart-Light:JeremieHornus:1.200',
         fontSize: 300,
-        lineHeightFactor: 1.16,
+        lineHeightFactor: 1.1,
         margin: 0,
         isMoving: false,
         startPos: null,

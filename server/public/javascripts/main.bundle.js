@@ -59,7 +59,7 @@
 /******/ 	
 /******/ 	
 /******/ 	var hotApplyOnUpdate = true;
-/******/ 	var hotCurrentHash = "31e0daeaeeae1c9ec056"; // eslint-disable-line no-unused-vars
+/******/ 	var hotCurrentHash = "a69aaccf0812b437144d"; // eslint-disable-line no-unused-vars
 /******/ 	var hotCurrentModuleData = {};
 /******/ 	var hotMainModule = true; // eslint-disable-line no-unused-vars
 /******/ 	var hotCurrentParents = []; // eslint-disable-line no-unused-vars
@@ -37514,7 +37514,7 @@ module.exports = function(module) {
         text: 'Welcome',
         font: 'Volkart-Light:JeremieHornus:1.200',
         fontSize: 300,
-        lineHeightFactor: 1.16,
+        lineHeightFactor: 1.1,
         margin: 0,
         isMoving: false,
         startPos: null,
