@@ -59,7 +59,7 @@
 /******/ 	
 /******/ 	
 /******/ 	var hotApplyOnUpdate = true;
-/******/ 	var hotCurrentHash = "6777274f7dfeb13586c6"; // eslint-disable-line no-unused-vars
+/******/ 	var hotCurrentHash = "63a156be15cec8696ea5"; // eslint-disable-line no-unused-vars
 /******/ 	var hotCurrentModuleData = {};
 /******/ 	var hotMainModule = true; // eslint-disable-line no-unused-vars
 /******/ 	var hotCurrentParents = []; // eslint-disable-line no-unused-vars
@@ -38113,7 +38113,8 @@ function main() {
     var rect = container.getBoundingClientRect();
 
     canvas.width = rect.width;
-    canvas.height = rect.height;
+    canvas.height = rect.height - 100;
+    canvas.style.marginTop = 100 + 'px';
     canvas.addEventListener('mousedown', startMoving, false);
     canvas.addEventListener('mouseup', stopMoving, false);
     canvas.addEventListener('mousemove', isMoving, false);
@@ -38121,6 +38122,7 @@ function main() {
     var keys = ['appReady', 'x', 'y', 'width', 'height', 'margin', 'font', 'fontSize', 'text', 'colorBackground', 'colorExtrusion', 'colorForeground'];
     __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_3__lib_state__["d" /* onStateChange */])(function (state) {
         canvas.style.backgroundColor = state.colorBackground;
+        container.style.backgroundColor = state.colorBackground;
 
         var width = state.width,
             height = state.height;

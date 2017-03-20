@@ -244,7 +244,8 @@ export default function main() {
     const rect = container.getBoundingClientRect();
 
     canvas.width = rect.width;
-    canvas.height = rect.height;
+    canvas.height = rect.height - 100;
+    canvas.style.marginTop = `${100}px`;
     canvas.addEventListener('mousedown', startMoving, false);
     canvas.addEventListener('mouseup', stopMoving, false);
     canvas.addEventListener('mousemove', isMoving, false);
@@ -258,6 +259,7 @@ export default function main() {
     ];
     onStateChange((state) => {
         canvas.style.backgroundColor = state.colorBackground;
+        container.style.backgroundColor = state.colorBackground;
 
         const { width, height } = state;
         const ss = getScaledSize(canvas, { width, height });
