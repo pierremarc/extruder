@@ -59,7 +59,7 @@
 /******/ 	
 /******/ 	
 /******/ 	var hotApplyOnUpdate = true;
-/******/ 	var hotCurrentHash = "a69aaccf0812b437144d"; // eslint-disable-line no-unused-vars
+/******/ 	var hotCurrentHash = "6777274f7dfeb13586c6"; // eslint-disable-line no-unused-vars
 /******/ 	var hotCurrentModuleData = {};
 /******/ 	var hotMainModule = true; // eslint-disable-line no-unused-vars
 /******/ 	var hotCurrentParents = []; // eslint-disable-line no-unused-vars
@@ -38471,11 +38471,11 @@ function textTool(box) {
 
 function colorTool(box) {
     var options = [{
+        label: 'Text',
+        keys: ['colorExtrusion']
+    }, {
         label: 'Background',
         keys: ['colorBackground', 'colorForeground']
-    }, {
-        label: 'Shadow',
-        keys: ['colorExtrusion']
     }];
 
     options.forEach(function (option) {
@@ -38590,16 +38590,29 @@ function exportTool(box) {
         };
     };
 
-    wrap1.appendChild(exportButton('PDF', pdfHandler(false)));
-    wrap1.appendChild(exportButton('PDF (knockout)', pdfHandler(true)));
+    wrap0.appendChild(exportButton('PDF', pdfHandler(false)));
+
+    var experimentalTitle = __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_10__lib_dom__["b" /* createElement */])('div', { class: 'tool-title-experimental' });
+
+    var experimentalBody = __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_10__lib_dom__["b" /* createElement */])('div', { class: 'tool-body-experimental' });
+
+    var experimentalButton = exportButton('Download PDF', pdfHandler(true));
+    __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_10__lib_dom__["e" /* addClass */])(experimentalButton, 'experimental');
+
+    experimentalTitle.appendChild(document.createTextNode('Experimental export'));
+    experimentalBody.appendChild(document.createTextNode('\nPDF containing type knocked out of the shadow. Can deliver unexpected output. Please check output before using.\n    '));
+
+    wrap1.appendChild(experimentalTitle);
+    wrap1.appendChild(experimentalBody);
+    wrap1.appendChild(experimentalButton);
 }
 
 function install(fonts) {
     var sidebar = __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_10__lib_dom__["b" /* createElement */])('div', { class: 'tool-box' });
-    var textBox = wrapTool('text', textTool);
-    var fontBox = wrapTool('font', fontTool, fonts);
-    var colorBox = wrapTool('colors', colorTool);
-    var exportBox = wrapTool('export', exportTool);
+    var textBox = wrapTool('Type your text', textTool);
+    var fontBox = wrapTool('Choose font style', fontTool, fonts);
+    var colorBox = wrapTool('Choose colors', colorTool);
+    var exportBox = wrapTool('Download', exportTool);
     // const xyBox = wrapTool('xy', xyTool);
     // const extentBox = wrapTool('size', extentTool);
 

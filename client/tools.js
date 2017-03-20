@@ -93,12 +93,12 @@ function textTool(box) {
 function colorTool(box) {
     const options = [
         {
-            label: 'Background',
-            keys: ['colorBackground', 'colorForeground'],
+            label: 'Text',
+            keys: ['colorExtrusion'],
         },
         {
-            label: 'Shadow',
-            keys: ['colorExtrusion'],
+            label: 'Background',
+            keys: ['colorBackground', 'colorForeground'],
         },
     ];
 
@@ -209,16 +209,31 @@ function exportTool(box) {
         }
     };
 
-    wrap1.appendChild(exportButton('PDF', pdfHandler(false)));
-    wrap1.appendChild(exportButton('PDF (knockout)', pdfHandler(true)));
+    wrap0.appendChild(exportButton('PDF', pdfHandler(false)));
+
+    const experimentalTitle = createElement('div', { class: 'tool-title-experimental' });
+
+    const experimentalBody = createElement('div', { class: 'tool-body-experimental' });
+
+    const experimentalButton = exportButton('Download PDF', pdfHandler(true));
+    addClass(experimentalButton, 'experimental');
+
+    experimentalTitle.appendChild(document.createTextNode('Experimental export'));
+    experimentalBody.appendChild(document.createTextNode(`
+PDF containing type knocked out of the shadow. Can deliver unexpected output. Please check output before using.
+    `));
+
+    wrap1.appendChild(experimentalTitle);
+    wrap1.appendChild(experimentalBody);
+    wrap1.appendChild(experimentalButton);
 }
 
 export default function install(fonts) {
     const sidebar = createElement('div', { class: 'tool-box' });
-    const textBox = wrapTool('text', textTool);
-    const fontBox = wrapTool('font', fontTool, fonts);
-    const colorBox = wrapTool('colors', colorTool);
-    const exportBox = wrapTool('export', exportTool);
+    const textBox = wrapTool('Type your text', textTool);
+    const fontBox = wrapTool('Choose font style', fontTool, fonts);
+    const colorBox = wrapTool('Choose colors', colorTool);
+    const exportBox = wrapTool('Download', exportTool);
     // const xyBox = wrapTool('xy', xyTool);
     // const extentBox = wrapTool('size', extentTool);
 
