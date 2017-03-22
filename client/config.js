@@ -9,7 +9,7 @@ export default {
         text: 'Expert',
         font: 'Volkart-Light:JeremieHornus:1.200',
         fontSize: 600,
-        lineHeightFactor: 1.1,
+        lineHeightFactor: 1,
         margin: 102,
         isMoving: false,
         startPos: null,
@@ -19,7 +19,7 @@ export default {
         colorForeground: 'white',
         extrusionLineWidth: 1,
         maskLineWidth: 4,
-        version: 3,
+        version: 4,
     },
     fonts: [
         '/fonts/Volkart/Volkart-Light.otf',

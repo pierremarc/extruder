@@ -59,7 +59,7 @@
 /******/ 	
 /******/ 	
 /******/ 	var hotApplyOnUpdate = true;
-/******/ 	var hotCurrentHash = "0ebaa19005d0fee3ce3a"; // eslint-disable-line no-unused-vars
+/******/ 	var hotCurrentHash = "d7edf1d1b395f4fff6ec"; // eslint-disable-line no-unused-vars
 /******/ 	var hotCurrentModuleData = {};
 /******/ 	var hotMainModule = true; // eslint-disable-line no-unused-vars
 /******/ 	var hotCurrentParents = []; // eslint-disable-line no-unused-vars
@@ -37529,7 +37529,7 @@ module.exports = function(module) {
         text: 'Expert',
         font: 'Volkart-Light:JeremieHornus:1.200',
         fontSize: 600,
-        lineHeightFactor: 1.1,
+        lineHeightFactor: 1,
         margin: 102,
         isMoving: false,
         startPos: null,
@@ -37539,7 +37539,7 @@ module.exports = function(module) {
         colorForeground: 'white',
         extrusionLineWidth: 1,
         maskLineWidth: 4,
-        version: 3
+        version: 4
     },
     fonts: ['/fonts/Volkart/Volkart-Light.otf', '/fonts/Volkart/Volkart-Regular.otf', '/fonts/Volkart/Volkart-Bold.otf', '/fonts/Volkart/Volkart-Extrabold.otf'],
     palette: ['#ffffff', '#dde1e4', '#768692', '#000000', '#da291c']
