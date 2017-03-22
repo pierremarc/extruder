@@ -75,8 +75,8 @@ function xyTool() {
     fsBox.appendChild(slider({
         key: 'fontSize',
         label: 'font size',
-        min: 70,
-        max: 700,
+        min: 250,
+        max: 800,
         parser: Math.ceil,
     }));
     marginBox.appendChild(slider({

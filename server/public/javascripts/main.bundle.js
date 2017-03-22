@@ -59,7 +59,7 @@
 /******/ 	
 /******/ 	
 /******/ 	var hotApplyOnUpdate = true;
-/******/ 	var hotCurrentHash = "be02a62e3f903f0569b1"; // eslint-disable-line no-unused-vars
+/******/ 	var hotCurrentHash = "db71173abc99b6dfdfe2"; // eslint-disable-line no-unused-vars
 /******/ 	var hotCurrentModuleData = {};
 /******/ 	var hotMainModule = true; // eslint-disable-line no-unused-vars
 /******/ 	var hotCurrentParents = []; // eslint-disable-line no-unused-vars
@@ -37953,8 +37953,8 @@ function xyTool() {
     fsBox.appendChild(__webpack_require__.i(__WEBPACK_IMPORTED_MODULE_4__lib_slider__["a" /* default */])({
         key: 'fontSize',
         label: 'font size',
-        min: 70,
-        max: 700,
+        min: 250,
+        max: 800,
         parser: Math.ceil
     }));
     marginBox.appendChild(__webpack_require__.i(__WEBPACK_IMPORTED_MODULE_4__lib_slider__["a" /* default */])({
