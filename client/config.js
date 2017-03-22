@@ -26,5 +26,5 @@ export default {
         '/fonts/Volkart/Volkart-Bold.otf',
         '/fonts/Volkart/Volkart-Extrabold.otf',
     ],
-    palette: ['#da291c', '#ffffff', '#dde1e4', '#768692', '#000000'],
+    palette: ['#ffffff', '#dde1e4', '#768692', '#000000', '#da291c'],
 };

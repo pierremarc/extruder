@@ -59,7 +59,7 @@
 /******/ 	
 /******/ 	
 /******/ 	var hotApplyOnUpdate = true;
-/******/ 	var hotCurrentHash = "b6379bc30453ee0080e5"; // eslint-disable-line no-unused-vars
+/******/ 	var hotCurrentHash = "402fbaf460b41bb24ca6"; // eslint-disable-line no-unused-vars
 /******/ 	var hotCurrentModuleData = {};
 /******/ 	var hotMainModule = true; // eslint-disable-line no-unused-vars
 /******/ 	var hotCurrentParents = []; // eslint-disable-line no-unused-vars
@@ -37526,7 +37526,7 @@ module.exports = function(module) {
         maskLineWidth: 4
     },
     fonts: ['/fonts/Volkart/Volkart-Light.otf', '/fonts/Volkart/Volkart-Regular.otf', '/fonts/Volkart/Volkart-Bold.otf', '/fonts/Volkart/Volkart-Extrabold.otf'],
-    palette: ['#da291c', '#ffffff', '#dde1e4', '#768692', '#000000']
+    palette: ['#ffffff', '#dde1e4', '#768692', '#000000', '#da291c']
 };
 
 /***/ }),
