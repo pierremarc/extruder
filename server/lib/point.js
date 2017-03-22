@@ -87,6 +87,11 @@ var Point = function () {
             _glMatrix.vec2.transformMat3(output, input, m);
             return new Point(output[0], output[1]);
         }
+    }, {
+        key: 'toString',
+        value: function toString() {
+            return '<Point x: ' + this.x + '; y: ' + this.y + '>';
+        }
 
         // translated(v) {
         //     const mat = mat3.fromTranslation(mat3.create(), v);

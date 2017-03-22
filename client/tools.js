@@ -184,8 +184,8 @@ function exportTool(box) {
                     ctx.operations.push(op);
                 });
             ctx.operations.push(transform(1, 0, 0, 1, margin, margin));
-            state.extrusionLineWidth = 0.1;
-            state.maskLineWidth = 0;
+            state.extrusionLineWidth = 0;
+            state.maskLineWidth = 0.1;
             state.colorBackground = 'transparent';
 
             const extResult = extrude(ctx, state, knockout);

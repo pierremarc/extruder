@@ -103,10 +103,10 @@ export default function extrude(ctx, state, knockout = false) {
     if (!font) {
         return null;
     }
-    console.log(`width: ${width}; height ${height}`);
-    lines.forEach((l, idx) => {
-        console.log(`line(${idx + 1}/${lines.length}): ${l.text} [${l.width}]`);
-    });
+    // console.log(`width: ${width}; height ${height}`);
+    // lines.forEach((l, idx) => {
+    //     console.log(`line(${idx + 1}/${lines.length}): ${l.text} [${l.width}]`);
+    // });
 
     if (lines.length > 0) {
         render(ctx, drawBackground(

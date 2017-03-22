@@ -59,7 +59,7 @@
 /******/ 	
 /******/ 	
 /******/ 	var hotApplyOnUpdate = true;
-/******/ 	var hotCurrentHash = "071033a32be677c82eb8"; // eslint-disable-line no-unused-vars
+/******/ 	var hotCurrentHash = "be02a62e3f903f0569b1"; // eslint-disable-line no-unused-vars
 /******/ 	var hotCurrentModuleData = {};
 /******/ 	var hotMainModule = true; // eslint-disable-line no-unused-vars
 /******/ 	var hotCurrentParents = []; // eslint-disable-line no-unused-vars
@@ -2037,6 +2037,11 @@ var Point = function () {
             __WEBPACK_IMPORTED_MODULE_0_gl_matrix__["vec2"].transformMat3(output, input, m);
             return new Point(output[0], output[1]);
         }
+    }, {
+        key: 'toString',
+        value: function toString() {
+            return '<Point x: ' + this.x + '; y: ' + this.y + '>';
+        }
 
         // translated(v) {
         //     const mat = mat3.fromTranslation(mat3.create(), v);
@@ -2502,7 +2507,8 @@ function init(initialState) {
     var storage = getLocaleStorage();
     if (storage) {
         var localStateVersion = storage.getItem('version');
-        if (storage.getItem(EXTR_STORAGE_ID) && localStateVersion === initialState.version) {
+        var initialStateVersion = initialState.version.toString();
+        if (storage.getItem(EXTR_STORAGE_ID) && localStateVersion === initialStateVersion) {
             (function () {
                 // we've been there once
                 var state = {};
@@ -37634,7 +37640,7 @@ function draw(state, text, font, fontSize, xOffset, yOffset) {
     var extrusion = [];
     var paths = __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_3__font__["b" /* getFont */])(font).getPaths(text, anchor.x, anchor.y, fontSize);
 
-    extrusion.push(__webpack_require__.i(__WEBPACK_IMPORTED_MODULE_1__lib_operation__["d" /* gs */])('lineJoin', 'round'));
+    extrusion.push(__webpack_require__.i(__WEBPACK_IMPORTED_MODULE_1__lib_operation__["d" /* gs */])('lineJoin', 'miter'));
 
     paths.forEach(function (path) {
         var commands = path.commands;
@@ -37828,10 +37834,10 @@ function extrude(ctx, state) {
     if (!font) {
         return null;
     }
-    console.log('width: ' + width + '; height ' + height);
-    lines.forEach(function (l, idx) {
-        console.log('line(' + (idx + 1) + '/' + lines.length + '): ' + l.text + ' [' + l.width + ']');
-    });
+    // console.log(`width: ${width}; height ${height}`);
+    // lines.forEach((l, idx) => {
+    //     console.log(`line(${idx + 1}/${lines.length}): ${l.text} [${l.width}]`);
+    // });
 
     if (lines.length > 0) {
         __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_3__lib_operation__["b" /* render */])(ctx, __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_2__draw__["c" /* drawBackground */])(offset, __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__lib_point__["a" /* default */])(offset.x + width, offset.y + height), colorBackground));
@@ -38566,8 +38572,8 @@ function exportTool(box) {
                         ctx.operations.push(op);
                     });
                     ctx.operations.push(__webpack_require__.i(__WEBPACK_IMPORTED_MODULE_9__lib_operation__["n" /* transform */])(1, 0, 0, 1, margin, margin));
-                    state.extrusionLineWidth = 0.1;
-                    state.maskLineWidth = 0;
+                    state.extrusionLineWidth = 0;
+                    state.maskLineWidth = 0.1;
                     state.colorBackground = 'transparent';
 
                     var extResult = __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_12__extrude__["a" /* default */])(ctx, state, knockout);

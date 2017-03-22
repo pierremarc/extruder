@@ -100,7 +100,9 @@ function init(initialState) {
     }
     var storage = getLocaleStorage();
     if (storage) {
-        if (storage.getItem(EXTR_STORAGE_ID)) {
+        var localStateVersion = storage.getItem('version');
+        var initialStateVersion = initialState.version.toString();
+        if (storage.getItem(EXTR_STORAGE_ID) && localStateVersion === initialStateVersion) {
             (function () {
                 // we've been there once
                 var state = {};
