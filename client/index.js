@@ -32,15 +32,18 @@ if (!HTMLCanvasElement.prototype.toBlob) {
 initState(config.initialState);
 
 function main(configOpt) {
+    const endMessage = message('loading fonts');
     loadFonts(configOpt.fonts)
         .then((names) => {
             tools(names);
             extruder();
-            message('fonts loaded, application is ready');
+            endMessage();
+            setTimeout(message('fonts loaded, application is ready'), 2000);
             setState('appReady', true);
         })
         .catch((err) => {
-            message(err.toString(), ERROR);
+            endMessage();
+            setTimeout(message(err.toString(), ERROR), 2000);
         });
 }
 

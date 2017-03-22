@@ -18,6 +18,7 @@ import {
 } from '../lib/dom';
 import palette from './palette';
 import extrude from './extrude';
+import message, { ERROR } from '../lib/message';
 
 
 function createfontItem(font) {
@@ -169,6 +170,8 @@ function exportTool(box) {
 
     const pdfHandler = knockout => () => {
         if (localState) {
+            const patience = knockout ? ', it might take long, please be patient' : '';
+            const endMessage = message(`preparing PDF file ${patience}`);
             const state = assign(localState, {});
             const nc = new ContextNull(state.width, state.height);
             const { width, height } = extrude(nc, state);
@@ -200,10 +203,20 @@ function exportTool(box) {
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify(data),
                 })
-                    .then(response => response.blob())
+                    .then((response) => {
+                        if (response.ok) {
+                            return response.blob();
+                        }
+                        throw (new Error(response.statusText));
+                    })
                     .then((blob) => {
                         const fn = knockout ? 'shadowtype-knockout.pdf' : 'shadowtype.pdf';
                         saveAs(blob, fn);
+                        endMessage();
+                    })
+                    .catch((err) => {
+                        endMessage();
+                        setTimeout(message(`PDF generation failed: ${err}`, ERROR), 10000);
                     });
             }
         }

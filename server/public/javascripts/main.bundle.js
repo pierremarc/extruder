@@ -59,7 +59,7 @@
 /******/ 	
 /******/ 	
 /******/ 	var hotApplyOnUpdate = true;
-/******/ 	var hotCurrentHash = "db71173abc99b6dfdfe2"; // eslint-disable-line no-unused-vars
+/******/ 	var hotCurrentHash = "0ebaa19005d0fee3ce3a"; // eslint-disable-line no-unused-vars
 /******/ 	var hotCurrentModuleData = {};
 /******/ 	var hotMainModule = true; // eslint-disable-line no-unused-vars
 /******/ 	var hotCurrentParents = []; // eslint-disable-line no-unused-vars
@@ -1704,13 +1704,19 @@ var DEBUG = 'debug';
 var timeoutId = null;
 var box = null;
 
+var endMessage = function endMessage(element) {
+    return function () {
+        __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__dom__["a" /* removeElement */])(element);
+    };
+};
+
 function message(text) {
     var type = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : INFO;
 
-    if (timeoutId !== null) {
-        clearTimeout(timeoutId);
-        __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__dom__["a" /* removeElement */])(box);
-    }
+    // if (timeoutId !== null) {
+    //     clearTimeout(timeoutId);
+    //     removeElement(box);
+    // }
 
     box = __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__dom__["b" /* createElement */])('div', {
         class: 'message-box message-' + type
@@ -1718,12 +1724,14 @@ function message(text) {
     box.appendChild(document.createTextNode(text));
 
     __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__dom__["c" /* body */])().appendChild(box);
-    var msgDuration = text.length * 24;
+    // const msgDuration = text.length * 24;
 
-    timeoutId = setTimeout(function () {
-        timeoutId = null;
-        __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__dom__["a" /* removeElement */])(box);
-    }, msgDuration);
+    // timeoutId = setTimeout(() => {
+    //     timeoutId = null;
+    //     removeElement(box);
+    // }, msgDuration);
+
+    return endMessage(box);
 }
 
 /***/ }),
@@ -38294,13 +38302,16 @@ if (!HTMLCanvasElement.prototype.toBlob) {
 __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_1__lib_state__["a" /* init */])(__WEBPACK_IMPORTED_MODULE_0__config__["a" /* default */].initialState);
 
 function main(configOpt) {
+    var endMessage = __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_2__lib_message__["a" /* default */])('loading fonts');
     __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_3__font__["a" /* loadFonts */])(configOpt.fonts).then(function (names) {
         __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_4__tools__["a" /* default */])(names);
         __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_5__extruder__["a" /* default */])();
-        __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_2__lib_message__["a" /* default */])('fonts loaded, application is ready');
+        endMessage();
+        setTimeout(__webpack_require__.i(__WEBPACK_IMPORTED_MODULE_2__lib_message__["a" /* default */])('fonts loaded, application is ready'), 2000);
         __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_1__lib_state__["b" /* setState */])('appReady', true);
     }).catch(function (err) {
-        __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_2__lib_message__["a" /* default */])(err.toString(), __WEBPACK_IMPORTED_MODULE_2__lib_message__["b" /* ERROR */]);
+        endMessage();
+        setTimeout(__webpack_require__.i(__WEBPACK_IMPORTED_MODULE_2__lib_message__["a" /* default */])(err.toString(), __WEBPACK_IMPORTED_MODULE_2__lib_message__["b" /* ERROR */]), 2000);
     });
 }
 
@@ -38388,7 +38399,9 @@ function palette(options) {
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_10__lib_dom__ = __webpack_require__("../lib/dom.js");
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_11__palette__ = __webpack_require__("./palette.js");
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_12__extrude__ = __webpack_require__("./extrude.js");
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_13__lib_message__ = __webpack_require__("../lib/message.js");
 /* harmony export (immutable) */ __webpack_exports__["a"] = install;
+
 
 
 
@@ -38556,6 +38569,8 @@ function exportTool(box) {
         return function () {
             if (localState) {
                 (function () {
+                    var patience = knockout ? ', it might take long, please be patient' : '';
+                    var endMessage = __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_13__lib_message__["a" /* default */])('preparing PDF file ' + patience);
                     var state = __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_2_lodash_fp__["assign"])(localState, {});
                     var nc = new __WEBPACK_IMPORTED_MODULE_6__lib_ctx_null__["a" /* default */](state.width, state.height);
 
@@ -38588,10 +38603,17 @@ function exportTool(box) {
                             headers: { 'Content-Type': 'application/json' },
                             body: JSON.stringify(data)
                         }).then(function (response) {
-                            return response.blob();
+                            if (response.ok) {
+                                return response.blob();
+                            }
+                            throw new Error(response.statusText);
                         }).then(function (blob) {
                             var fn = knockout ? 'shadowtype-knockout.pdf' : 'shadowtype.pdf';
                             __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_1_file_saver__["saveAs"])(blob, fn);
+                            endMessage();
+                        }).catch(function (err) {
+                            endMessage();
+                            setTimeout(__webpack_require__.i(__WEBPACK_IMPORTED_MODULE_13__lib_message__["a" /* default */])('PDF generation failed: ' + err, __WEBPACK_IMPORTED_MODULE_13__lib_message__["b" /* ERROR */]), 10000);
                         });
                     }
                 })();
