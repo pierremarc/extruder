@@ -296,7 +296,12 @@ border: none;
 }
 
 .tool-title-experimental {
+    font-size: 13px;
         margin-top: 1em;
-    margin-bottom: .5em;
+    margin-bottom: .3em;
     font-weight: bold;
+}
+.tool-body-experimental {
+    font-size: 13px;
+    margin-bottom: .3em;
 }

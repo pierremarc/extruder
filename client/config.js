@@ -1,16 +1,16 @@
 
 export default {
     initialState: {
-        x: 16,
-        y: 16,
+        x: -16,
+        y: -12,
         fixedSize: true,
         width: 1920,
         height: 1080,
-        text: 'Welcome',
+        text: 'Expert',
         font: 'Volkart-Light:JeremieHornus:1.200',
-        fontSize: 300,
+        fontSize: 600,
         lineHeightFactor: 1.1,
-        margin: 0,
+        margin: 102,
         isMoving: false,
         startPos: null,
         numSplit: 32,
@@ -19,6 +19,7 @@ export default {
         colorForeground: 'white',
         extrusionLineWidth: 1,
         maskLineWidth: 4,
+        version: 3,
     },
     fonts: [
         '/fonts/Volkart/Volkart-Light.otf',

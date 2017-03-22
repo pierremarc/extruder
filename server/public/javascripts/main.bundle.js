@@ -59,7 +59,7 @@
 /******/ 	
 /******/ 	
 /******/ 	var hotApplyOnUpdate = true;
-/******/ 	var hotCurrentHash = "402fbaf460b41bb24ca6"; // eslint-disable-line no-unused-vars
+/******/ 	var hotCurrentHash = "071033a32be677c82eb8"; // eslint-disable-line no-unused-vars
 /******/ 	var hotCurrentModuleData = {};
 /******/ 	var hotMainModule = true; // eslint-disable-line no-unused-vars
 /******/ 	var hotCurrentParents = []; // eslint-disable-line no-unused-vars
@@ -2501,7 +2501,8 @@ function init(initialState) {
     }
     var storage = getLocaleStorage();
     if (storage) {
-        if (storage.getItem(EXTR_STORAGE_ID)) {
+        var localStateVersion = storage.getItem('version');
+        if (storage.getItem(EXTR_STORAGE_ID) && localStateVersion === initialState.version) {
             (function () {
                 // we've been there once
                 var state = {};
@@ -37506,16 +37507,16 @@ module.exports = function(module) {
 
 /* harmony default export */ __webpack_exports__["a"] = {
     initialState: {
-        x: 16,
-        y: 16,
+        x: -16,
+        y: -12,
         fixedSize: true,
         width: 1920,
         height: 1080,
-        text: 'Welcome',
+        text: 'Expert',
         font: 'Volkart-Light:JeremieHornus:1.200',
-        fontSize: 300,
+        fontSize: 600,
         lineHeightFactor: 1.1,
-        margin: 0,
+        margin: 102,
         isMoving: false,
         startPos: null,
         numSplit: 32,
@@ -37523,7 +37524,8 @@ module.exports = function(module) {
         colorBackground: 'white',
         colorForeground: 'white',
         extrusionLineWidth: 1,
-        maskLineWidth: 4
+        maskLineWidth: 4,
+        version: 3
     },
     fonts: ['/fonts/Volkart/Volkart-Light.otf', '/fonts/Volkart/Volkart-Regular.otf', '/fonts/Volkart/Volkart-Bold.otf', '/fonts/Volkart/Volkart-Extrabold.otf'],
     palette: ['#ffffff', '#dde1e4', '#768692', '#000000', '#da291c']
@@ -37877,8 +37879,7 @@ function extrude(ctx, state) {
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__lib_dom__ = __webpack_require__("../lib/dom.js");
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__lib_state__ = __webpack_require__("../lib/state.js");
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_4__lib_slider__ = __webpack_require__("../lib/slider.js");
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_5__palette__ = __webpack_require__("./palette.js");
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_6__extrude__ = __webpack_require__("./extrude.js");
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_5__extrude__ = __webpack_require__("./extrude.js");
 /* harmony export (immutable) */ __webpack_exports__["a"] = main;
 
 
@@ -37886,7 +37887,7 @@ function extrude(ctx, state) {
 
 
 
-
+// import palette from './palette';
 
 
 function mouseEventPos(e) {
@@ -38130,7 +38131,7 @@ function main() {
         var ss = getScaledSize(canvas, { width: width, height: height });
 
         withContext(canvas, ss, function (ctx) {
-            var sz = __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_6__extrude__["a" /* default */])(ctx, state, false);
+            var sz = __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_5__extrude__["a" /* default */])(ctx, state, false);
             var hasLines = sz.height > 0;
             var diff = Math.abs(sz.height - height);
 

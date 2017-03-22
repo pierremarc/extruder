@@ -4,7 +4,7 @@ import ContextCanvas from '../lib/ctx-canvas';
 import { body, createElement, px } from '../lib/dom';
 import { onStateChange, getState, setState } from '../lib/state';
 import slider from '../lib/slider';
-import palette from './palette';
+// import palette from './palette';
 import extrude from './extrude';
 
 
