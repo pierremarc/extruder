@@ -29,4 +29,14 @@ PORT=8888 npm start
 
 You can now test the installation by pointing a recent web browser to http://localhost:3000
 
+
+
+If you wish to bind on a specific interface, set the environment ```HOSTNAME``` variable to the desired value, e.g.:
+
+
+```bash
+HOSTNAME=10.99.99.50 PORT=8888 npm start
+```
+
+
 Done!
