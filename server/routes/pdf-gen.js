@@ -3,7 +3,7 @@ const fs = require('fs');
 const op = require('../lib/operation');
 const ContextPDF = require('../lib/ctx-pdf').default;
 
-console.log(ContextPDF);
+// console.log(ContextPDF);
 
 const router = express.Router();
 
